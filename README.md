@@ -1,12 +1,58 @@
 # OpenFunnel
 
-OpenFunnel is a search for active pain-points and buying windows in your Ideal Customer Profile. It specializes in three things: **ICP + Pain-Points**, **ICP + Buying Windows**, and **ICP + Signals** — starting from a static ICP definition (firmographic + trait fit) and layering dynamic, time-sensitive intelligence on top.
+> GTM intelligence — find active pain-points and buying windows in your ICP.
+
+[![npm](https://img.shields.io/npm/v/openfunnel)](https://www.npmjs.com/package/openfunnel)
+
+## Install
+
+```bash
+npm install openfunnel
+```
+
+Or run directly:
+
+```bash
+npx openfunnel
+```
+
+## Setup
+
+```bash
+export OPENFUNNEL_API_KEY=your-api-key
+export OPENFUNNEL_USER_ID=your-user-id
+```
+
+## Usage
+
+### CLI
+
+```bash
+npx openfunnel
+```
+
+### As a library
+
+```ts
+import { searchByTraits, listAccounts, getAccounts } from "openfunnel/api";
+import { findAccounts } from "openfunnel/skills/find-accounts";
+import { accountIntelligence } from "openfunnel/skills/account-intelligence";
+import { accountScoring } from "openfunnel/skills/account-scoring";
+```
+
+## What This Does
+
+OpenFunnel starts from a static ICP definition (firmographic + trait fit) and layers dynamic, time-sensitive intelligence on top. It specializes in three things:
+
+- **ICP + Pain-Points** — find companies experiencing problems you solve
+- **ICP + Buying Windows** — detect when companies are ready to buy
+- **ICP + Signals** — track real-time activities that indicate intent
 
 ---
 
 ## How to Think About Any Request
 
-Every request falls into one of these patterns. Route accordingly.
+Every request falls into one of these patterns:
 
 ```
 User Request
@@ -43,7 +89,7 @@ User Request
 
 **Traits** = searchable. Natural language → vector similarity → instant results.
 
-**Activities** = NOT searchable. Activities are detected by live search agents and stored as **signals**. Each signal tracks a specific buying activity (e.g., "companies hiring for Kubernetes") and its matched accounts are collected in an audience. You cannot search "companies posting about AI safety" unless an agent is already tracking that signal.
+**Activities** = NOT searchable. Activities are detected by live search agents and stored as **signals**. Each signal tracks a specific buying activity (e.g., "companies hiring for Kubernetes") and its matched accounts are collected in an audience.
 
 ### Always Check Existing Data First
 
@@ -63,9 +109,9 @@ Be transparent. Return what you can and flag the gap:
 
 ---
 
-## Where to Go Deeper
+## Repository Structure
 
-### Domain Knowledge — `knowledge/`
+### `knowledge/` — Domain Knowledge
 GTM concepts. Timeless — doesn't change when the platform changes.
 
 - [ICP](knowledge/icp.md) — ICP = Firmographic + Trait (static). Signals and timing are what OpenFunnel adds.
@@ -80,13 +126,13 @@ GTM concepts. Timeless — doesn't change when the platform changes.
 - [Pricing](knowledge/pricing.md) — Credit costs, pricing tiers, value equation.
 - [Case Studies](knowledge/case-studies.md) — Cekura, Central, NUMI, Fini.
 
-### Skills — `skills/`
-Product execution knowledge, workflows, and live search agent guides. Markdown files encode decision logic and rubrics. TypeScript files chain API calls.
+### `skills/` — Workflows & Live Search Agents
+Markdown files encode decision logic and rubrics. TypeScript files chain API calls.
 
 **Workflows:**
 - [find_accounts_skill.md](skills/find_accounts_skill.md) — Classification, routing, gap handling, agent recommendations. Code: [find_accounts_skill.ts](skills/find_accounts_skill.ts).
 - [account_intelligence_skill.md](skills/account_intelligence_skill.md) — Deep-dive workflow, synthesis format, sparse data handling. Code: [account_intelligence_skill.ts](skills/account_intelligence_skill.ts).
-- [account_scoring_skill.md](skills/account_scoring_skill.md) — Pain-based scoring rubric + conversation flow. Agent MUST present model choices before scoring. Code: [account_scoring_skill.ts](skills/account_scoring_skill.ts).
+- [account_scoring_skill.md](skills/account_scoring_skill.md) — Pain-based scoring rubric + conversation flow. Code: [account_scoring_skill.ts](skills/account_scoring_skill.ts).
 
 **Live search agents — company:**
 - [Job Posts](skills/find_companies_with_relevant_insights/job_posts.md) — "Find Companies with Hiring post mentioning [activity]"
@@ -100,8 +146,12 @@ Product execution knowledge, workflows, and live search agent guides. Markdown f
 - [Competitor Spy](skills/find_people_with_relevant_insights/competitor_spy.md) — Monitor competitor sales rep activity.
 - [People Social Posts](skills/find_people_with_relevant_insights/social_posts.md) — "Find people posting about [topic]"
 
-### API — `api/`
-Raw TypeScript functions wrapping all 21 OpenFunnel endpoints (V1 + V2). JSDoc comments explain each function.
+### `api/` — API Client
+TypeScript functions wrapping all 21 OpenFunnel endpoints (V1 + V2).
 
 - [client.ts](api/client.ts) — All endpoint wrappers: `searchByTraits`, `listAccounts`, `getAccounts`, `getAccountsV2`, `getAccountFilters`, `getFilteredAccounts`, `listAudiences`, `getAudience`, `listSignals`, `getInsightsFeed`, `deepEnrich`, etc.
 - [API Reference](api/reference.md) — All 21 endpoints documented (V1 + V2), what's searchable vs not, V2 inline signal content, known limitations.
+
+## License
+
+UNLICENSED

@@ -1,0 +1,46 @@
+{
+  "name": "openfunnel",
+  "version": "0.1.0",
+  "description": "OpenFunnel GTM intelligence — find active pain-points and buying windows in your ICP",
+  "type": "module",
+  "main": "dist/api/client.js",
+  "types": "dist/api/client.d.ts",
+  "exports": {
+    "./api": "./dist/api/client.js",
+    "./skills/find-accounts": "./dist/skills/find_accounts_skill.js",
+    "./skills/account-intelligence": "./dist/skills/account_intelligence_skill.js",
+    "./skills/account-scoring": "./dist/skills/account_scoring_skill.js"
+  },
+  "bin": {
+    "openfunnel": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "knowledge",
+    "skills/*.md",
+    "skills/find_companies_with_relevant_insights",
+    "skills/find_people_with_relevant_insights",
+    "api/reference.md",
+    "CLAUDE.md"
+  ],
+  "keywords": [
+    "openfunnel",
+    "gtm",
+    "sales-intelligence",
+    "icp",
+    "buying-signals"
+  ],
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@types/node": "^25.4.0",
+    "typescript": "^5.9.3"
+  }
+}

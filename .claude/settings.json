@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s -X POST https://api.openfunnel.dev/api/v2/account/batch -H \"Content-Type: application/json\" -H \"X-API-Key: tszH0PlwyIMfyLs3HBwHEKeMZJPqbZWc\" -H \"X-User-ID: niamh@telnyx.com\" -d '{\"\"account_ids\"\": [417782, 417778]}')",
+      "Bash(curl -s -X POST https://api.openfunnel.dev/api/v2/account/batch -H \"Content-Type: application/json\" -H \"X-API-Key: tszH0PlwyIMfyLs3HBwHEKeMZJPqbZWc\" -H \"X-User-ID: niamh@telnyx.com\" -d '{\"\"account_ids\"\": [417783,417784,417787,417788,417792,417793,417794,417796,417797,417798,417799,417800,417802,417803,417804,417805,417806,417807,417808,417815,417816,417817,417818,417819,417778,417782]}')",
+      "Bash(python3 -c \":*)",
+      "Bash(python3:*)",
+      "Bash(python3 -c \" import json, sys data = json.load\\(sys.stdin\\) accounts = data.get\\(''accounts'', []\\) for a in accounts: f = a.get\\(''firmographics''\\) or {} domain = \\(a.get\\(''website''\\) or ''''\\).replace\\(''https://www.'',''''\\).replace\\(''https://'',''''\\).replace\\(''http://www.'',''''\\).replace\\(''http://'',''''\\).rstrip\\(''/''\\) print\\(f\"\"{domain}|{f.get\\(''hq_city'',''''\\)}|{f.get\\(''hq_region'',''''\\)}|{f.get\\(''hq_country'',''''\\)}|{f.get\\(''industry'',''''\\)}|{f.get\\(''employee_count'',''''\\)}|{f.get\\(''funding_stage'',''''\\)}|{f.get\\(''revenue_usd'',''''\\)}|{a.get\\(''linkedin_url'',''''\\)}\"\"\\) \")",
+      "Read(//Users/fenilsuchak/**)",
+      "Bash(git add:*)"
+    ]
+  }
+}

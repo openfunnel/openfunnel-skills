@@ -1,6 +1,6 @@
 {
   "name": "openfunnel",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "OpenFunnel GTM intelligence — find active pain-points and buying windows in your ICP",
   "type": "module",
   "main": "dist/api/client.js",
@@ -43,8 +43,5 @@
   "devDependencies": {
     "@types/node": "^25.4.0",
     "typescript": "^5.9.3"
-  },
-  "dependencies": {
-    "openfunnel": "file:openfunnel-0.1.0.tgz"
   }
 }

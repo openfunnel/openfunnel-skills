@@ -301,9 +301,7 @@ Keep the strategy concise and actionable. Every recommendation must tie back to 
 
 ## Runtime
 
-**Claude.ai (MCP tools):** Use `lookup_company`, `get_account_full_details` to gather data, then apply the attack strategy prompt.
-
-**Claude Code / sandbox:** Use the TypeScript functions in `skills/enrich_and_research_account_skill.ts`.
+Use the TypeScript functions in `skills/enrich_and_research_account_skill.ts`.
 
 ## Code
 

@@ -14,9 +14,7 @@
       "Bash(git remote:*)",
       "Bash(npm run:*)",
       "Bash(npm install:*)",
-      "mcp__claude_ai_openfunnek__lookup_company",
-      "mcp__claude_ai_openfunnek__get_account_full_details",
-      "Read(//Users/fenilsuchak/.claude/**)",
+"Read(//Users/fenilsuchak/.claude/**)",
       "Bash(python3 -m json.tool)",
       "Bash(export OPENFUNNEL_API_KEY=\"of_1216ed4d7cb51799f4ed5cea3cb116c2631dc0a6c1c205da2c7e0a45550a9db4\")",
       "Bash(export OPENFUNNEL_USER_ID=\"dogfood@openfunnel.dev\")",
@@ -32,6 +30,9 @@
       "Bash(npm whoami:*)",
       "Bash(NPM_TOKEN=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 npm publish --registry=https://registry.npmjs.org/)",
       "Bash(npm publish:*)"
+    ],
+    "additionalDirectories": [
+      "/Users/fenilsuchak/openfunnel-alg"
     ]
   }
 }

@@ -7,11 +7,13 @@
  */
 
 const BASE_URL = "https://api.openfunnel.dev";
-const API_KEY = process.env.OPENFUNNEL_API_KEY ?? "";
-const USER_ID = process.env.OPENFUNNEL_USER_ID ?? "";
 
 function headers(): Record<string, string> {
-  return { "X-API-Key": API_KEY, "X-User-ID": USER_ID, "Content-Type": "application/json" };
+  return {
+    "X-API-Key": process.env.OPENFUNNEL_API_KEY ?? "",
+    "X-User-ID": process.env.OPENFUNNEL_USER_ID ?? "",
+    "Content-Type": "application/json",
+  };
 }
 
 async function post(path: string, body: Record<string, any> = {}): Promise<any> {

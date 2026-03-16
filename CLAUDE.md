@@ -105,3 +105,23 @@ Raw TypeScript functions wrapping all 21 OpenFunnel endpoints (V1 + V2). JSDoc c
 
 - [client.ts](api/client.ts) — All endpoint wrappers: `searchByTraits`, `listAccounts`, `getAccounts`, `getAccountsV2`, `getAccountFilters`, `getFilteredAccounts`, `listAudiences`, `getAudience`, `listSignals`, `getInsightsFeed`, `deepEnrich`, etc.
 - [API Reference](api/reference.md) — All 21 endpoints documented (V1 + V2), what's searchable vs not, V2 inline signal content, known limitations.
+
+<!-- openfunnel:start -->
+## OpenFunnel SDK
+
+This project uses the `openfunnel` package for GTM intelligence.
+
+### Available Skills
+- **account-intelligence** — Deep-dive workflow for gathering everything known about a specific company. Gathers signals, people, timeline, and signal coverage, then synthesizes into an intelligence brief with outreach angles.
+- **account-scoring** — Score accounts in an audience based on pain-point relevance and urgency. Presents scoring model options, gathers evidence per account, and uses LLM judgment to assign 0-100 scores with reasoning.
+- **enrich-and-research-account** — Look up an account, assess enrichment coverage, offer deep enrichment for people discovery, and produce an account attack strategy.
+- **find-accounts** — End-to-end workflow for finding companies. Handles trait queries, activity queries, and combinations. Routes requests, checks existing data, and recommends discovery agents for gaps.
+- **score-and-tier** — Score OpenFunnel's account universe against pain-based or custom criteria, bucket into tiers, and continuously re-score as new signals arrive.
+
+### Usage
+The agent should read `node_modules/openfunnel/CLAUDE.md` for full routing logic and instructions.
+Skill workflows: `node_modules/openfunnel/skills/{skill_name}.md`
+
+### Environment
+`OPENFUNNEL_API_KEY` and `OPENFUNNEL_USER_ID` are loaded from `.env`.
+<!-- openfunnel:end -->

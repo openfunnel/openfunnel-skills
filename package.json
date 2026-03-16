@@ -15,9 +15,10 @@
     "openfunnel": "./dist/cli.js"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "node node_modules/typescript/bin/tsc",
     "dev": "tsc --watch",
-    "start": "node dist/cli.js"
+    "start": "node dist/cli.js",
+    "prepublishOnly": "npm run build"
   },
   "files": [
     "dist",
@@ -42,5 +43,8 @@
   "devDependencies": {
     "@types/node": "^25.4.0",
     "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "openfunnel": "file:openfunnel-0.1.0.tgz"
   }
 }

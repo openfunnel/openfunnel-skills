@@ -7,7 +7,31 @@
       "Bash(python3:*)",
       "Bash(python3 -c \" import json, sys data = json.load\\(sys.stdin\\) accounts = data.get\\(''accounts'', []\\) for a in accounts: f = a.get\\(''firmographics''\\) or {} domain = \\(a.get\\(''website''\\) or ''''\\).replace\\(''https://www.'',''''\\).replace\\(''https://'',''''\\).replace\\(''http://www.'',''''\\).replace\\(''http://'',''''\\).rstrip\\(''/''\\) print\\(f\"\"{domain}|{f.get\\(''hq_city'',''''\\)}|{f.get\\(''hq_region'',''''\\)}|{f.get\\(''hq_country'',''''\\)}|{f.get\\(''industry'',''''\\)}|{f.get\\(''employee_count'',''''\\)}|{f.get\\(''funding_stage'',''''\\)}|{f.get\\(''revenue_usd'',''''\\)}|{a.get\\(''linkedin_url'',''''\\)}\"\"\\) \")",
       "Read(//Users/fenilsuchak/**)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git config:*)",
+      "Bash(git push:*)",
+      "Bash(git remote:*)",
+      "Bash(npm run:*)",
+      "Bash(npm install:*)",
+      "mcp__claude_ai_openfunnek__lookup_company",
+      "mcp__claude_ai_openfunnek__get_account_full_details",
+      "Read(//Users/fenilsuchak/.claude/**)",
+      "Bash(python3 -m json.tool)",
+      "Bash(export OPENFUNNEL_API_KEY=\"of_1216ed4d7cb51799f4ed5cea3cb116c2631dc0a6c1c205da2c7e0a45550a9db4\")",
+      "Bash(export OPENFUNNEL_USER_ID=\"dogfood@openfunnel.dev\")",
+      "Bash(node -e \":*)",
+      "Bash(OPENFUNNEL_API_KEY=\"of_1216ed4d7cb51799f4ed5cea3cb116c2631dc0a6c1c205da2c7e0a45550a9db4\" OPENFUNNEL_USER_ID=\"dogfood@openfunnel.dev\" npx tsx -e \":*)",
+      "Bash(xargs ls:*)",
+      "Bash(npx tsc:*)",
+      "Bash(tsc --version)",
+      "Bash(npx -y typescript@5.9.3 tsc --version)",
+      "Bash(node -e \"const ts = require\\(''''/Users/fenilsuchak/openfunnel-alg/node_modules/typescript''''\\); console.log\\(ts.version\\);\")",
+      "Bash(node /Users/fenilsuchak/openfunnel-alg/node_modules/typescript/bin/tsc -p /Users/fenilsuchak/openfunnel-alg/tsconfig.json)",
+      "Bash(npm pack:*)",
+      "Bash(npm whoami:*)",
+      "Bash(NPM_TOKEN=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 npm publish --registry=https://registry.npmjs.org/)",
+      "Bash(npm publish:*)"
     ]
   }
 }

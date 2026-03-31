@@ -54,22 +54,12 @@ Every request falls into one of these patterns. Route accordingly.
 User Request
   │
   ├─ SPECIFIC COMPANY ("Tell me about Acme Corp")
-  │   → Read skills/account_intelligence_skill.md and follow its workflow
+  │   → Read skills/enrich_and_research_account_skill.md and follow its workflow
   │
-  ├─ TRAIT QUERY ("Find AI-native ERP companies", "Series B fintech")
-  │   → Read skills/find_accounts_skill.md and follow its workflow
+  ├─ FIND COMPANIES ("Companies hiring for Kubernetes", "posting about SOC2")
+  │   → Read skills/find_companies_skill.md and follow its workflow
   │
-  ├─ ACTIVITY QUERY ("Companies hiring for Kubernetes", "posting about SOC2")
-  │   → Activities are NOT directly searchable
-  │   → Check existing signals first (POST /signal/get-signal-list)
-  │   → Signal exists? → get its audience for matched accounts + people
-  │   → No signal? → Recommend deploying a live search agent
-  │   → Read skills/find_accounts_skill.md for full decision tree
-  │
-  ├─ TRAIT + ACTIVITY ("Series B SaaS companies hiring for data engineers")
-  │   → Read skills/find_accounts_skill.md — handles multi-step intersection
-  │
-  ├─ PEOPLE ("Find decision-makers posting about X")
+  ├─ FIND PEOPLE ("Find decision-makers posting about X")
   │   → Read skills/find_people_skill.md and follow its workflow
   │
   ├─ SCORING ("Score these accounts", "Tier my pipeline")
@@ -106,13 +96,12 @@ Existing data is instant and free. Only search or deploy agents when no signal c
 Read these files only when routed to them by the workflow above.
 
 ### Skills — `skills/`
-- `skills/find_accounts_skill.md` — Find companies by activity: hiring, social, technography signals
-- `skills/find_people_skill.md` — Find people by activity: social posts, job changes, competitor tracking
-- `skills/account_intelligence_skill.md` — Deep-dive on a specific company
-- `skills/enterprise_account_research_skill.md` — Crack open F500 accounts by team + pain-point
-- `skills/enrich_and_research_account_skill.md` — Enrich + attack strategy
-- `skills/static_account_scoring_skill.md` — Static account scoring (one-shot, 0-100 scores with reasoning)
-- `skills/dynamic_account_scoring_and_tiering_skill.md` — Dynamic account scoring and tiering (continuous re-scoring as new signals arrive)
+- `skills/find_companies_skill.md` — Find companies by what they're hiring for, posting about, or what tech they use
+- `skills/find_people_skill.md` — Find people posting about topics, changing jobs, or engaging with competitor content
+- `skills/enrich_and_research_account_skill.md` — Look up a company, enrich it with people and signals, and get an attack strategy
+- `skills/enterprise_account_research_skill.md` — Break into F500 accounts — find which team has the pain, who leads it, and the evidence
+- `skills/static_account_scoring_skill.md` — Score accounts 0-100 on pain-point relevance with evidence and reasoning
+- `skills/dynamic_account_scoring_and_tiering_skill.md` — Score accounts, bucket into tiers, and re-score as new signals come in
 
 ### API — `api/`
 - `api/client.ts` — All endpoint wrappers with JSDoc. Read this to understand the API shape (endpoints, params, auth headers), then make your own fetch calls.

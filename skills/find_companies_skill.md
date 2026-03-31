@@ -1,6 +1,6 @@
 ---
-name: find-accounts
-description: Find companies matching an activity, behavior, or signal. Checks existing deployed signals first, deploys new ones if needed. Covers hiring, social listening, and technography signals.
+name: find-companies
+description: Find companies by what they're hiring for, posting about, or what tech they use
 ---
 
 # Find Accounts Skill
@@ -37,21 +37,38 @@ What activity or behavior is the user looking for? If unclear, ask.
 
 `listSignals()` → get all currently deployed signals.
 
-Compare against existing signal names. Close match only — same meaning, different wording:
+A signal is unique by **query + ICP pair**. The same query with a different ICP is a different signal and needs separate deployment. When checking for matches, compare BOTH:
 
-- "Find companies building voice AI agents" ≈ "Find companies building voice agents" → **match**
-- "Find companies building voice AI agents" ≠ "Find companies building in-house voice agents" → **not a match**
-- "Companies hiring for Kubernetes" ≈ "Companies looking to adopt Kubernetes" → **match**
-- "Companies hiring for Kubernetes" ≠ "Companies migrating to container orchestration" → **not a match, too much inference**
+1. **Query match** — close match on signal name. Same meaning, different wording is fine:
+   - "Find companies building voice AI agents" ≈ "Find companies building voice agents" → **match**
+   - "Find companies building voice AI agents" ≠ "Find companies building in-house voice agents" → **not a match**
+   - "Companies hiring for Kubernetes" ≈ "Companies looking to adopt Kubernetes" → **match**
+   - "Companies hiring for Kubernetes" ≠ "Companies migrating to container orchestration" → **not a match, too much inference**
 
-**If potential match found:**
+2. **ICP match** — the signal's `icp.id` must match the user's intended ICP. If the user hasn't specified an ICP yet, note which ICP the existing signal uses.
+
+**If potential match found (query + ICP both match):**
 
 ```
-I found an existing signal that looks like it covers this:
+I found an existing signal that covers this:
 
 **{signal_name}** (ID: {signal_id})
+**ICP:** {icp.name}
 
 Want to use this one, or deploy a new signal?
+```
+
+**If query matches but ICP is different:**
+
+```
+I found a signal with a similar query but a different ICP:
+
+**{signal_name}** (ID: {signal_id})
+**ICP:** {icp.name}
+
+This uses a different ICP than what you need. Want to:
+1. Use this one anyway
+2. Deploy a new signal with the right ICP
 ```
 
 Wait for user input.

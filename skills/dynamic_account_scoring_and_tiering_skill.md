@@ -1,6 +1,6 @@
 ---
-name: dynamic-account-scoring-and-tiering
-description: Score accounts against pain-based or custom criteria, bucket into tier audiences, and continuously re-score as new signals arrive.
+name: score-and-tier
+description: Score accounts, bucket into tiers, and re-score as new signals come in
 ---
 
 # Dynamic Account Scoring and Tiering

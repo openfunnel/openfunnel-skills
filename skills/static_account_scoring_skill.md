@@ -1,6 +1,6 @@
 ---
-name: static-account-scoring
-description: Score accounts in an audience based on pain-point relevance and urgency. Presents scoring model options, gathers evidence per account, and uses LLM judgment to assign 0-100 scores with reasoning. One-shot scoring.
+name: account-scoring
+description: Score accounts 0-100 on pain-point relevance with evidence and reasoning
 ---
 
 # Static Account Scoring

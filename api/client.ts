@@ -228,7 +228,8 @@ export async function getAudience(audienceId: number) {
  * @param signalTypes - Filter to specific types.
  * @param limit - 1-500, default 50.
  * @param offset - Default 0.
- * @returns {signals: [{signal_id, signal_name, signal_type}], total_count, pagination}
+ * @returns {signals: [{signal_id, signal_name, signal_type, status, repeat,
+ *           icp: {id, name, target_roles, min_employee, max_employee, ...}}], total_count, pagination}
  */
 export async function listSignals(signalTypes?: string[], limit = 50, offset = 0) {
   const body: Record<string, any> = { pagination: { limit, offset } };
@@ -242,8 +243,12 @@ export async function listSignals(signalTypes?: string[], limit = 50, offset = 0
  * @param signalId - The signal ID.
  * @param dateFrom - Inclusive start date (YYYY-MM-DD).
  * @param dateTo - Non-inclusive end date (YYYY-MM-DD).
- * @returns {signal_id, signal_name, signal_type, account_ids, total_accounts,
- *           signal_people, total_people}
+ * @returns {signal_id, signal_name, signal_type, status, repeat, total_accounts, total_people,
+ *           icp: {id, name, target_roles, min_employee, max_employee, min_funding, max_funding,
+ *           location, sub_locations, people_locations, people_sub_locations},
+ *           account_ids, signal_people: [{person_id, person_name, person_role, person_email,
+ *           person_location, person_linkedin_url, joined_company_at, person_crm_status,
+ *           person_team_name, account_id, account_name, account_domain, direct_signals}]}
  */
 export async function getSignal(signalId: number, dateFrom?: string, dateTo?: string) {
   const body: Record<string, any> = { signal_id: signalId };

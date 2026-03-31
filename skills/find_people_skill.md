@@ -1,6 +1,6 @@
 ---
 name: find-people
-description: Find people matching an activity, behavior, or signal. Covers people social posts, ICP job changes, competitor engagement tracking, and competitor activity monitoring.
+description: Find people posting about topics, changing jobs, or engaging with competitor content
 ---
 
 # Find People Skill
@@ -33,16 +33,32 @@ What activity or behavior, and what kind of people? If unclear, ask.
 
 ### 2. Check existing signals
 
-`listSignals()` → compare against existing signal names. Close match only.
+`listSignals()` → get all currently deployed signals.
 
-**If potential match found:**
+A signal is unique by **query + ICP pair**. Same query with a different ICP is a different signal. When checking for matches, compare BOTH the query (close match, not inference) and the ICP.
+
+**If potential match found (query + ICP both match):**
 
 ```
-I found an existing signal that looks like it covers this:
+I found an existing signal that covers this:
 
 **{signal_name}** (ID: {signal_id})
+**ICP:** {icp.name}
 
 Want to use this one, or deploy a new signal?
+```
+
+**If query matches but ICP is different:**
+
+```
+I found a signal with a similar query but a different ICP:
+
+**{signal_name}** (ID: {signal_id})
+**ICP:** {icp.name}
+
+This uses a different ICP than what you need. Want to:
+1. Use this one anyway
+2. Deploy a new signal with the right ICP
 ```
 
 Wait for user input.

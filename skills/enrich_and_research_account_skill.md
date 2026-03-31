@@ -1,6 +1,6 @@
 ---
-name: enrich-and-research-account
-description: Look up an account, assess enrichment coverage, offer deep enrichment for people discovery, and produce an account attack strategy.
+name: enrich-and-research
+description: Look up a company, enrich it with people and signals, and get an attack strategy
 ---
 
 # Enrich & Research Account Skill

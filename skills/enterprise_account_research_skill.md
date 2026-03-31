@@ -1,6 +1,6 @@
 ---
 name: enterprise-account-research
-description: Crack open F500/enterprise accounts into teams, find the specific team facing a specific pain-point, identify the leaders and people associated with each. Built on top of the enrich-and-research workflow.
+description: Break into F500 accounts — find which team has the pain, who leads it, and the evidence
 ---
 
 # Enterprise Account Research Skill

@@ -2,6 +2,12 @@
   "name": "openfunnel",
   "version": "0.2.2",
   "description": "OpenFunnel GTM intelligence for Claude Code — find active pain-points and buying windows in your ICP",
+  "author": "OpenFunnel <hello@openfunnel.ai> (https://openfunnel.ai)",
+  "homepage": "https://openfunnel.ai",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/openfunnel/openfunnel-alg"
+  },
   "scripts": {
     "postinstall": "node postinstall.js"
   },
@@ -17,9 +23,12 @@
     "claude-code",
     "sales-intelligence",
     "icp",
-    "buying-signals"
+    "buying-signals",
+    "intent-data",
+    "signals",
+    "revops"
   ],
-  "license": "UNLICENSED",
+  "license": "MIT",
   "engines": {
     "node": ">=18"
   }

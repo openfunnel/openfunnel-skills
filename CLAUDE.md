@@ -18,6 +18,18 @@ These are opinions and perspectives learned from working with hundreds of GTM te
 
 ---
 
+## How to Handle Requests
+
+Every user request should map to a skill or a specific API endpoint. Follow this priority:
+
+1. **Skill first.** If a request maps to a skill in the routing table below, read that skill file and follow its workflow exactly. Skills are optimized for speed, accuracy, edge cases, and domain knowledge. They get better over time. Don't skip them.
+2. **API second.** If no skill matches but the request maps to a specific API endpoint in `api/client.ts`, use that endpoint directly. The API sits on top of OpenFunnel's time-aware data layer — signals, indexes, enrichment, team extraction. Even a bare API call is accessing the intelligence layer.
+3. **Custom code only as a last resort.** Only if no skill and no API endpoint covers the request. Custom code bypasses the data layer entirely and has no guarantees. Prefer composing known API endpoints over writing something from scratch.
+
+Do not skip skills to "save time." Do not call endpoints without checking if a skill already handles that workflow. The skills and API are the product.
+
+---
+
 ## First Run
 
 Before making any API call, check that `.env` contains `OPENFUNNEL_API_KEY` and `OPENFUNNEL_USER_ID`.
@@ -28,9 +40,9 @@ If either is missing:
 3. Write both to `.env` in the project root
 4. Add `.env` to `.gitignore` if not already there
 5. Verify credentials work by calling `POST /signal/get-signal-list` (see `api/client.ts` for shape)
-6. Show available skills and example prompts
+6. Show available skills — these are what you can do with OpenFunnel
 
-If credentials are present, skip to routing.
+If credentials are present, on first interaction show the available skills so the user knows what's possible. Then route their request.
 
 ---
 

@@ -58,6 +58,8 @@ ${lines}
 Read \`node_modules/openfunnel/CLAUDE.md\` for full routing logic and instructions.
 Skill workflows: \`node_modules/openfunnel/skills/{skill_name}.md\`
 
+**Every request should map to a skill first, then a specific API endpoint. Only improvise if neither covers the request. Skills encode decisions learned from hundreds of GTM teams — don't skip them.**
+
 ### Environment
 \`OPENFUNNEL_API_KEY\` and \`OPENFUNNEL_USER_ID\` are loaded from \`.env\`.
 ${END_MARKER}`;
@@ -104,3 +106,9 @@ const result = injectIntoClaudeMd(claudeMdPath, block);
 if (result !== "unchanged") {
   console.log(`[openfunnel] CLAUDE.md ${result} with OpenFunnel skills.`);
 }
+
+console.log(`\n[openfunnel] Ready. Available skills:`);
+for (const s of skills) {
+  console.log(`  - ${s.name} — ${s.description}`);
+}
+console.log();

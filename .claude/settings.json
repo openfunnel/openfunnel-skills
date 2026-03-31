@@ -12,35 +12,12 @@
       "Bash(npm pack:*)",
       "Bash(npm whoami:*)",
       "Bash(npm publish:*)",
-      "Bash(npx tsc:*)",
       "Bash(node -e:*)",
-      "Bash(mkdir -p /tmp/check-npm-pkg)",
-      "Bash(tar -tzf openfunnel-*.tgz)",
-      "Read(//private/tmp/check-npm-pkg/**)",
-      "Bash(tar -xzf openfunnel-0.1.1.tgz)",
-      "Bash(grep -r -i 'api.key\\\\|secret\\\\|token\\\\|password\\\\|sk-ant\\\\|of_[a-f0-9]\\\\{10,\\\\}\\\\|npm_[a-zA-Z0-9]\\\\{10,\\\\}' package/)",
-      "Bash(curl -s -L --max-time 15 https://openfunnel.ai)",
-      "Bash(curl -s -L --max-time 15 https://docs.openfunnel.dev)",
-      "Bash(curl -s -X POST https://api.openfunnel.dev/api/v2/account/batch -H \"Content-Type: application/json\" -H \"X-API-Key: of_ad9fdbc8bf69474ea23e02a7749c48f6a96cf1075188485295ad9d93daab1cb2\" -H \"X-User-ID: dogfood@openfunnel.dev\" -d '{\"\"\"\"account_ids\"\"\"\": [343305]}')",
+      "Bash(python3 -c:*)",
       "Bash(python3 -m json.tool)",
-      "Bash(curl -s -X POST https://api.openfunnel.dev/api/v2/account/batch -H \"Content-Type: application/json\" -H \"X-API-Key: of_ad9fdbc8bf69474ea23e02a7749c48f6a96cf1075188485295ad9d93daab1cb2\" -H \"X-User-ID: llmops@openfunnel.dev\" -d '{\"\"\"\"account_ids\"\"\"\": [343305]}')",
-      "Bash(curl -s -X POST https://api.openfunnel.dev/api/v2/account/batch -H \"Content-Type: application/json\" -H \"X-API-Key: of_ad9fdbc8bf69474ea23e02a7749c48f6a96cf1075188485295ad9d93daab1cb2\" -H \"X-User-ID: llmops@openfunnel.dev\" -d '{\"\"\"\"account_ids\"\"\"\": [343462]}')",
-      "Bash(curl -s -X POST https://api.openfunnel.dev/api/v2/account/batch -H \"Content-Type: application/json\" -H \"X-API-Key: of_ad9fdbc8bf69474ea23e02a7749c48f6a96cf1075188485295ad9d93daab1cb2\" -H \"X-User-ID: llmops@openfunnel.dev\" -d '{\"\"\"\"account_ids\"\"\"\": [343489]}')",
-      "Bash(zip enterprise_research_skill.zip skills/enterprise_account_research_skill.md api/client.ts)",
-      "Bash(unzip -p enterprise_research_skill.zip)",
-      "Bash(grep -i -E 'of_[a-f0-9]{10,}|sk-ant|npm_[a-zA-Z0-9]{10,}|api.key.*=|secret|token')",
-      "Bash(zip arkam_skills.zip skills/*.md)",
-      "Bash(python3 -c \"import json,sys; print\\(json.dumps\\(json.load\\(sys.stdin\\),indent=2\\)\\)\")",
-      "Bash(curl -s -X POST https://api.openfunnel.dev/api/v2/account/batch -H \"Content-Type: application/json\" -H \"X-API-Key: of_a97e2c78f75da9ccd9d5f9ce0dd07c48f03d97a36e150bc4f3bf07db65e13d19\" -H \"X-User-ID: josh@telnyx.com\" -d '{\"\"account_ids\"\": [238937]}')",
-      "Bash(python3 -c \":*)",
-      "Bash(python3 -c \"import json,sys;d=json.load\\(sys.stdin\\);print\\(json.dumps\\(d,indent=2\\)\\)\")",
-      "Bash(python3 -c \"import json,sys;print\\(json.dumps\\(json.load\\(sys.stdin\\),indent=2\\)\\)\")",
-      "Bash(python3 -c \"import json,sys;d=json.load\\(sys.stdin\\);m=d[''''matches''''][0];print\\(f''''{m[\"\"id\"\"]} {m[\"\"name\"\"]} {m[\"\"domain\"\"]} {m[\"\"employee_count\"\"]}''''\\)\")",
-      "Bash(python3 -c \"import json,sys;d=json.load\\(sys.stdin\\);m=d[''''matches''''][0];print\\(f''''{m[\"\"id\"\"]}''''\\)\")"
-    ],
-    "additionalDirectories": [
-      "/private/tmp/check-npm-pkg",
-      "/private/tmp"
+      "Bash(curl -s:*)",
+      "Bash(zip:*)",
+      "Bash(unzip:*)"
     ]
   }
 }

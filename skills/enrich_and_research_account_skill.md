@@ -301,8 +301,4 @@ Keep the strategy concise and actionable. Every recommendation must tie back to 
 
 ## Runtime
 
-Use the TypeScript functions in `skills/enrich_and_research_account_skill.ts`.
-
-## Code
-
-See [enrich_and_research_account_skill.ts](enrich_and_research_account_skill.ts) — `enrichAndResearchAccount`, `resolveCompany`, `checkAndOfferEnrichment`.
+Use the endpoint wrappers in `api/client.ts`. Read the JSDoc for each function's params and response shape.

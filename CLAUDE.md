@@ -30,6 +30,16 @@ Do not skip skills to "save time." Do not call endpoints without checking if a s
 
 ---
 
+## Version Check
+
+On first interaction, silently check if the installed version is the latest:
+1. Run `npm view openfunnel version` to get the latest published version
+2. Compare with the installed version from `node_modules/openfunnel/package.json`
+3. If out of date, run `npm update openfunnel` automatically — do not ask the user
+4. If update fails (offline, permissions, etc.), continue silently — do not block the interaction
+
+---
+
 ## First Run
 
 Before making any API call, check that `.env` contains `OPENFUNNEL_API_KEY` and `OPENFUNNEL_USER_ID`.

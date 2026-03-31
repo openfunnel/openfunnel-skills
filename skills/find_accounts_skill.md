@@ -1,88 +1,205 @@
 ---
 name: find-accounts
-description: End-to-end workflow for finding companies. Handles trait queries, activity queries, and combinations. Routes requests, checks existing data, and recommends discovery agents for gaps.
+description: Find companies matching an activity, behavior, or signal. Checks existing deployed signals first, deploys new ones if needed. Covers hiring, social listening, and technography signals.
 ---
 
 # Find Accounts Skill
 
-End-to-end workflow for finding companies. Handles trait queries, activity queries, and combinations.
+Find companies based on what they're doing — hiring, posting, or using specific technologies. This skill checks if a signal is already tracking what the user wants, returns results if so, or deploys a new signal if not.
 
-## Classification
+If the user is looking for **people** (not companies), use `find_people_skill.md` instead.
+If the user is asking about a **specific company**, use account intelligence or enterprise research instead.
 
-Route the user's request based on what they're asking for:
+## When to Use This Skill
 
-| Request | Type | Action |
-|---------|------|--------|
-| "Find AI-native ERP companies" | Trait only | `search_by_traits()` |
-| "Find companies hiring for Kubernetes" | Activity only | `check_existing_data()` first — is a signal tracking this? |
-| "Find Series B SaaS companies posting about migration" | Trait + Activity | `find_by_trait_and_audience()` |
-| "What do you know about Acme Corp?" | Specific company | `search_by_name_or_domain()` |
-| "Find companies like Snowflake" | Trait similar | `search_by_traits()` |
-| "Find companies with recent funding in fintech" | Trait + Signal | `find_by_trait_and_audience()` |
+- "Find companies that are looking to adopt Kubernetes"
+- "Find companies posting about SOC2 compliance"
+- "Companies using Snowflake"
+- "Companies hiring AI engineers"
+- "Find companies posting about their Series A"
+
+## Agent Rules
+
+1. **Don't deploy signals without confirming.** Signals cost credits. Always confirm before deploying.
+2. **Don't guess the signal type.** If ambiguous (could be hiring or social), ask.
+3. **Close match ≠ loose match.** "Building voice AI agents" ≈ "building voice agents" but ≠ "building in-house voice agents." If you have to think about it, it's not a match.
+4. **Present what the API returns.** No fabrication, no inference.
+
+---
 
 ## Workflow
 
-1. **Always call `check_existing_data()` first** — existing signal data is instant and free.
-2. Classify the request (trait / activity / both / specific company).
-3. Execute:
-   - **Trait only** → `searchByTraits()` from api/client.ts
-   - **Activity only** → if a signal is tracking this, `getAudience()` for its matched accounts. If not, recommend deploying an agent.
-   - **Trait + Activity** → `findByTraitAndAudience()` (client-side intersection)
-   - **Specific company** → `searchByNameOrDomain()` from api/client.ts
-4. Apply firmographic filters via `list_accounts()` if user specified size/funding/location.
-5. Return results with sourcing transparency (where each result came from).
-6. If gaps, recommend the specific discovery agent + prompt.
+### 1. Understand the request
 
-## Key Assumption
+What activity or behavior is the user looking for? If unclear, ask.
 
-Signals and audiences have a 1-to-1 mapping. Each live search agent produces a **signal** (the buying activity being tracked) and a corresponding **audience** (the collection of matched accounts). Signals are the core concept — audiences are just the containers. Checking either is sufficient.
+### 2. Check existing signals
 
-## Trait + Activity Intersection
+`listSignals()` → get all currently deployed signals.
 
-There is no single API call that combines trait search with activity filtering. Two separate queries, then intersect client-side by domain:
+Compare against existing signal names. Close match only — same meaning, different wording:
 
-1. `search_by_traits("[trait part]")` → Set A (domains)
-2. `list_accounts(include_audience_ids=[id])` → Set B (domains)
-3. Return A ∩ B
+- "Find companies building voice AI agents" ≈ "Find companies building voice agents" → **match**
+- "Find companies building voice AI agents" ≠ "Find companies building in-house voice agents" → **not a match**
+- "Companies hiring for Kubernetes" ≈ "Companies looking to adopt Kubernetes" → **match**
+- "Companies hiring for Kubernetes" ≠ "Companies migrating to container orchestration" → **not a match, too much inference**
 
-## Gap Handling
+**If potential match found:**
 
-When a query can't be fully answered:
+```
+I found an existing signal that looks like it covers this:
 
-- **No signal tracking the activity** → "Deploy [agent] with: [prompt]"
-- **Few trait results** → "Consider broadening: [suggestion]"
+**{signal_name}** (ID: {signal_id})
 
-## Agent Recommendation Map
+Want to use this one, or deploy a new signal?
+```
 
-Which agent fills which gap. Each links to the full guide with input format, extraction details, and signal interpretation.
+Wait for user input.
 
-| Gap | Agent | Prompt |
-|-----|-------|--------|
-| Hiring activity | [Job Posts](find_companies_with_relevant_insights/job_posts.md) | "Find Companies with Hiring post mentioning [activity]" |
-| Social/announcement | [Social Posts](find_companies_with_relevant_insights/social_posts.md) | "Find companies posting about [topic]" |
-| Technology usage | [Technographics](find_companies_with_relevant_insights/technographics.md) | "[specific tool name]" |
-| Company profile enrichment | [GTMWiki Search](find_companies_with_relevant_insights/gtmwiki_search.md) | "Trait: [type] \| Activity: [doing]" |
-| People posting about topic | [People Social Posts](find_people_with_relevant_insights/social_posts.md) | "Find people posting about [topic]" |
-| Job change signals | [Job Changes](find_people_with_relevant_insights/job_changes.md) | Configured at campaign level |
-| LinkedIn engagement | [Engagement Tracking](find_people_with_relevant_insights/engagement_tracking.md) | Input: LinkedIn profile URL |
-| Competitor activity | [Competitor Spy](find_people_with_relevant_insights/competitor_spy.md) | Input: competitor rep LinkedIn URL |
+### 3. Get results from existing signal
 
-## Firmographic Filters
+`getSignal(signalId)` → returns accounts and people matched by this signal.
 
-Applied via `list_accounts()`:
+```
+### Results from: {signal_name}
 
-- `min_employee_count` / `max_employee_count` → "50-200 employees"
-- `funding_stages` → `["seed", "series_a", "series_b"]`
-- `hq_country_codes` → `["US", "GB"]`
-- `is_present_in_crm` → true/false
-- `is_imported` → true/false
+**{total_accounts} accounts found | {total_people} people found**
+```
 
-## Runtime
+If the user wants full details, pull with `getAccountsV2({ accountIds: [...] })`.
 
-**Claude.ai (MCP tools):** Use `list_audiences`, `search_by_traits`, `get_audience_data`, `list_accounts`, `lookup_company` directly.
+After presenting:
 
-**Claude Code / sandbox:** Use the TypeScript functions in `skills/find_accounts_skill.ts`.
+```
+Would you like to:
+1. See full details on specific accounts
+2. Narrow results with filters (size, funding, location)
+3. Deploy an additional signal for broader coverage ⚡ *uses credits*
+```
 
-## Code
+### 4. Classify and deploy a new signal
 
-See [find_accounts_skill.ts](find_accounts_skill.ts) — `checkExistingData`, `findByTraitAndAudience`.
+Three company signal types:
+
+#### Deep Hiring Signal
+
+**When:** Companies hiring for something, looking to build something, facing a pain point.
+
+**Core principle:** Job posts are modern RFPs — budget is committed, leadership is aligned, they're ready to act. What a company hires for tells you what they're building, scaling, or fixing.
+
+**Prompt format:** `"Find companies that are looking to [activity] or facing [pain point]"`
+
+**Examples:**
+- "Find Companies with Hiring post mentioning Implementing Guardrails for AI agents"
+- "Find Companies with Hiring post mentioning Setting up Agent Evals and Testing"
+- "Find Companies with Hiring post mentioning Migrating from Heroku to AWS"
+- "Find Companies with Hiring post mentioning Scaling their PLG motion"
+- "Find Companies with Hiring post mentioning Building out their first data engineering team"
+- "Find Companies with Hiring post mentioning Adopting Kubernetes"
+
+**Timeframe:** Last day to last year. Default: last 3 months.
+
+**Deploy:** `deployDeepHiringSignal({ name, searchQuery, timeframe })`
+
+---
+
+#### Social Listening Signal (Company)
+
+**When:** Companies posting about a topic, milestone, or announcement.
+
+**What it captures:**
+- Decision-maker pain posts (VP/C-level posting about challenges — stronger than press releases)
+- Budget signals (headcount growth, new initiatives, strategic pivots)
+- Vendor evaluation (comparing tools, asking for recommendations, discussing migrations)
+- Conference/event attendance
+
+**Prompt format:** `"Find companies posting about [topic or milestone or announcement]"`
+
+**Examples:**
+- "Find companies posting about their Series A round"
+- "Find companies posting about growing their GTM team"
+- "Find companies posting about attending RSAC conference"
+- "Find companies posting about adding AI to their existing stack"
+
+**Timeframe:** Last day to last year.
+
+**Deploy:** `deploySocialListeningSignal({ name, searchQuery, signalTarget: "account", timeframe })`
+
+---
+
+#### Technography Signal
+
+**When:** Companies using a specific tool, platform, or technology. Inferred from job postings.
+
+**Important:** Input must be a specific tool name — not general descriptions.
+
+**Good inputs:** `Kubernetes`, `Snowflake`, `React`, `Terraform`, `dbt`, `Kafka`
+**Bad inputs:** "cloud infrastructure" (too general), "data tools" (not specific), "modern stack" (meaningless)
+
+**Note on timing:** Technographic data alone is a trait (static). It becomes a signal when combined with timing — "just adopted Snowflake" vs "has used Snowflake for 5 years" are very different. The timeframe parameter controls this.
+
+**Timeframe:** Last day to last year. Default: last 3 months.
+
+**Deploy:** `deployTechnographySignal({ name, technographicList, technographicVariations, technographyContext, timeframe })`
+
+---
+
+**If ambiguous** — e.g., "companies investing in AI" could be hiring or social — ask:
+
+```
+This could be tracked through hiring signals or social signals. Which would be more useful?
+
+1. **Hiring signals** — reveals budget commitment, team building, specific roles
+2. **Social signals** — reveals announcements, thought leadership, public positioning
+3. **Both** — deploy two signals for broader coverage ⚡ *uses more credits*
+```
+
+### 5. Confirm before deploying
+
+First, fetch available ICP profiles via `listIcps()`. If the user has ICPs, present them:
+
+```
+I'll deploy a **{signal type}** signal:
+
+**Name:** {auto-generated descriptive name}
+**Query:** "{formatted prompt}"
+**Timeframe:** {default}
+
+**ICP Profile:**
+{list available ICPs by name}
+→ I'd recommend using **{first/most relevant ICP name}** to qualify results.
+   Or "none" to skip ICP filtering.
+
+⚡ *This will use credits from your plan.*
+
+Other options:
+- **Repeat daily** — re-run this signal every day for continuous monitoring
+- **Audience name** — auto-add results to a named audience
+- **Credit limit** — cap spending on this signal
+
+Set any of these, or "deploy" to go with defaults.
+```
+
+If the user has no ICP profiles:
+
+```
+You don't have any ICP profiles set up yet. Results won't be filtered against an ICP.
+You can create one in the OpenFunnel UI to qualify future signals.
+
+Deploy anyway? (yes / no)
+```
+
+Wait for user input. Then deploy with the selected ICP ID.
+
+### 6. Post-deploy
+
+```
+Signal deployed: **{name}** (ID: {signal_id})
+
+This is now scanning {job posts / social posts / tech stack data}.
+Results come in as they're found — just say "check on {signal_name}" anytime.
+```
+
+### 7. Check back
+
+`getSignal(signalId)` → present whatever accounts and people have been found so far.

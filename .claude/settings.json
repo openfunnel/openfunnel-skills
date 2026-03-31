@@ -1,11 +1,6 @@
 {
   "permissions": {
     "allow": [
-      "Bash(curl -s -X POST https://api.openfunnel.dev/api/v2/account/batch -H \"Content-Type: application/json\" -H \"X-API-Key: tszH0PlwyIMfyLs3HBwHEKeMZJPqbZWc\" -H \"X-User-ID: niamh@telnyx.com\" -d '{\"\"account_ids\"\": [417782, 417778]}')",
-      "Bash(curl -s -X POST https://api.openfunnel.dev/api/v2/account/batch -H \"Content-Type: application/json\" -H \"X-API-Key: tszH0PlwyIMfyLs3HBwHEKeMZJPqbZWc\" -H \"X-User-ID: niamh@telnyx.com\" -d '{\"\"account_ids\"\": [417783,417784,417787,417788,417792,417793,417794,417796,417797,417798,417799,417800,417802,417803,417804,417805,417806,417807,417808,417815,417816,417817,417818,417819,417778,417782]}')",
-      "Bash(python3 -c \":*)",
-      "Bash(python3:*)",
-      "Bash(python3 -c \" import json, sys data = json.load\\(sys.stdin\\) accounts = data.get\\(''accounts'', []\\) for a in accounts: f = a.get\\(''firmographics''\\) or {} domain = \\(a.get\\(''website''\\) or ''''\\).replace\\(''https://www.'',''''\\).replace\\(''https://'',''''\\).replace\\(''http://www.'',''''\\).replace\\(''http://'',''''\\).rstrip\\(''/''\\) print\\(f\"\"{domain}|{f.get\\(''hq_city'',''''\\)}|{f.get\\(''hq_region'',''''\\)}|{f.get\\(''hq_country'',''''\\)}|{f.get\\(''industry'',''''\\)}|{f.get\\(''employee_count'',''''\\)}|{f.get\\(''funding_stage'',''''\\)}|{f.get\\(''revenue_usd'',''''\\)}|{a.get\\(''linkedin_url'',''''\\)}\"\"\\) \")",
       "Read(//Users/fenilsuchak/**)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
@@ -14,25 +9,38 @@
       "Bash(git remote:*)",
       "Bash(npm run:*)",
       "Bash(npm install:*)",
-"Read(//Users/fenilsuchak/.claude/**)",
-      "Bash(python3 -m json.tool)",
-      "Bash(export OPENFUNNEL_API_KEY=\"of_1216ed4d7cb51799f4ed5cea3cb116c2631dc0a6c1c205da2c7e0a45550a9db4\")",
-      "Bash(export OPENFUNNEL_USER_ID=\"dogfood@openfunnel.dev\")",
-      "Bash(node -e \":*)",
-      "Bash(OPENFUNNEL_API_KEY=\"of_1216ed4d7cb51799f4ed5cea3cb116c2631dc0a6c1c205da2c7e0a45550a9db4\" OPENFUNNEL_USER_ID=\"dogfood@openfunnel.dev\" npx tsx -e \":*)",
-      "Bash(xargs ls:*)",
-      "Bash(npx tsc:*)",
-      "Bash(tsc --version)",
-      "Bash(npx -y typescript@5.9.3 tsc --version)",
-      "Bash(node -e \"const ts = require\\(''''/Users/fenilsuchak/openfunnel-alg/node_modules/typescript''''\\); console.log\\(ts.version\\);\")",
-      "Bash(node /Users/fenilsuchak/openfunnel-alg/node_modules/typescript/bin/tsc -p /Users/fenilsuchak/openfunnel-alg/tsconfig.json)",
       "Bash(npm pack:*)",
       "Bash(npm whoami:*)",
-      "Bash(NPM_TOKEN=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 npm publish --registry=https://registry.npmjs.org/)",
-      "Bash(npm publish:*)"
+      "Bash(npm publish:*)",
+      "Bash(npx tsc:*)",
+      "Bash(node -e:*)",
+      "Bash(mkdir -p /tmp/check-npm-pkg)",
+      "Bash(tar -tzf openfunnel-*.tgz)",
+      "Read(//private/tmp/check-npm-pkg/**)",
+      "Bash(tar -xzf openfunnel-0.1.1.tgz)",
+      "Bash(grep -r -i 'api.key\\\\|secret\\\\|token\\\\|password\\\\|sk-ant\\\\|of_[a-f0-9]\\\\{10,\\\\}\\\\|npm_[a-zA-Z0-9]\\\\{10,\\\\}' package/)",
+      "Bash(curl -s -L --max-time 15 https://openfunnel.ai)",
+      "Bash(curl -s -L --max-time 15 https://docs.openfunnel.dev)",
+      "Bash(curl -s -X POST https://api.openfunnel.dev/api/v2/account/batch -H \"Content-Type: application/json\" -H \"X-API-Key: of_ad9fdbc8bf69474ea23e02a7749c48f6a96cf1075188485295ad9d93daab1cb2\" -H \"X-User-ID: dogfood@openfunnel.dev\" -d '{\"\"\"\"account_ids\"\"\"\": [343305]}')",
+      "Bash(python3 -m json.tool)",
+      "Bash(curl -s -X POST https://api.openfunnel.dev/api/v2/account/batch -H \"Content-Type: application/json\" -H \"X-API-Key: of_ad9fdbc8bf69474ea23e02a7749c48f6a96cf1075188485295ad9d93daab1cb2\" -H \"X-User-ID: llmops@openfunnel.dev\" -d '{\"\"\"\"account_ids\"\"\"\": [343305]}')",
+      "Bash(curl -s -X POST https://api.openfunnel.dev/api/v2/account/batch -H \"Content-Type: application/json\" -H \"X-API-Key: of_ad9fdbc8bf69474ea23e02a7749c48f6a96cf1075188485295ad9d93daab1cb2\" -H \"X-User-ID: llmops@openfunnel.dev\" -d '{\"\"\"\"account_ids\"\"\"\": [343462]}')",
+      "Bash(curl -s -X POST https://api.openfunnel.dev/api/v2/account/batch -H \"Content-Type: application/json\" -H \"X-API-Key: of_ad9fdbc8bf69474ea23e02a7749c48f6a96cf1075188485295ad9d93daab1cb2\" -H \"X-User-ID: llmops@openfunnel.dev\" -d '{\"\"\"\"account_ids\"\"\"\": [343489]}')",
+      "Bash(zip enterprise_research_skill.zip skills/enterprise_account_research_skill.md api/client.ts)",
+      "Bash(unzip -p enterprise_research_skill.zip)",
+      "Bash(grep -i -E 'of_[a-f0-9]{10,}|sk-ant|npm_[a-zA-Z0-9]{10,}|api.key.*=|secret|token')",
+      "Bash(zip arkam_skills.zip skills/*.md)",
+      "Bash(python3 -c \"import json,sys; print\\(json.dumps\\(json.load\\(sys.stdin\\),indent=2\\)\\)\")",
+      "Bash(curl -s -X POST https://api.openfunnel.dev/api/v2/account/batch -H \"Content-Type: application/json\" -H \"X-API-Key: of_a97e2c78f75da9ccd9d5f9ce0dd07c48f03d97a36e150bc4f3bf07db65e13d19\" -H \"X-User-ID: josh@telnyx.com\" -d '{\"\"account_ids\"\": [238937]}')",
+      "Bash(python3 -c \":*)",
+      "Bash(python3 -c \"import json,sys;d=json.load\\(sys.stdin\\);print\\(json.dumps\\(d,indent=2\\)\\)\")",
+      "Bash(python3 -c \"import json,sys;print\\(json.dumps\\(json.load\\(sys.stdin\\),indent=2\\)\\)\")",
+      "Bash(python3 -c \"import json,sys;d=json.load\\(sys.stdin\\);m=d[''''matches''''][0];print\\(f''''{m[\"\"id\"\"]} {m[\"\"name\"\"]} {m[\"\"domain\"\"]} {m[\"\"employee_count\"\"]}''''\\)\")",
+      "Bash(python3 -c \"import json,sys;d=json.load\\(sys.stdin\\);m=d[''''matches''''][0];print\\(f''''{m[\"\"id\"\"]}''''\\)\")"
     ],
     "additionalDirectories": [
-      "/Users/fenilsuchak/openfunnel-alg"
+      "/private/tmp/check-npm-pkg",
+      "/private/tmp"
     ]
   }
 }

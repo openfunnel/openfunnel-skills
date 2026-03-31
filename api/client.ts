@@ -42,19 +42,8 @@ async function get(path: string, params: Record<string, any> = {}): Promise<any>
 // Account
 // ---------------------------------------------------------------------------
 
-/**
- * Search companies by describing what they do or what traits they have.
- *
- * Natural language query → vector similarity → instant results scored 0-1.
- * Use this for trait-based queries like "AI-native ERP companies" or "Series B fintech".
- *
- * @param query - Natural language description (1-500 chars).
- * @param limit - Max results (1-100, default 25).
- * @returns {query, results: [{id, name, domain, description, similarity, technographics, in_crm, is_exported}], total}
- */
-export async function searchByTraits(query: string, limit = 25) {
-  return post("/api/v1/account/search-by-traits", { query, limit });
-}
+// searchByTraits — coming soon (vector similarity search)
+// startSearchJob / pollSearchJob / getSearchResults / searchAndWait — coming soon
 
 /**
  * List accounts with optional filters and pagination.
@@ -126,82 +115,6 @@ export async function getAccounts(opts: {
  */
 export async function searchByNameOrDomain(query: string, limit = 10) {
   return post("/api/v1/account/search-by-name-or-domain", { query, limit });
-}
-
-// ---------------------------------------------------------------------------
-// Account Search (Async)
-// ---------------------------------------------------------------------------
-
-/**
- * Start an async search job. Returns a job_id to poll.
- *
- * Deeper than searchByTraits — returns ranked results with reasoning,
- * evidence snippets, and relevance scores (0-10). Takes 2-10 minutes.
- *
- * WARNING: queryActivity parameter exists but does NOT work yet. Traits only.
- *
- * @param queryTrait - Natural language trait description.
- * @param queryActivity - NOT FUNCTIONAL. Exists in API but returns no results.
- * @returns {job_id, status: "pending", message}
- */
-export async function startSearchJob(queryTrait?: string, queryActivity?: string) {
-  return post("/api/v1/account/start-search-job", {
-    query_trait: queryTrait,
-    query_activity: queryActivity,
-  });
-}
-
-/**
- * Check status of an async search job.
- *
- * Poll every 5-10s for small queries, 10-30s for large. Typical: 2-10 min.
- *
- * @param jobId - From startSearchJob response.
- * @returns {job_id, status: "pending"|"running"|"completed"|"failed", created_at, message}
- */
-export async function pollSearchJob(jobId: string) {
-  return get(`/api/v1/account/poll-search-job/${jobId}`);
-}
-
-/**
- * Get results of a completed async search job.
- *
- * Only call when pollSearchJob returns status="completed".
- *
- * @param jobId - From startSearchJob response.
- * @returns {job_id, status, results: [{rank, account_id, account_name, account_url,
- *           employee_count, funding_stage, location, reasoning, evidence_snippets,
- *           relevance_score}], total_count}
- */
-export async function getSearchResults(jobId: string) {
-  return get(`/api/v1/account/get-search-results/${jobId}`);
-}
-
-/**
- * Start an async search and wait for results. Convenience wrapper.
- *
- * @param queryTrait - Natural language trait description.
- * @param pollInterval - Milliseconds between polls (default 10000).
- * @param timeout - Max milliseconds to wait (default 600000).
- * @returns Search results, same as getSearchResults.
- * @throws Error if job fails or times out.
- */
-export async function searchAndWait(
-  queryTrait: string,
-  pollInterval = 10_000,
-  timeout = 600_000,
-) {
-  const job = await startSearchJob(queryTrait);
-  const jobId = job.job_id;
-  let elapsed = 0;
-  while (elapsed < timeout) {
-    const status = await pollSearchJob(jobId);
-    if (status.status === "completed") return getSearchResults(jobId);
-    if (status.status === "failed") throw new Error(`Search job ${jobId} failed: ${status.message}`);
-    await new Promise((r) => setTimeout(r, pollInterval));
-    elapsed += pollInterval;
-  }
-  throw new Error(`Search job ${jobId} did not complete within ${timeout}ms`);
 }
 
 // ---------------------------------------------------------------------------
@@ -342,6 +255,158 @@ export async function getSignal(signalId: number, dateFrom?: string, dateTo?: st
 }
 
 // ---------------------------------------------------------------------------
+// Signal Deploy
+// ---------------------------------------------------------------------------
+
+/** Common options shared across all signal deploy endpoints. */
+interface SignalDeployBase {
+  name: string;
+  icpId?: number;
+  repeat?: boolean;
+  accountAudienceName?: string;
+  peopleAudienceName?: string;
+  maxCreditLimit?: number;
+  enableSafeCrmAddition?: boolean;
+}
+
+function buildSignalDeployBody(opts: SignalDeployBase): Record<string, any> {
+  const body: Record<string, any> = { name: opts.name };
+  if (opts.icpId) body.icp_id = opts.icpId;
+  if (opts.repeat !== undefined) body.repeat = opts.repeat;
+  if (opts.accountAudienceName) body.account_audience_name = opts.accountAudienceName;
+  if (opts.peopleAudienceName) body.people_audience_name = opts.peopleAudienceName;
+  if (opts.maxCreditLimit) body.max_credit_limit = opts.maxCreditLimit;
+  if (opts.enableSafeCrmAddition !== undefined) body.enable_safe_crm_addition = opts.enableSafeCrmAddition;
+  return body;
+}
+
+/**
+ * Deploy a deep hiring signal agent.
+ *
+ * Searches millions of job postings to find companies whose hiring activity
+ * matches the described goal or pain point. Job posts are modern RFPs —
+ * budget is committed, leadership is aligned.
+ *
+ * @param opts.searchQuery - Hiring goal (e.g., "companies hiring AI engineers", "companies building voice agents").
+ * @param opts.timeframe - Days lookback (1-180).
+ * @returns Signal deployment confirmation.
+ */
+export async function deployDeepHiringSignal(opts: SignalDeployBase & {
+  searchQuery: string;
+  timeframe?: number;
+}) {
+  const body = buildSignalDeployBody(opts);
+  body.search_query = opts.searchQuery;
+  if (opts.timeframe) body.timeframe = opts.timeframe;
+  return post("/api/v1/signal/deploy/deep-hiring-agent", body);
+}
+
+/**
+ * Deploy a social listening signal agent.
+ *
+ * Searches LinkedIn, Twitter/X, and Google for posts matching a keyword.
+ * Can target companies (account-level) or individual people.
+ *
+ * @param opts.searchQuery - LinkedIn search keyword (e.g., "AI tools", "SOC2 compliance").
+ * @param opts.signalTarget - "account" for company posts, "people" for individual posts. Default: "account".
+ * @param opts.timeframe - Days lookback (1-180).
+ * @returns Signal deployment confirmation.
+ */
+export async function deploySocialListeningSignal(opts: SignalDeployBase & {
+  searchQuery: string;
+  signalTarget?: "account" | "people";
+  timeframe?: number;
+}) {
+  const body = buildSignalDeployBody(opts);
+  body.search_query = opts.searchQuery;
+  if (opts.signalTarget) body.signal_target = opts.signalTarget;
+  if (opts.timeframe) body.timeframe = opts.timeframe;
+  return post("/api/v1/signal/deploy/social-listening-agent", body);
+}
+
+/**
+ * Deploy a technography search signal agent.
+ *
+ * Infers technology stack from job postings to find companies using
+ * or hiring for specific tools, platforms, or technologies.
+ *
+ * @param opts.technographicList - List of technologies (e.g., ["Snowflake", "Databricks"]).
+ * @param opts.technographicVariations - Alternate names/variations of the technologies.
+ * @param opts.technographyContext - Additional context for the search.
+ * @param opts.excludeCompanyName - Company name to exclude from results.
+ * @param opts.timeframe - Days lookback (1-365).
+ * @returns Signal deployment confirmation.
+ */
+export async function deployTechnographySignal(opts: SignalDeployBase & {
+  technographicList: string[];
+  technographicVariations?: string[];
+  technographyContext?: string;
+  excludeCompanyName?: string;
+  timeframe?: number;
+}) {
+  const body = buildSignalDeployBody(opts);
+  body.technographic_list = opts.technographicList;
+  if (opts.technographicVariations) body.technographic_variations = opts.technographicVariations;
+  if (opts.technographyContext) body.technography_context = opts.technographyContext;
+  if (opts.excludeCompanyName) body.exclude_company_name = opts.excludeCompanyName;
+  if (opts.timeframe) body.timeframe = opts.timeframe;
+  return post("/api/v1/signal/deploy/technography-search-agent", body);
+}
+
+/**
+ * Deploy an ICP job change signal agent.
+ *
+ * Monitors LinkedIn for ICP professionals who recently joined new companies.
+ * Filters out internal promotions — only surfaces genuine new hires.
+ *
+ * @returns Signal deployment confirmation.
+ */
+export async function deployIcpJobChangeSignal(opts: SignalDeployBase) {
+  const body = buildSignalDeployBody(opts);
+  return post("/api/v1/signal/deploy/icp-job-change-agent", body);
+}
+
+/**
+ * Deploy a competitor engagement signal agent.
+ *
+ * Monitors a LinkedIn profile (person or company) to track which ICP
+ * people are engaging with it (liking, commenting). Surfaces in-market signals.
+ *
+ * @param opts.linkedinUrl - LinkedIn profile URL to monitor.
+ * @param opts.timeframe - Days lookback (1-180, default 7).
+ * @returns Signal deployment confirmation.
+ */
+export async function deployCompetitorEngagementSignal(opts: SignalDeployBase & {
+  linkedinUrl: string;
+  timeframe?: number;
+}) {
+  const body = buildSignalDeployBody(opts);
+  body.linkedin_url = opts.linkedinUrl;
+  if (opts.timeframe) body.timeframe = opts.timeframe;
+  return post("/api/v1/signal/deploy/competitor-engagement-agent", body);
+}
+
+/**
+ * Deploy a competitor activity signal agent.
+ *
+ * Scans a competitor sales rep's LinkedIn activity to surface which accounts
+ * they are actively engaging with. Alerts when competitors enter your territory.
+ *
+ * @param opts.linkedinUrl - LinkedIn profile URL of competitor salesperson to monitor.
+ * @param opts.timeframe - Days lookback (1-180, default 7).
+ * @returns Signal deployment confirmation.
+ */
+export async function deployCompetitorActivitySignal(opts: SignalDeployBase & {
+  linkedinUrl: string;
+  timeframe?: number;
+}) {
+  const body = buildSignalDeployBody(opts);
+  body.linkedin_url = opts.linkedinUrl;
+  if (opts.timeframe) body.timeframe = opts.timeframe;
+  return post("/api/v1/signal/deploy/competitor-activity-agent", body);
+}
+
+// ---------------------------------------------------------------------------
 // Insights
 // ---------------------------------------------------------------------------
 
@@ -422,6 +487,67 @@ export async function listIcps() {
 }
 
 // ---------------------------------------------------------------------------
+// People
+// ---------------------------------------------------------------------------
+
+/**
+ * Get people details in bulk by IDs.
+ *
+ * Returns full person profiles including role, email, phone, team, department,
+ * seniority, associated account, and direct signals.
+ *
+ * @param peopleIds - List of people IDs.
+ * @returns {people: [{person_id, person_name, person_role, person_email, person_location,
+ *           person_linkedin_url, joined_company_at, person_crm_status, person_phone_number,
+ *           person_team_name, department, seniority, account_id, account_name, account_domain,
+ *           reasoning, direct_signals, connected_crm, crm_contact_id, crm_owner_id}], total_count}
+ */
+export async function getPeople(peopleIds: number[]) {
+  return post("/api/v1/people/batch", { people_ids: peopleIds });
+}
+
+/**
+ * Get available filter field definitions for people listing.
+ *
+ * Returns all filter fields with types, descriptions, and available options.
+ * Use this to discover what filters are available before calling getFilteredPeople.
+ *
+ * @returns {filters: [{field_name, description, type, required, options, schema_description}]}
+ */
+export async function getPeopleFilters() {
+  return get("/api/v1/people/filters");
+}
+
+/**
+ * List people IDs with dynamic filters and sorting.
+ *
+ * Filter fields are dynamic — call getPeopleFilters() first to discover available fields.
+ *
+ * @param filters - Key-value filter object using field names from /people/filters endpoint.
+ * @param sortKey - Field to sort by (default "latest_signal_date").
+ * @param sortDirection - "asc" or "desc" (default "desc").
+ * @param page - 0-indexed page number (default 0).
+ * @param pageSize - Results per page (1-500, default 50).
+ * @returns {people_ids: number[], total_count, total_accounts_count, page, page_size, has_more}
+ */
+export async function getFilteredPeople(opts: {
+  filters?: Record<string, any>;
+  sortKey?: string;
+  sortDirection?: string;
+  page?: number;
+  pageSize?: number;
+} = {}) {
+  const body: Record<string, any> = {
+    page: opts.page ?? 0,
+    page_size: opts.pageSize ?? 50,
+  };
+  if (opts.filters) body.filters = opts.filters;
+  if (opts.sortKey) body.sort_key = opts.sortKey;
+  if (opts.sortDirection) body.sort_direction = opts.sortDirection;
+  return post("/api/v1/people/filtered-people", body);
+}
+
+// ---------------------------------------------------------------------------
 // Enrichment
 // ---------------------------------------------------------------------------
 
@@ -456,6 +582,137 @@ export async function deepEnrich(opts: {
   if (opts.icpId) body.icp_id = opts.icpId;
   if (opts.targetIcpRoles) body.target_icp_roles = opts.targetIcpRoles;
   return post("/api/v1/enrich/deep-enrich", body);
+}
+
+/**
+ * Enrich a single account by domain. Returns firmographic data.
+ *
+ * Lighter than deepEnrich — just resolves and enriches basic company info.
+ * Synchronous — returns immediately.
+ *
+ * @param domain - Company domain (e.g. "stripe.com"). 1-200 chars.
+ * @returns {account_id, name, domain, linkedin_url, is_new_account, firmographics, fields_updated}
+ */
+export async function enrichAccount(domain: string) {
+  return post("/api/v1/enrich/account", { domain });
+}
+
+/**
+ * Batch enrich multiple accounts by domain. Async — returns a job_id to poll.
+ *
+ * @param domains - List of company domains (max 500).
+ * @returns {job_id, status: "pending", message, total_accounts}
+ */
+export async function batchEnrichAccounts(domains: string[]) {
+  return post("/api/v1/enrich/accounts", { domains });
+}
+
+/**
+ * Poll a batch account enrichment job.
+ *
+ * @param jobId - From batchEnrichAccounts response.
+ * @returns {job_id, status: "pending"|"running"|"completed"|"failed",
+ *           progress: {total, completed, new_accounts, updated_accounts},
+ *           result: [{domain, account_id, name, is_new_account, fields_updated, status}],
+ *           error_message}
+ */
+export async function pollBatchAccountEnrichment(jobId: string) {
+  return get(`/api/v1/enrich/accounts/${jobId}`);
+}
+
+/**
+ * Enrich people with emails and/or phone numbers. Async — returns a job_id to poll.
+ *
+ * @param peopleIds - List of people IDs (max 500).
+ * @param enrichEmails - Whether to find work emails (default true).
+ * @param enrichPhones - Whether to find phone numbers (default false).
+ * @returns {job_id, status: "pending", message, total_people}
+ */
+export async function enrichPeople(opts: {
+  peopleIds: number[];
+  enrichEmails?: boolean;
+  enrichPhones?: boolean;
+}) {
+  const body: Record<string, any> = {
+    people_ids: opts.peopleIds,
+    enrich_emails: opts.enrichEmails ?? true,
+    enrich_phones: opts.enrichPhones ?? false,
+  };
+  return post("/api/v1/enrich/people", body);
+}
+
+/**
+ * Poll a people enrichment job.
+ *
+ * @param jobId - From enrichPeople response.
+ * @returns {job_id, status: "pending"|"running"|"completed"|"failed",
+ *           progress: {total, completed, emails_found, phones_found},
+ *           credits_used: {emails, phones, total},
+ *           result: [{person_id, email, phone_number, person_name, linkedin_url, status}],
+ *           error_message}
+ */
+export async function pollPeopleEnrichment(jobId: string) {
+  return get(`/api/v1/enrich/people/${jobId}`);
+}
+
+// ---------------------------------------------------------------------------
+// CRM
+// ---------------------------------------------------------------------------
+
+/**
+ * Sync accounts to CRM (Salesforce or HubSpot). Async — returns a job_id.
+ *
+ * @param accountIds - Account IDs to sync (1-500).
+ * @param assignedUserEmail - Email of user to assign CRM records to. If omitted, assigns to authenticated user.
+ * @returns {job_id, status, message, connected_crm, total_records}
+ */
+export async function syncAccountsToCrm(accountIds: number[], assignedUserEmail?: string) {
+  const body: Record<string, any> = { account_ids: accountIds };
+  if (assignedUserEmail) body.assigned_user_email = assignedUserEmail;
+  return post("/api/v1/crm/sync-accounts-job", body);
+}
+
+/**
+ * Sync people to CRM (Salesforce or HubSpot). Async — returns a job_id.
+ * Accounts are resolved automatically.
+ *
+ * @param peopleIds - People IDs to sync (1-500).
+ * @param assignedUserEmail - Email of user to assign CRM records to. If omitted, assigns to authenticated user.
+ * @returns {job_id, status, message, connected_crm, total_records}
+ */
+export async function syncPeopleToCrm(peopleIds: number[], assignedUserEmail?: string) {
+  const body: Record<string, any> = { people_ids: peopleIds };
+  if (assignedUserEmail) body.assigned_user_email = assignedUserEmail;
+  return post("/api/v1/crm/sync-people-job", body);
+}
+
+/**
+ * Check status of a CRM sync job (accounts or people).
+ *
+ * @param jobId - From syncAccountsToCrm or syncPeopleToCrm response.
+ * @returns {job_id, job_type, status: "pending"|"running"|"completed"|"failed",
+ *           connected_crm, created_at, error_message, result}
+ */
+export async function checkCrmJobStatus(jobId: string) {
+  return post("/api/v1/crm/check-job-status", { job_id: jobId });
+}
+
+// ---------------------------------------------------------------------------
+// Admin (Orchestrator/Provisioner)
+// ---------------------------------------------------------------------------
+
+/**
+ * Create an API-only user. Requires provisioner access (is_provisioner flag).
+ *
+ * Used by orchestrator providers to programmatically create users under their domain.
+ * Created users can only access OpenFunnel via API (no UI login).
+ * Users on the same domain share credits — provider pays for all.
+ *
+ * @param email - The internal email for the new user (e.g., "alice@provider-domain.com").
+ * @returns {id, email, api_key}
+ */
+export async function createUser(email: string) {
+  return post("/api/v1/admin/create-user", { email });
 }
 
 // ---------------------------------------------------------------------------

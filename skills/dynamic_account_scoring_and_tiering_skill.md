@@ -1,9 +1,9 @@
 ---
-name: score-and-tier
-description: Score OpenFunnel's account universe against pain-based or custom criteria, bucket into tiers, and continuously re-score as new signals arrive.
+name: dynamic-account-scoring-and-tiering
+description: Score accounts against pain-based or custom criteria, bucket into tier audiences, and continuously re-score as new signals arrive.
 ---
 
-# Score and Tier
+# Dynamic Account Scoring and Tiering
 
 OpenFunnel runs thousands of signals daily, producing a universe of accounts with rich signal data (job postings, social posts, engagement, job changes). This skill scores that universe and buckets accounts into tiers so customers can operationalize it.
 

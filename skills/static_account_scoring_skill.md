@@ -1,9 +1,9 @@
 ---
-name: account-scoring
-description: Score accounts in an audience based on pain-point relevance and urgency. Presents scoring model options, gathers evidence per account, and uses LLM judgment to assign 0-100 scores with reasoning.
+name: static-account-scoring
+description: Score accounts in an audience based on pain-point relevance and urgency. Presents scoring model options, gathers evidence per account, and uses LLM judgment to assign 0-100 scores with reasoning. One-shot scoring.
 ---
 
-# Account Scoring Skill
+# Static Account Scoring
 
 Score accounts in an audience based on pain-point relevance and urgency.
 
@@ -109,31 +109,15 @@ Output per account: score (0-100) + reasoning (1-2 sentences).
 
 ## Runtime
 
-**Claude.ai (MCP tools):**
-
-| Step | Tool |
-|------|------|
-| Step 1 | `list_audiences` |
-| Step 2 | `get_audience_data(audience_id)` → returns account_ids + people |
-| Step 4 | `get_account_summary(account_id)` → signal counts, top contacts |
-| | `get_account_timeline(account_id)` → chronological events |
-| | `get_account_full_details(account_id)` → people, tech stack, firmographics |
-
-**Claude Code / sandbox (TypeScript functions from api/client.ts):**
-
 | Step | Function |
 |------|----------|
 | Step 1 | `listAudiences()` |
 | Step 2 | `getAudience(audienceId)` |
-| Step 4 | `getAccountSummary(accountId)` |
-| | `getAccountTimeline(accountId, 90)` |
-| | `getAccountsV2({ accountIds: [accountId] })` → full details + inline signal content (preferred) |
+| Step 4 | `getAccountsV2({ accountIds: [accountId] })` → full details + inline signal content (preferred) |
 
 **Prefer V2 batch for scoring.** `getAccountsV2` returns inline signal content — job posting text, social post content, context — so the LLM can read actual evidence without extra calls.
 
-The TypeScript functions chain the Claude Code calls for convenience. In Claude.ai, use the MCP tools directly — ignore the TS functions.
-
-> **NOTE:** 3 calls per account in either environment. Large audiences (100+) will be slow.
+> **NOTE:** Large audiences (100+) will be slow.
 
 ## Code
 

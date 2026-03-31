@@ -1,10 +1,40 @@
 # OpenFunnel
 
-OpenFunnel is a search for active pain-points and buying windows in your Ideal Customer Profile. It specializes in three things: **ICP + Pain-Points**, **ICP + Buying Windows**, and **ICP + Signals** — starting from a static ICP definition (firmographic + trait fit) and layering dynamic, time-sensitive intelligence on top.
+Search for active pain-points and buying windows in your Ideal Customer Profile. Layers dynamic, time-sensitive intelligence on top of static ICP definitions.
 
 ---
 
-## How to Think About Any Request
+## How You Operate
+
+These are opinions and perspectives learned from working with hundreds of GTM teams. They're not rules — they're patterns that keep showing up. Let them inform how you present data, make recommendations, and guide conversations.
+
+- Pain-points are temporal. Searching for pain is searching for timing.
+- In enterprise, the team is what matters — not the company. A 30,000-person org has 100+ teams with separate budgets, leaders, and timelines.
+- Job posts are modern RFPs — budget is committed, leadership is aligned, they're ready to act.
+- A signal without timing is just a trait. Timing is what makes you relevant instead of salesy.
+- Always have a recommendation and a reason. Don't just list options.
+- Relevance over personalization. Know their pain before you craft the message.
+- Evidence over inference. Every claim needs a source.
+
+---
+
+## First Run
+
+Before making any API call, check that `.env` contains `OPENFUNNEL_API_KEY` and `OPENFUNNEL_USER_ID`.
+
+If either is missing:
+1. Welcome the user to OpenFunnel
+2. Ask for their API key and User ID
+3. Write both to `.env` in the project root
+4. Add `.env` to `.gitignore` if not already there
+5. Verify credentials work by calling `POST /signal/get-signal-list` (see `api/client.ts` for shape)
+6. Show available skills and example prompts
+
+If credentials are present, skip to routing.
+
+---
+
+## Routing
 
 Every request falls into one of these patterns. Route accordingly.
 
@@ -12,116 +42,65 @@ Every request falls into one of these patterns. Route accordingly.
 User Request
   │
   ├─ SPECIFIC COMPANY ("Tell me about Acme Corp")
-  │   → search-by-name-or-domain → /account/{id}/summary → /account/batch
-  │   → Full workflow: skills/account_intelligence.md
+  │   → Read skills/account_intelligence_skill.md and follow its workflow
   │
   ├─ TRAIT QUERY ("Find AI-native ERP companies", "Series B fintech")
-  │   → POST /account/search-by-traits (instant, similarity scored)
-  │   → Or POST /account/start-search-job for deeper async results
-  │   → Optionally narrow with audience_ids / signal_ids
+  │   → Read skills/find_accounts_skill.md and follow its workflow
   │
   ├─ ACTIVITY QUERY ("Companies hiring for Kubernetes", "posting about SOC2")
   │   → Activities are NOT directly searchable
   │   → Check existing signals first (POST /signal/get-signal-list)
   │   → Signal exists? → get its audience for matched accounts + people
   │   → No signal? → Recommend deploying a live search agent
+  │   → Read skills/find_accounts_skill.md for full decision tree
   │
   ├─ TRAIT + ACTIVITY ("Series B SaaS companies hiring for data engineers")
-  │   → Multi-step:
-  │     1. search-by-traits for the trait part
-  │     2. Find the signal tracking the activity (signals map 1:1 to audiences)
-  │     3. get-account-list with include_audience_ids to intersect
-  │   → If no signal for the activity → partial answer + recommend agent
+  │   → Read skills/find_accounts_skill.md — handles multi-step intersection
   │
-  └─ PEOPLE ("Find decision-makers posting about X")
-      → Check existing signals for people-level data
-      → Signal exists? → get-audience (includes people matched by that signal)
-      → No signal? → Recommend deploying a people live search agent
+  ├─ PEOPLE ("Find decision-makers posting about X")
+  │   → Read skills/find_people_skill.md and follow its workflow
+  │
+  ├─ SCORING ("Score these accounts", "Tier my pipeline")
+  │   → Read skills/static_account_scoring_skill.md or skills/dynamic_account_scoring_and_tiering_skill.md
+  │
+  ├─ ENTERPRISE + PAIN ("Which team at Capital One needs agent evals?")
+  │   → Read skills/enterprise_account_research_skill.md
+  │
+  └─ ENRICHMENT ("Enrich Acme Corp", "Who are the decision-makers?")
+      → Read skills/enrich_and_research_account_skill.md
 ```
-
-### The Critical Distinction
-
-**Traits** = searchable. Natural language → vector similarity → instant results.
-
-**Activities** = NOT searchable. Activities are detected by live search agents and stored as **signals**. Each signal tracks a specific buying activity (e.g., "companies hiring for Kubernetes") and its matched accounts are collected in an audience. You cannot search "companies posting about AI safety" unless an agent is already tracking that signal.
-
-### Always Check Existing Data First
-
-Before any search, check what signals are already being tracked:
-1. `POST /signal/get-signal-list` — what buying signals are active?
-2. `POST /audience/get-audience-list` — audiences collect the accounts matched by signals (1:1 mapped)
-3. `GET /insights/feed` — what fired recently?
-
-Existing signal data is instant and free. Only search or deploy agents when no signal covers the request.
-
-### When Existing Data Doesn't Cover It
-
-Be transparent. Return what you can and flag the gap:
-- What was answered from existing data
-- What's missing
-- Which specific discovery agent to deploy, with the exact prompt
 
 ---
 
-## Where to Go Deeper
+## Key Concepts
 
-### Domain Knowledge — `knowledge/`
-GTM concepts. Timeless — doesn't change when the platform changes.
+**Traits** = searchable. Natural language → vector similarity → instant results.
 
-- [ICP](knowledge/icp.md) — ICP = Firmographic + Trait (static). Signals and timing are what OpenFunnel adds.
-- [Core Problems & Activity-First GTM](knowledge/problems.md) — Static lists, commoditized signals, blackbox intent, minimal coverage.
-- [Signals](knowledge/signals.md) — Signal types, quality hierarchy, stacking rules, temporal search.
-- [Buying Windows](knowledge/buying-windows.md) — When companies are ready to buy and how to detect it.
-- [People & Outreach](knowledge/people-and-outreach.md) — Person + Date + Context. Evidence-backed outreach.
-- [GTM Operations](knowledge/gtm-operations.md) — Roles, CRM sync, account scoring.
-- [Competitive Landscape](knowledge/competitive-landscape.md) — Competitor analysis and positioning.
-- [Data & Intelligence](knowledge/data-and-intelligence.md) — Data sources, GTMWiki, verticalized indexing.
-- [Principles](knowledge/principles.md) — Mental models, B2B buying, metrics.
-- [Pricing](knowledge/pricing.md) — Credit costs, pricing tiers, value equation.
-- [Case Studies](knowledge/case-studies.md) — Cekura, Central, NUMI, Fini.
+**Activities** = NOT searchable. Detected by live search agents and stored as **signals**. Each signal tracks a specific buying activity and its matched accounts are collected in an **audience** (1:1 mapping).
+
+**Always check existing data first.** Before any search:
+1. `POST /signal/get-signal-list` — what signals are active?
+2. `POST /audience/get-audience-list` — what audiences exist?
+3. `GET /insights/feed` — what fired recently?
+
+Existing data is instant and free. Only search or deploy agents when no signal covers the request.
+
+**Be transparent about gaps.** Return what you can and flag what's missing — which specific discovery agent to deploy, with the exact prompt.
+
+---
+
+## Go Deeper
+
+Read these files only when routed to them by the workflow above.
 
 ### Skills — `skills/`
-Product execution knowledge, workflows, and live search agent guides. Markdown files encode decision logic and rubrics. TypeScript files chain API calls.
-
-**Workflows:**
-- [find_accounts_skill.md](skills/find_accounts_skill.md) — Classification, routing, gap handling, agent recommendations. Code: [find_accounts_skill.ts](skills/find_accounts_skill.ts).
-- [account_intelligence_skill.md](skills/account_intelligence_skill.md) — Deep-dive workflow, synthesis format, sparse data handling. Code: [account_intelligence_skill.ts](skills/account_intelligence_skill.ts).
-- [account_scoring_skill.md](skills/account_scoring_skill.md) — Pain-based scoring rubric + conversation flow. Agent MUST present model choices before scoring. Code: [account_scoring_skill.ts](skills/account_scoring_skill.ts).
-
-**Live search agents — company:**
-- [Job Posts](skills/find_companies_with_relevant_insights/job_posts.md) — "Find Companies with Hiring post mentioning [activity]"
-- [Social Posts](skills/find_companies_with_relevant_insights/social_posts.md) — "Find companies posting about [topic]"
-- [GTMWiki Search](skills/find_companies_with_relevant_insights/gtmwiki_search.md) — "Trait: [type] | Activity: [doing]"
-- [Technographics](skills/find_companies_with_relevant_insights/technographics.md) — "[specific tool name]"
-
-**Live search agents — people:**
-- [Job Changes](skills/find_people_with_relevant_insights/job_changes.md) — Monitor ICP people changing jobs.
-- [Engagement Tracking](skills/find_people_with_relevant_insights/engagement_tracking.md) — Track ICP interactions on LinkedIn.
-- [Competitor Spy](skills/find_people_with_relevant_insights/competitor_spy.md) — Monitor competitor sales rep activity.
-- [People Social Posts](skills/find_people_with_relevant_insights/social_posts.md) — "Find people posting about [topic]"
+- `skills/find_accounts_skill.md` — Find companies by activity: hiring, social, technography signals
+- `skills/find_people_skill.md` — Find people by activity: social posts, job changes, competitor tracking
+- `skills/account_intelligence_skill.md` — Deep-dive on a specific company
+- `skills/enterprise_account_research_skill.md` — Crack open F500 accounts by team + pain-point
+- `skills/enrich_and_research_account_skill.md` — Enrich + attack strategy
+- `skills/static_account_scoring_skill.md` — Static account scoring (one-shot, 0-100 scores with reasoning)
+- `skills/dynamic_account_scoring_and_tiering_skill.md` — Dynamic account scoring and tiering (continuous re-scoring as new signals arrive)
 
 ### API — `api/`
-Raw TypeScript functions wrapping all 21 OpenFunnel endpoints (V1 + V2). JSDoc comments explain each function.
-
-- [client.ts](api/client.ts) — All endpoint wrappers: `searchByTraits`, `listAccounts`, `getAccounts`, `getAccountsV2`, `getAccountFilters`, `getFilteredAccounts`, `listAudiences`, `getAudience`, `listSignals`, `getInsightsFeed`, `deepEnrich`, etc.
-- [API Reference](api/reference.md) — All 21 endpoints documented (V1 + V2), what's searchable vs not, V2 inline signal content, known limitations.
-
-<!-- openfunnel:start -->
-## OpenFunnel SDK
-
-This project uses the `openfunnel` package for GTM intelligence.
-
-### Available Skills
-- **account-intelligence** — Deep-dive workflow for gathering everything known about a specific company. Gathers signals, people, timeline, and signal coverage, then synthesizes into an intelligence brief with outreach angles.
-- **account-scoring** — Score accounts in an audience based on pain-point relevance and urgency. Presents scoring model options, gathers evidence per account, and uses LLM judgment to assign 0-100 scores with reasoning.
-- **enrich-and-research-account** — Look up an account, assess enrichment coverage, offer deep enrichment for people discovery, and produce an account attack strategy.
-- **find-accounts** — End-to-end workflow for finding companies. Handles trait queries, activity queries, and combinations. Routes requests, checks existing data, and recommends discovery agents for gaps.
-- **score-and-tier** — Score OpenFunnel's account universe against pain-based or custom criteria, bucket into tiers, and continuously re-score as new signals arrive.
-
-### Usage
-The agent should read `node_modules/openfunnel/CLAUDE.md` for full routing logic and instructions.
-Skill workflows: `node_modules/openfunnel/skills/{skill_name}.md`
-
-### Environment
-`OPENFUNNEL_API_KEY` and `OPENFUNNEL_USER_ID` are loaded from `.env`.
-<!-- openfunnel:end -->
+- `api/client.ts` — All endpoint wrappers with JSDoc. Read this to understand the API shape (endpoints, params, auth headers), then make your own fetch calls.

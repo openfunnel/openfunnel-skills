@@ -10,7 +10,7 @@ Deep-dive workflow for gathering everything known about a specific company. Use 
 ## Workflow
 
 1. **Identify the company:**
-   - User gives name or domain → `search_by_name_or_domain()` / `lookup_company`
+   - User gives name or domain → `searchByNameOrDomain()`
    - Ambiguous description → `search_by_traits()`
    - Not found → `deep_enrich(domain)` to add it (15-30 min async)
 
@@ -44,12 +44,3 @@ Deep-dive workflow for gathering everything known about a specific company. Use 
 
 People data lives in the batch endpoint response. There is no separate org chart endpoint.
 
-## Runtime
-
-**Claude.ai (MCP tools):** Use `lookup_company`, `get_account_summary`, `get_account_timeline`, `get_account_full_details`, `get_my_insights`, `list_audiences`, `get_audience_data` directly.
-
-**Claude Code / sandbox:** Use the TypeScript functions in `skills/account_intelligence_skill.ts`.
-
-## Code
-
-See [account_intelligence_skill.ts](account_intelligence_skill.ts) — `getFullIntelligence`, `getAccountAudienceMembership`, `findSimilarCompanies`.

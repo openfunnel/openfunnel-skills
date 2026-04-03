@@ -35,7 +35,7 @@ What activity or behavior is the user looking for? If unclear, ask.
 
 ### 2. Check existing signals
 
-`listSignals()` → get all currently deployed signals.
+`POST /api/v1/signal/get-signal-list` → get all currently deployed signals.
 
 A signal is unique by **query + ICP pair**. The same query with a different ICP is a different signal and needs separate deployment. When checking for matches, compare BOTH:
 
@@ -75,7 +75,7 @@ Wait for user input.
 
 ### 3. Get results from existing signal
 
-`getSignal(signalId)` → returns accounts and people matched by this signal.
+`POST /api/v1/signal/ { signal_id }` → returns accounts and people matched by this signal.
 
 ```
 ### Results from: {signal_name}
@@ -83,7 +83,7 @@ Wait for user input.
 **{total_accounts} accounts found | {total_people} people found**
 ```
 
-If the user wants full details, pull with `getAccountsV2({ accountIds: [...] })`.
+If the user wants full details, pull with `POST /api/v2/account/batch { account_ids: [...] }`.
 
 After presenting:
 
@@ -116,7 +116,7 @@ Three company signal types:
 
 **Timeframe:** Last day to last year. Default: last 3 months.
 
-**Deploy:** `deployDeepHiringSignal({ name, searchQuery, timeframe })`
+**Deploy:** `POST /api/v1/signal/deploy/deep-hiring-agent { name, search_query, timeframe, icp_id }`
 
 ---
 
@@ -140,7 +140,7 @@ Three company signal types:
 
 **Timeframe:** Last day to last year.
 
-**Deploy:** `deploySocialListeningSignal({ name, searchQuery, signalTarget: "account", timeframe })`
+**Deploy:** `POST /api/v1/signal/deploy/social-listening-agent { name, search_query, signal_target: "account", timeframe, icp_id }`
 
 ---
 
@@ -157,7 +157,7 @@ Three company signal types:
 
 **Timeframe:** Last day to last year. Default: last 3 months.
 
-**Deploy:** `deployTechnographySignal({ name, technographicList, technographicVariations, technographyContext, timeframe })`
+**Deploy:** `POST /api/v1/signal/deploy/technography-search-agent { name, technographic_list, technographic_variations, technography_context, timeframe, icp_id }`
 
 ---
 
@@ -173,7 +173,7 @@ This could be tracked through hiring signals or social signals. Which would be m
 
 ### 5. Confirm before deploying
 
-First, fetch available ICP profiles via `listIcps()`. If the user has ICPs, present them:
+First, fetch available ICP profiles via `GET /api/v1/icp/list`. If the user has ICPs, present them:
 
 ```
 I'll deploy a **{signal type}** signal:
@@ -219,4 +219,4 @@ Results come in as they're found — just say "check on {signal_name}" anytime.
 
 ### 7. Check back
 
-`getSignal(signalId)` → present whatever accounts and people have been found so far.
+`POST /api/v1/signal/ { signal_id }` → present whatever accounts and people have been found so far.

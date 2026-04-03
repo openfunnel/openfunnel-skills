@@ -51,7 +51,7 @@ If the user provides the company but not the pain-point, ask: *"What specific pr
 
 ### 1. Resolve the company
 
-User provides a name or domain → `searchByNameOrDomain(query)`.
+User provides a name or domain → `POST /api/v1/account/search-by-name-or-domain { query }`.
 
 | Result | Action |
 |--------|--------|
@@ -61,7 +61,7 @@ User provides a name or domain → `searchByNameOrDomain(query)`.
 
 ### 2. Company card
 
-`getAccountsV2({ accountIds: [id] })` → present a short summary:
+`POST /api/v2/account/batch { account_ids: [id] }` → present a short summary:
 
 ```
 ## {company_name}
@@ -148,15 +148,15 @@ Deep enrichment works best when it knows what to look for:
 Set any of these, or "none" for defaults.
 ```
 
-Wait for user input. For each one they want to set, collect the value. If the user provides an ICP name instead of an ID, look it up via `listIcps()` to resolve the ID.
+Wait for user input. For each one they want to set, collect the value. If the user provides an ICP name instead of an ID, look it up via `GET /api/v1/icp/list` to resolve the ID.
 
-Then call `deepEnrich` with:
+Then call `POST /api/v1/enrich/deep-enrich` with:
 - `domain` — from step 1 (already known, do NOT ask for it)
 - `goal` — user's input or default
-- `targetIcpRoles` — user's input or default
-- `icpId` — user's input or default
-- `timeframe` — 90 days
-- `maxJobsToCheck` — 200
+- `target_icp_roles` — user's input or default
+- `icp_id` — user's input or default
+- `timeframe` — 90
+- `max_jobs_to_check` — 200
 
 **Monitoring — present after triggering:**
 
@@ -170,7 +170,7 @@ Deep enrichment running for {domain}. Typically 15-30 minutes.
 **If user picks monitoring:**
 
 Poll in the background:
-- Re-fetch `getAccountsV2({ accountIds: [id] })` every 3 minutes
+- Re-fetch `POST /api/v2/account/batch { account_ids: [id] }` every 3 minutes
 - Compare people count to pre-enrichment count
 - After 2 consecutive polls where count stabilized and differs from initial → done
 - Timeout after 45 minutes
@@ -208,7 +208,7 @@ Got it. Deep enrichment is processing for {domain}. Just ask me to check on {com
 
 **After enrichment (or when user checks back):**
 
-Re-fetch `getAccountsV2`, go back to step 3 to re-assess team coverage with updated data. Present before/after comparison.
+Re-fetch `POST /api/v2/account/batch { account_ids: [id] }`, go back to step 3 to re-assess team coverage with updated data. Present before/after comparison.
 
 ### 5. Team-first view
 

@@ -82,7 +82,7 @@ Output: every account has a score, reasoning, and tier.
 
 Create a new audience per tier. Each audience is named by tier (e.g. "Tier-1", "Tier-2", "Tier-3") and contains the account IDs that landed in that bucket.
 
-Use `createAudience(name, accountIds)` to create each tier audience.
+Use `POST https://api.openfunnel.dev/api/v1/audience/create { audience_name, account_ids }` to create each tier audience.
 
 ---
 
@@ -96,11 +96,11 @@ The continuous piece is **new accounts entering the OF universe**. Signals fire 
 
 Runs on a cron (e.g. daily). Uses the alerts API to detect new accounts.
 
-1. **Poll alerts** — `getMyAlerts()` filtered by `view_name` matching the master scoring audience. Returns newly discovered accounts since last check.
+1. **Poll alerts** — `GET https://api.openfunnel.dev/api/v1/insights/alerts { days, limit, offset }` filtered by `view_name` matching the master scoring audience. Returns newly discovered accounts since last check.
 2. **Diff** — compare alert account IDs against already-scored accounts. The delta = new accounts to score.
 3. **Score new accounts** — same lens (pain-based or custom prompt), same rubric, same four dimensions.
 4. **Tier new accounts** — apply the same tier boundaries from init scoring.
-5. **Add to tier audiences** — `addAccountsToAudience()` for each tier.
+5. **Add to tier audiences** — `POST https://api.openfunnel.dev/api/v1/audience/add-accounts { audience_id, account_ids }` for each tier.
 6. **Enter assignment** — new accounts in each tier are available for assignment (round robin, etc.)
 
 ### What stays the same
@@ -158,16 +158,16 @@ Do signals tell a connected narrative?
 
 ## API Calls
 
-| Step | API | Description |
-|------|-----|-------------|
-| Step 1 | `listAudiences()` | List audiences for customer to pick source |
-| Step 1 | `getAudience(audienceId)` | Get account IDs from source audience |
-| Step 4 | `getAccountsV2({ accountIds })` | Full details with inline signal content + CRM data |
-| Step 4 | `getAccountTimeline(accountId, days)` | Chronological events |
-| Step 6 | `createAudience(name, accountIds)` | Create tier audience (init) |
-| Part 2 | `getMyAlerts(days)` | Poll for new accounts in master scoring audience |
-| Part 2 | `addAccountsToAudience(audienceId, accountIds)` | Add new accounts to existing tier audience |
+| Step | Endpoint | Description |
+|------|----------|-------------|
+| Step 1 | `POST https://api.openfunnel.dev/api/v1/audience/get-audience-list { limit, offset }` | List audiences for customer to pick source |
+| Step 1 | `POST https://api.openfunnel.dev/api/v1/audience/ { audience_id }` | Get account IDs from source audience |
+| Step 4 | `POST https://api.openfunnel.dev/api/v2/account/batch { account_ids }` | Full details with inline signal content + CRM data |
+| Step 4 | `GET https://api.openfunnel.dev/api/v1/account/{accountId}/timeline { days, limit, offset }` | Chronological events |
+| Step 6 | `POST https://api.openfunnel.dev/api/v1/audience/create { audience_name, account_ids }` | Create tier audience (init) |
+| Part 2 | `GET https://api.openfunnel.dev/api/v1/insights/alerts { days, limit, offset }` | Poll for new accounts in master scoring audience |
+| Part 2 | `POST https://api.openfunnel.dev/api/v1/audience/add-accounts { audience_id, account_ids }` | Add new accounts to existing tier audience |
 
-See `api/client.ts` for function signatures and `skills/score_and_tier.ts` for orchestration helpers.
+All endpoints require headers: `X-API-Key`, `X-User-ID`, `Content-Type: application/json`.
 
 > **NOTE:** 3 API calls per account (summary + V2 batch + timeline). Large audiences (100+) will be slow.

@@ -26,7 +26,7 @@ This skill handles mission-critical GTM data. Bad data = bad outreach = burned r
 
 ### 1. Resolve the company
 
-User provides a name or domain → `searchByNameOrDomain(query)`.
+User provides a name or domain → `POST /api/v1/account/search-by-name-or-domain { query }`.
 
 | Result | Action |
 |--------|--------|
@@ -36,7 +36,7 @@ User provides a name or domain → `searchByNameOrDomain(query)`.
 
 ### 2. Present the Company Card
 
-`getAccountsV2({ accountIds: [id] })` → full details with inline signal content + ICP people.
+`POST /api/v2/account/batch { account_ids: [id] }` → full details with inline signal content + ICP people.
 
 Present a clean summary so the user can see what we know at a glance:
 
@@ -136,7 +136,7 @@ This is the enrichment decision tree. Present the recommendation based on curren
 
 **3a. Account not found in DB:**
 
-The company wasn't resolved in Step 1. Ask the user for the exact domain (e.g., "What's their domain?"), then call `triggerDeepEnrich(userProvidedDomain)` — the function handles URL/www cleanup automatically.
+The company wasn't resolved in Step 1. Ask the user for the exact domain (e.g., "What's their domain?"), then call `POST /api/v1/enrich/deep-enrich { domain }` (clean the domain first — strip protocol and www prefix).
 
 > This company isn't in OpenFunnel yet. Deep enrichment will add it — discovering the company profile, buying signals, and key contacts.
 >
@@ -191,7 +191,15 @@ If yes → before triggering, present the enrichment configuration. The domain i
 >
 > **Which of these would you like to set?** (or "none" to use defaults for all)
 
-Wait for user input. For each one they want to set, collect the value. If the user provides an ICP name instead of an ID, look it up via `listIcps()` to resolve the ID. Then call `triggerDeepEnrich(domain, { goal, icpId, targetIcpRoles })` with whatever they provided. Anything they didn't set uses the default.
+Wait for user input. For each one they want to set, collect the value. If the user provides an ICP name instead of an ID, look it up via `GET /api/v1/icp/list` to resolve the ID. Then call `POST /api/v1/enrich/deep-enrich` with:
+- `domain` — from Step 1 (already known, do NOT ask for it)
+- `goal` — user's input or omit
+- `icp_id` — user's input or omit
+- `target_icp_roles` — user's input or omit
+- `timeframe` — 90 (default)
+- `max_jobs_to_check` — 200 (default)
+
+Anything the user didn't set uses the default.
 
 Then present the monitoring choice:
 
@@ -204,14 +212,14 @@ Then present the monitoring choice:
 
 **If user picks OpenFunnel Poller:**
 
-Run `waitForEnrichment(accountId, initialPeopleCount)` in the background:
-- `accountId` — from the resolved account
-- `initialPeopleCount` — from the `enrichmentState.peopleCount` before enrichment was triggered
-- Polls every 3 minutes, checks for people count stabilization
-- After 2 consecutive unchanged polls where data differs from initial → enrichment is done
+Poll `POST /api/v2/account/batch { account_ids: [id] }` every 3 minutes in the background:
+- `id` — from the resolved account
+- Record the `peopleCount` before enrichment was triggered as `initialPeopleCount`
+- Each poll, check the current people count in the response
+- After 2 consecutive unchanged polls where people count differs from `initialPeopleCount` → enrichment is done
 - Times out after 45 minutes
 
-When `waitForEnrichment` returns, notify the user:
+When polling completes, notify the user:
 
 **If done (data changed and stabilized):**
 > Deep enrichment complete for **{domain}**.
@@ -245,7 +253,7 @@ Proceed to step 5.
 ### 4. Post-enrichment refresh
 
 After enrichment completes (or user returns manually):
-- Re-fetch `getAccountsV2({ accountIds: [id] })` for updated data
+- Re-fetch `POST /api/v2/account/batch { account_ids: [id] }` for updated data
 - Re-present the company card with updated numbers
 - Return to the option menu
 
@@ -299,6 +307,44 @@ Prioritize by: decision-making power × signal recency × role relevance
 Keep the strategy concise and actionable. Every recommendation must tie back to a specific signal or data point.
 ```
 
-## Runtime
+## API Reference
 
-Use the endpoint wrappers in `api/client.ts`. Read the JSDoc for each function's params and response shape.
+**Base URL:** `https://api.openfunnel.dev`
+
+**Required headers (all requests):**
+
+| Header | Value |
+|--------|-------|
+| `X-API-Key` | Your OpenFunnel API key (from `.env` → `OPENFUNNEL_API_KEY`) |
+| `X-User-ID` | Your OpenFunnel user ID (from `.env` → `OPENFUNNEL_USER_ID`) |
+| `Content-Type` | `application/json` |
+
+**Endpoints used by this skill:**
+
+### 1. Search by name or domain
+
+- **Method:** `POST`
+- **Path:** `/api/v1/account/search-by-name-or-domain`
+- **Body:** `{ "query": "<company name or domain>", "limit": <number> }`
+- **Response:** Array of account matches. If multiple results, the response includes `needs_clarification: true`.
+
+### 2. Get accounts (batch)
+
+- **Method:** `POST`
+- **Path:** `/api/v2/account/batch`
+- **Body:** `{ "account_ids": ["<id>"], "account_domains": [], "icp_people_page": 1, "icp_people_page_size": 25 }`
+- **Response:** Full account details including traits, signals (hiring, social, engagement, job changes), ICP people with roles and LinkedIn profiles, and enrichment state.
+
+### 3. List ICP profiles
+
+- **Method:** `GET`
+- **Path:** `/api/v1/icp/list`
+- **Body:** None
+- **Response:** Array of ICP profiles with `id` and `name`.
+
+### 4. Trigger deep enrichment
+
+- **Method:** `POST`
+- **Path:** `/api/v1/enrich/deep-enrich`
+- **Body:** `{ "domain": "<domain>", "goal": "<optional goal string>", "icp_id": "<optional ICP ID>", "target_icp_roles": ["<optional roles>"], "timeframe": "<optional>", "max_jobs_to_check": <optional number> }`
+- **Response:** Confirmation that enrichment has been queued. The domain should be cleaned before sending (strip protocol and www prefix).

@@ -33,7 +33,7 @@ What activity or behavior, and what kind of people? If unclear, ask.
 
 ### 2. Check existing signals
 
-`listSignals()` → get all currently deployed signals.
+`POST /api/v1/signal/get-signal-list { pagination: { limit, offset }, filters }` → get all currently deployed signals.
 
 A signal is unique by **query + ICP pair**. Same query with a different ICP is a different signal. When checking for matches, compare BOTH the query (close match, not inference) and the ICP.
 
@@ -65,7 +65,7 @@ Wait for user input.
 
 ### 3. Get results from existing signal
 
-`getSignal(signalId)` → returns people matched by this signal.
+`POST /api/v1/signal/ { signal_id }` → returns people matched by this signal.
 
 ```
 ### Results from: {signal_name}
@@ -106,7 +106,7 @@ Four people signal types:
 
 **Timeframe:** Last day to last year.
 
-**Deploy:** `deploySocialListeningSignal({ name, searchQuery, signalTarget: "people", timeframe })`
+**Deploy:** `POST /api/v1/signal/deploy/social-listening-agent { name, search_query, signal_target: "people", timeframe, icp_id }`
 
 ---
 
@@ -127,7 +127,7 @@ The 2-month window from job posted → person hired is the buying window. A new 
 
 **No search query needed** — monitors ICP-matching people across qualified accounts automatically. Filters out internal promotions.
 
-**Deploy:** `deployIcpJobChangeSignal({ name, icpId })`
+**Deploy:** `POST /api/v1/signal/deploy/icp-job-change-agent { name, icp_id, repeat, account_audience_name, people_audience_name, max_credit_limit }`
 
 ---
 
@@ -149,7 +149,7 @@ The 2-month window from job posted → person hired is the buying window. A new 
 
 **Timeframe:** Last day to last year. Default: 7 days.
 
-**Deploy:** `deployCompetitorEngagementSignal({ name, linkedinUrl, timeframe })`
+**Deploy:** `POST /api/v1/signal/deploy/competitor-engagement-agent { name, linkedin_url, timeframe, icp_id }`
 
 ---
 
@@ -169,13 +169,13 @@ The 2-month window from job posted → person hired is the buying window. A new 
 
 **Timeframe:** Default: 7 days.
 
-**Deploy:** `deployCompetitorActivitySignal({ name, linkedinUrl, timeframe })`
+**Deploy:** `POST /api/v1/signal/deploy/competitor-activity-agent { name, linkedin_url, timeframe, icp_id }`
 
 ---
 
 ### 5. Confirm before deploying
 
-First, fetch available ICP profiles via `listIcps()`. If the user has ICPs, present them:
+First, fetch available ICP profiles via `GET /api/v1/icp/list`. If the user has ICPs, present them:
 
 ```
 I'll deploy a **{signal type}** signal:
@@ -221,4 +221,4 @@ Results come in as they're found — just say "check on {signal_name}" anytime.
 
 ### 7. Check back
 
-`getSignal(signalId)` → present whatever people have been found so far.
+`POST /api/v1/signal/ { signal_id }` → present whatever people have been found so far.

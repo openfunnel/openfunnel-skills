@@ -109,16 +109,14 @@ Output per account: score (0-100) + reasoning (1-2 sentences).
 
 ## Runtime
 
-| Step | Function |
+| Step | Endpoint |
 |------|----------|
-| Step 1 | `listAudiences()` |
-| Step 2 | `getAudience(audienceId)` |
-| Step 4 | `getAccountsV2({ accountIds: [accountId] })` → full details + inline signal content (preferred) |
+| Step 1 | `POST https://api.openfunnel.dev/api/v1/audience/get-audience-list { limit, offset }` |
+| Step 2 | `POST https://api.openfunnel.dev/api/v1/audience/ { audience_id }` |
+| Step 4 | `POST https://api.openfunnel.dev/api/v2/account/batch { account_ids: [id] }` → full details + inline signal content (preferred) |
 
-**Prefer V2 batch for scoring.** `getAccountsV2` returns inline signal content — job posting text, social post content, context — so the LLM can read actual evidence without extra calls.
+**Prefer V2 batch for scoring.** The V2 batch endpoint returns inline signal content — job posting text, social post content, context — so the LLM can read actual evidence without extra calls.
 
 > **NOTE:** Large audiences (100+) will be slow.
 
-## Code
-
-See [account_scoring_skill.ts](account_scoring_skill.ts) — `getAudiencesForScoring`, `getAudienceAccountIds`, `getAccountEvidence`.
+All endpoints require headers: `X-API-Key`, `X-User-ID`, `Content-Type: application/json`.

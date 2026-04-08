@@ -7,9 +7,7 @@ description: Enrich a list of company domains into account IDs, relevant contact
 
 Resolve one or more company domains in a batch, discover relevant people at each account, enrich missing work emails, and return a clean account-by-account contact list.
 
-If the user is asking about a **single company** for general research, use `enrich_and_research_account_skill.md` instead.
 If the user wants **contacts + emails for one company**, this skill still applies.
-If the user is asking to **find people by behavior or signal**, use `find_people_skill.md` instead.
 
 ## When to Use This Skill
 

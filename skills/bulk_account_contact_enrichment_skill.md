@@ -130,12 +130,12 @@ Rules:
 - If a domain fails in batch account enrichment, mark it as unresolved and keep going.
 - Do not stop the entire batch for one failed domain.
 
-### 3. Confirm enrichment plan
+### 3. Execution summary
 
-Before spending credits, present exactly what will run:
+Present a brief execution summary, then continue automatically:
 
 ```
-I can process these accounts with:
+Processing plan:
 
 1. **Batch account enrichment** — create or refresh account records from the input domains
 2. **Fast people enrichment** — run per resolved account to find relevant people by department and seniority
@@ -149,11 +149,7 @@ Batch settings:
 I'll reuse existing people and emails where OpenFunnel already has them.
 
 This works for a single account too — it just runs as a one-domain batch.
-
-Proceed? (yes / no)
 ```
-
-Wait for user confirmation.
 
 ### 4. Run fast people enrichment for resolved accounts in parallel
 
@@ -181,7 +177,7 @@ Then poll each job:
 Polling guidance:
 
 - Poll every 5 seconds
-- Typical completion time is 1 minute per 100 employees
+- Typical completion time is around 1 minute per 100 employees.
 - Stop when status is `completed` or `failed`
 
 For each account, record:
@@ -255,7 +251,7 @@ Then poll:
 
 Polling guidance:
 
-- Poll every 3-5 seconds
+- Poll every 5 seconds
 - Typical runtime is about 2 seconds per person
 - Stop when status is `completed` or `failed`
 
@@ -278,7 +274,6 @@ Return results grouped by account using this format:
 ## Enriched Accounts
 
 ### {account_name} ({domain})
-**Account ID:** {account_id}
 
 | Name | Role | Department | Seniority | Team | Email | LinkedIn | Status |
 |------|------|------------|-----------|------|-------|----------|--------|

@@ -72,6 +72,9 @@ User Request
   ├─ FIND PEOPLE ("Find decision-makers posting about X")
   │   → Read skills/find_people_skill.md and follow its workflow
   │
+  ├─ BULK CONTACT ENRICHMENT ("Take this list of domains and get contacts + emails")
+  │   → Read skills/bulk_account_contact_enrichment_skill.md and follow its workflow
+  │
   ├─ SCORING ("Score these accounts", "Tier my pipeline")
   │   → Read skills/static_account_scoring_skill.md or skills/dynamic_account_scoring_and_tiering_skill.md
   │
@@ -108,6 +111,7 @@ Read these files only when routed to them by the workflow above.
 ### Skills — `skills/`
 - `skills/find_companies_skill.md` — Find companies by what they're hiring for, posting about, or what tech they use
 - `skills/find_people_skill.md` — Find people posting about topics, changing jobs, or engaging with competitor content
+- `skills/bulk_account_contact_enrichment_skill.md` — Turn a list of domains or accounts into relevant contacts with work email coverage
 - `skills/enrich_and_research_account_skill.md` — Look up a company, enrich it with people and signals, and get an attack strategy
 - `skills/enterprise_account_research_skill.md` — Break into F500 accounts — find which team has the pain, who leads it, and the evidence
 - `skills/static_account_scoring_skill.md` — Score accounts 0-100 on pain-point relevance with evidence and reasoning

@@ -74,9 +74,9 @@ Someone who owned a vendor relationship leaves the company. The new owner inheri
 
 ---
 
-## Cross-Company Talent Migration
+## Cross-Company Expertise & Tool Migration
 
-A cluster of people from the same company or industry moving into a target company. What they used before predicts what they'll buy and prioritize next.
+A cluster of people from the same company or industry moving into a target company. What they used, worked on, and were responsible for before predicts what they'll buy and prioritize next.
 
 **What makes it a window:** People bring their playbooks. A wave of ex-Stripe engineers joining a fintech startup means that startup is about to adopt Stripe-like infrastructure patterns. The tools those people used and the problems they solved at their previous company become the buying roadmap at the new one.
 

@@ -5,22 +5,7 @@
 
 A buying window is the period when a company is most likely to purchase — the intersection of organizational need, budget availability, and decision-maker mandate.
 
-### Types of Buying Windows
-
-**Top-Down Buying Windows (easier to validate):**
-- Relevant job posted → person hired for that role (2-month window)
-- New executive hire with mandate to build something (90-day pressure to pick vendors)
-- Board-level or C-suite announcement of new strategic initiative
-
-**Bottom-Up Buying Windows (require deeper indexing):**
-- Build-out signals — hiring manager posting 4+ roles for the same function
-- First hire in a function — company entering a new domain, needs tooling
-- Tech evaluation signals — team members actively comparing solutions
-
-**Competitor-Triggered Windows:**
-- Competitor renewal coming up → window to pitch alternative
-- Competitor deal falling through → warm takeout opportunity
-- Competitor engagement declining → dissatisfaction signal
+For the specific buying windows OpenFunnel detects, see `openfunnel-buying-windows.md`.
 
 ### Why Buying Windows Matter
 

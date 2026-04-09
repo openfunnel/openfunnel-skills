@@ -24,6 +24,43 @@ This skill handles mission-critical GTM data. Bad data = bad outreach = burned r
 
 ## Workflow
 
+### 0. Agent Auth Check
+
+Before anything, check that `.env` contains `OPENFUNNEL_API_KEY` and `OPENFUNNEL_USER_ID`.
+
+**If both exist:** skip to Step 1.
+
+**If either is missing:**
+
+```
+### Welcome to OpenFunnel
+
+OpenFunnel enriches and researches accounts — signals, contacts, and attack strategies for any company.
+
+To get started, I'll authenticate you via the API.
+
+**What's your work email?**
+```
+
+Wait for user input. Then:
+
+1. Call `POST /api/v1/agent/sign-up` with `{ "email": "<user_email>" }`
+2. Tell the user a 6-digit code was sent:
+   ```
+   I sent a 6-digit verification code to **{email}**. Reply with the code.
+   ```
+3. Wait for input. Call `POST /api/v1/agent/verify` with `{ "email": "<user_email>", "otp_code": "<code>" }`
+4. On success, write to `.env`:
+   - `OPENFUNNEL_API_KEY={api_key}`
+   - `OPENFUNNEL_USER_ID={email}`
+5. Add `.env` to `.gitignore` if not already there
+6. Verify with `POST /api/v1/signal/get-signal-list { "pagination": { "limit": 1, "offset": 0 } }`
+7. If verification succeeds → continue to Step 1
+8. If sign-up fails → ask user to retry
+9. If verify fails → tell user the code was invalid or expired (up to 10 attempts in 24 hours), offer to retry or resend
+
+---
+
 ### 1. Resolve the company
 
 User provides a name or domain → `POST /api/v1/account/search-by-name-or-domain { query }`.
@@ -320,6 +357,18 @@ Keep the strategy concise and actionable. Every recommendation must tie back to 
 | `Content-Type` | `application/json` |
 
 **Endpoints used by this skill:**
+
+### Agent Sign Up
+- **Method:** `POST`
+- **Path:** `/api/v1/agent/sign-up`
+- **Body:** `{ "email": "<user_email>" }`
+- **Response:** `{ email, message }`
+
+### Agent Verify
+- **Method:** `POST`
+- **Path:** `/api/v1/agent/verify`
+- **Body:** `{ "email": "<user_email>", "otp_code": "<6_digit_code>" }`
+- **Response:** `{ email, api_key, is_new_user }`
 
 ### 1. Search by name or domain
 

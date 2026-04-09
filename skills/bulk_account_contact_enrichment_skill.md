@@ -175,7 +175,7 @@ Then poll each job:
 Polling guidance:
 
 - Poll every 5 seconds
-- Typical completion time is around 1 minute per 100 employees.
+- Typical completion time is around 1 minute per 100 employees in the company. For large companies, this can take upto 10 minutes.
 - Stop when status is `completed` or `failed`
 
 For each account, record:

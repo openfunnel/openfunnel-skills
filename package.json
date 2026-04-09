@@ -6,7 +6,7 @@
   "homepage": "https://openfunnel.ai",
   "repository": {
     "type": "git",
-    "url": "https://github.com/openfunnel/openfunnel-alg"
+    "url": "https://github.com/openfunnel/openfunnel"
   },
   "scripts": {
     "postinstall": "node postinstall.js"
@@ -15,7 +15,8 @@
     "CLAUDE.md",
     "postinstall.js",
     "api/client.ts",
-    "skills/*.md"
+    "skills/*/SKILL.md",
+    ".claude-plugin/plugin.json"
   ],
   "keywords": [
     "openfunnel",

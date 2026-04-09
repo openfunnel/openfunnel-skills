@@ -64,25 +64,25 @@ Every request falls into one of these patterns. Route accordingly.
 User Request
   │
   ├─ SPECIFIC COMPANY ("Tell me about Acme Corp")
-  │   → Read skills/enrich_and_research_account_skill.md and follow its workflow
+  │   → Read skills/enrich-and-research-account/SKILL.md and follow its workflow
   │
   ├─ FIND COMPANIES ("Companies hiring for Kubernetes", "posting about SOC2")
-  │   → Read skills/find_companies_that_have_signals.md and follow its workflow
+  │   → Read skills/find-companies-that-have-signals/SKILL.md and follow its workflow
   │
   ├─ FIND PEOPLE ("Find decision-makers posting about X")
-  │   → Read skills/find_people_that_have_signals.md and follow its workflow
+  │   → Read skills/find-people-that-have-signals/SKILL.md and follow its workflow
   │
   ├─ SCORING ("Score these accounts", "Tier my pipeline")
-  │   → Read skills/static_account_scoring_skill.md or skills/dynamic_account_scoring_and_tiering_skill.md
+  │   → Read skills/static-account-scoring/SKILL.md or skills/dynamic-account-scoring-and-tiering/SKILL.md
   │
   ├─ ENTERPRISE + PAIN ("Which team at Capital One needs agent evals?")
-  │   → Read skills/enterprise_account_research_skill.md
+  │   → Read skills/enterprise-account-research/SKILL.md
   │
   ├─ ENRICHMENT ("Enrich Acme Corp", "Who are the decision-makers?")
-  │   → Read skills/enrich_and_research_account_skill.md
+  │   → Read skills/enrich-and-research-account/SKILL.md
   │
   └─ ADVANCED SETUP ("Set up my ICP", "Connect Salesforce", "Block competitors", "Configure integrations")
-      → Read skills/setup_your_openfunnel_account.md and follow its workflow
+      → Read skills/setup-your-openfunnel-account/SKILL.md and follow its workflow
 ```
 
 ---
@@ -109,13 +109,13 @@ Existing data is instant and free. Only search or deploy agents when no signal c
 Read these files only when routed to them by the workflow above.
 
 ### Skills — `skills/`
-- `skills/find_companies_that_have_signals.md` — Find companies by what they're hiring for, posting about, or what tech they use
-- `skills/find_people_that_have_signals.md` — Find people posting about topics, changing jobs, or engaging with competitor content
-- `skills/enrich_and_research_account_skill.md` — Look up a company, enrich it with people and signals, and get an attack strategy
-- `skills/enterprise_account_research_skill.md` — Break into F500 accounts — find which team has the pain, who leads it, and the evidence
-- `skills/static_account_scoring_skill.md` — Score accounts 0-100 on pain-point relevance with evidence and reasoning
-- `skills/dynamic_account_scoring_and_tiering_skill.md` — Score accounts, bucket into tiers, and re-score as new signals come in
-- `skills/setup_your_openfunnel_account.md` — Advanced account setup — ICP profiles, blocklists, and integrations (Salesforce, HubSpot, Slack)
+- `skills/find-companies-that-have-signals/SKILL.md` — Find companies by what they're hiring for, posting about, or what tech they use
+- `skills/find-people-that-have-signals/SKILL.md` — Find people posting about topics, changing jobs, or engaging with competitor content
+- `skills/enrich-and-research-account/SKILL.md` — Look up a company, enrich it with people and signals, and get an attack strategy
+- `skills/enterprise-account-research/SKILL.md` — Break into F500 accounts — find which team has the pain, who leads it, and the evidence
+- `skills/static-account-scoring/SKILL.md` — Score accounts 0-100 on pain-point relevance with evidence and reasoning
+- `skills/dynamic-account-scoring-and-tiering/SKILL.md` — Score accounts, bucket into tiers, and re-score as new signals come in
+- `skills/setup-your-openfunnel-account/SKILL.md` — Advanced account setup — ICP profiles, blocklists, and integrations (Salesforce, HubSpot, Slack)
 
 ### API — `api/`
 - `api/client.ts` — All endpoint wrappers with JSDoc. Read this to understand the API shape (endpoints, params, auth headers), then make your own fetch calls.

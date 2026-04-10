@@ -27,7 +27,7 @@ OPENFUNNEL_USER_ID=your-user-id
 
 Get your key at [openfunnel.ai](https://openfunnel.ai).
 
-## Buying windows it detects
+## Every buying window, custom to your domain, before anyone sees it
 
 | **40M** | **1B** | **<60s** |
 |:---:|:---:|:---:|

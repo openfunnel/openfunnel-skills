@@ -2,13 +2,9 @@
 
 [![npm](https://img.shields.io/npm/v/openfunnel)](https://www.npmjs.com/package/openfunnel)
 
-A live query engine over the movement and intent of 35M companies and 800M people.
+### Every buying window, before anyone else sees it
 
-It continuously monitors a live changelog of every activity, and lets GTM teams define and detect patterns that indicate pain in natural language.
-
-When any company's state evolves in a way that matches your pattern, OpenFunnel fires an event instantly — piped directly to Slack or your CRM with the right people behind the change and what happened.
-
-OpenFunnel is built to detect leading indicators of pain in real-time.
+A live query engine over 35M companies and 800M people. When a company's state evolves in a way that signals pain, OpenFunnel fires instantly — piped to Slack or your CRM before your competitor knows it happened.
 
 ## Install
 
@@ -28,6 +24,10 @@ OPENFUNNEL_USER_ID=your-user-id
 Get your key at [openfunnel.ai](https://openfunnel.ai).
 
 ## Buying windows it detects
+
+| **35M** | **800M** | **<60s** |
+|:---:|:---:|:---:|
+| companies tracked | people monitored | signal to alert |
 
 **Specific Hire** — A company posted a role to build an LLM evaluation framework. Three weeks later, someone started in that role. That person now has 90 days to pick vendors and show early wins — budget is already committed, leadership already aligned.
 

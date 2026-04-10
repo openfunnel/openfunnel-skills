@@ -4,7 +4,7 @@
 
 A live query engine over the movement and intent of 35M companies and 800M people.
 
-It continuously monitors a live changelog of this activity, and lets GTM teams define and detect sequential patterns that indicate pain in natural language.
+It continuously monitors a live changelog of every activity, and lets GTM teams define and detect patterns that indicate pain in natural language.
 
 When any company's state evolves in a way that matches your pattern, OpenFunnel fires an event instantly — piped directly to Slack or your CRM with the right people behind the change and what happened.
 

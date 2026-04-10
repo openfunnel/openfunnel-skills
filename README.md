@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/openfunnel)](https://www.npmjs.com/package/openfunnel)
 
-A live query engine over the movement and intent of 35M companies and 800M people.
+A live query engine over the movement and intent of 40M companies and 1B people.
 
 It continuously monitors a live changelog of every activity, and lets GTM teams define and detect patterns that indicate pain in natural language.
 
@@ -29,7 +29,7 @@ Get your key at [openfunnel.ai](https://openfunnel.ai).
 
 ## Buying windows it detects
 
-| **35M** | **800M** | **<60s** |
+| **40M** | **1B** | **<60s** |
 |:---:|:---:|:---:|
 | companies tracked | people monitored | signal to alert |
 

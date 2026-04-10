@@ -1,7 +1,7 @@
 {
   "name": "openfunnel",
-  "version": "0.2.6",
-  "description": "OpenFunnel GTM intelligence for Claude Code — find active pain-points and buying windows in your ICP",
+  "version": "0.2.7",
+  "description": "A live query engine over the movement and intent of 35M companies and 800M people. Detects leading indicators of pain in real-time.",
   "author": "OpenFunnel <hello@openfunnel.ai> (https://openfunnel.ai)",
   "homepage": "https://openfunnel.ai",
   "repository": {

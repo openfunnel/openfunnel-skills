@@ -2,11 +2,13 @@
 
 [![npm](https://img.shields.io/npm/v/openfunnel)](https://www.npmjs.com/package/openfunnel)
 
-Real-time search for people and companies with active pain-points, open buying windows, and market movements you can act on.
+A live query engine over the movement and intent of 35M companies and 800M people.
 
-Your ICP exists in every database. That's a list. SDRs exhaust lists. Markets don't sit still — companies hire, post, adopt tools, reorganize, face new problems. These movements create windows where you're relevant, not salesy. Miss the window and you're just another cold email.
+It continuously monitors a live changelog of this activity, and lets GTM teams define and detect sequential patterns that indicate pain in natural language.
 
-OpenFunnel captures these movements as they happen. Daily net-new accounts and insights delivered to the right rep — with assignment logic, rules of engagement, and round-robin distribution baked in. Not just intelligence. RevOps-native intelligence.
+When any company's state evolves in a way that matches your pattern, OpenFunnel fires an event instantly — piped directly to Slack or your CRM with the right people behind the change and what happened.
+
+OpenFunnel is built to detect leading indicators of pain in real-time.
 
 ## Install
 
@@ -43,4 +45,4 @@ Get your key at [openfunnel.ai](https://openfunnel.ai).
 
 ## License
 
-UNLICENSED
+MIT

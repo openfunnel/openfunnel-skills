@@ -7,7 +7,7 @@ description: Find companies by what they're hiring for, posting about, or what t
 
 Find companies based on what they're doing — hiring, posting, or using specific technologies. This skill checks if a signal is already tracking what the user wants, returns results if so, or deploys a new signal if not.
 
-If the user is looking for **people** (not companies), use `find_people_skill.md` instead.
+If the user is looking for **people** (not companies), use `find_people_that_have_signals.md` instead.
 If the user is asking about a **specific company**, use account intelligence or enterprise research instead.
 
 ## When to Use This Skill
@@ -28,6 +28,43 @@ If the user is asking about a **specific company**, use account intelligence or 
 ---
 
 ## Workflow
+
+### 0. Agent Auth Check
+
+Before anything, check that `.env` contains `OPENFUNNEL_API_KEY` and `OPENFUNNEL_USER_ID`.
+
+**If both exist:** skip to Step 1.
+
+**If either is missing:**
+
+```
+### Welcome to OpenFunnel
+
+OpenFunnel finds companies based on what they're doing — hiring, posting, or using specific technologies.
+
+To get started, I'll authenticate you via the API.
+
+**What's your work email?**
+```
+
+Wait for user input. Then:
+
+1. Call `POST /api/v1/agent/sign-up` with `{ "email": "<user_email>" }`
+2. Tell the user a 6-digit code was sent:
+   ```
+   I sent a 6-digit verification code to **{email}**. Reply with the code.
+   ```
+3. Wait for input. Call `POST /api/v1/agent/verify` with `{ "email": "<user_email>", "otp_code": "<code>" }`
+4. On success, write to `.env`:
+   - `OPENFUNNEL_API_KEY={api_key}`
+   - `OPENFUNNEL_USER_ID={email}`
+5. Add `.env` to `.gitignore` if not already there
+6. Verify with `POST /api/v1/signal/get-signal-list { "pagination": { "limit": 1, "offset": 0 } }`
+7. If verification succeeds → continue to Step 1
+8. If sign-up fails → ask user to retry
+9. If verify fails → tell user the code was invalid or expired (up to 10 attempts in 24 hours), offer to retry or resend
+
+---
 
 ### 1. Understand the request
 

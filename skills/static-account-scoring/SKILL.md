@@ -11,6 +11,43 @@ Score accounts in an audience based on pain-point relevance and urgency.
 
 The agent MUST follow this sequence — do NOT skip steps.
 
+### Step 0: Agent Auth Check
+
+Before anything, check that `.env` contains `OPENFUNNEL_API_KEY` and `OPENFUNNEL_USER_ID`.
+
+**If both exist:** skip to Step 1.
+
+**If either is missing:**
+
+```
+### Welcome to OpenFunnel
+
+OpenFunnel scores accounts based on pain-point relevance and buying urgency.
+
+To get started, I'll authenticate you via the API.
+
+**What's your work email?**
+```
+
+Wait for user input. Then:
+
+1. Call `POST /api/v1/agent/sign-up` with `{ "email": "<user_email>" }`
+2. Tell the user a 6-digit code was sent:
+   ```
+   I sent a 6-digit verification code to **{email}**. Reply with the code.
+   ```
+3. Wait for input. Call `POST /api/v1/agent/verify` with `{ "email": "<user_email>", "otp_code": "<code>" }`
+4. On success, write to `.env`:
+   - `OPENFUNNEL_API_KEY={api_key}`
+   - `OPENFUNNEL_USER_ID={email}`
+5. Add `.env` to `.gitignore` if not already there
+6. Verify with `POST /api/v1/signal/get-signal-list { "pagination": { "limit": 1, "offset": 0 } }`
+7. If verification succeeds → continue to Step 1
+8. If sign-up fails → ask user to retry
+9. If verify fails → tell user the code was invalid or expired (up to 10 attempts in 24 hours), offer to retry or resend
+
+---
+
 ### Step 1: List audiences for user to pick
 
 - List audiences (see Runtime below for which tool to call)

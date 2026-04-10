@@ -1,0 +1,31 @@
+{
+  "name": "openfunnel",
+  "description": "Real-time search for people and companies with active pain-points, open buying windows, and market movements you can act on.",
+  "version": "0.2.6",
+  "author": {
+    "name": "OpenFunnel",
+    "url": "https://openfunnel.ai"
+  },
+  "repository": "https://github.com/openfunnel/openfunnel",
+  "homepage": "https://openfunnel.ai",
+  "license": "MIT",
+  "keywords": [
+    "gtm",
+    "sales-intelligence",
+    "buying-signals",
+    "icp",
+    "intent-data",
+    "prospecting"
+  ],
+  "skills": "./skills/",
+  "userConfig": {
+    "OPENFUNNEL_API_KEY": {
+      "description": "Your OpenFunnel API key",
+      "sensitive": true
+    },
+    "OPENFUNNEL_USER_ID": {
+      "description": "Your OpenFunnel User ID",
+      "sensitive": false
+    }
+  }
+}

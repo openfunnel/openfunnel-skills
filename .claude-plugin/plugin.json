@@ -1,7 +1,7 @@
 {
   "name": "openfunnel",
   "description": "A live query engine over the movement and intent of 35M companies and 800M people. Detects leading indicators of pain in real-time.",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "author": {
     "name": "OpenFunnel",
     "url": "https://openfunnel.ai"

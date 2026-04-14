@@ -64,28 +64,28 @@ Every request falls into one of these patterns. Route accordingly.
 User Request
   │
   ├─ SPECIFIC COMPANY ("Tell me about Acme Corp")
-  │   → Read skills/enrich-and-research/SKILL.md and follow its workflow
+  │   → Use the `enrich-and-research` skill and follow its workflow
   │
   ├─ FIND COMPANIES ("Companies hiring for Kubernetes", "posting about SOC2")
-  │   → Read skills/find-companies/SKILL.md and follow its workflow
+  │   → Use the `find-companies` skill and follow its workflow
   │
   ├─ FIND PEOPLE ("Find decision-makers posting about X")
-  │   → Read skills/find-people/SKILL.md and follow its workflow
+  │   → Use the `find-people` skill and follow its workflow
   │
   ├─ BULK CONTACT ENRICHMENT ("Take this list of domains and get contacts + emails")
-  │   → Read skills/bulk-account-contact-enrichment/SKILL.md and follow its workflow
+  │   → Use the `bulk-account-contact-enrichment` skill and follow its workflow
   │
   ├─ SCORING ("Score these accounts", "Tier my pipeline")
-  │   → Read skills/account-scoring/SKILL.md or skills/score-and-tier/SKILL.md
+  │   → Use the `account-scoring` or `score-and-tier` skill
   │
   ├─ ENTERPRISE + PAIN ("Which team at Capital One needs agent evals?")
-  │   → Read skills/enterprise-account-research/SKILL.md
+  │   → Use the `enterprise-account-research` skill
   │
   ├─ ENRICHMENT ("Enrich Acme Corp", "Who are the decision-makers?")
-  │   → Read skills/enrich-and-research/SKILL.md
+  │   → Use the `enrich-and-research` skill
   │
   └─ ADVANCED SETUP ("Set up my ICP", "Connect Salesforce", "Block competitors", "Configure integrations")
-      → Read skills/advanced-account-setup/SKILL.md and follow its workflow
+      → Use the `advanced-account-setup` skill and follow its workflow
 ```
 
 ---
@@ -111,15 +111,15 @@ Existing data is instant and free. Only search or deploy agents when no signal c
 
 Read these files only when routed to them by the workflow above.
 
-### Skills — `skills/`
-- `skills/find-companies/SKILL.md` — Find companies by what they're hiring for, posting about, or what tech they use
-- `skills/find-people/SKILL.md` — Find people posting about topics, changing jobs, or engaging with competitor content
-- `skills/bulk-account-contact-enrichment/SKILL.md` — Turn a list of domains or accounts into relevant contacts with work email coverage
-- `skills/enrich-and-research/SKILL.md` — Look up a company, enrich it with people and signals, and get an attack strategy
-- `skills/enterprise-account-research/SKILL.md` — Break into F500 accounts — find which team has the pain, who leads it, and the evidence
-- `skills/account-scoring/SKILL.md` — Score accounts 0-100 on pain-point relevance with evidence and reasoning
-- `skills/score-and-tier/SKILL.md` — Score accounts, bucket into tiers, and re-score as new signals come in
-- `skills/advanced-account-setup/SKILL.md` — Advanced account setup — ICP profiles, blocklists, and integrations (Salesforce, HubSpot, Slack)
+### Skills
+- `find-companies` — Find companies by what they're hiring for, posting about, or what tech they use
+- `find-people` — Find people posting about topics, changing jobs, or engaging with competitor content
+- `bulk-account-contact-enrichment` — Turn a list of domains or accounts into relevant contacts with work email coverage
+- `enrich-and-research` — Look up a company, enrich it with people and signals, and get an attack strategy
+- `enterprise-account-research` — Break into F500 accounts and find which team has the pain, who leads it, and the evidence
+- `account-scoring` — Score accounts 0-100 on pain-point relevance with evidence and reasoning
+- `score-and-tier` — Score accounts, bucket into tiers, and re-score as new signals come in
+- `advanced-account-setup` — Advanced account setup for ICPs, blocklists, and integrations
 
 ### API — `api/`
 - `api/client.ts` — All endpoint wrappers with JSDoc. Read this to understand the API shape (endpoints, params, auth headers), then make your own fetch calls.

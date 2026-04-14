@@ -7,7 +7,7 @@ description: Find companies by what they're hiring for, posting about, or what t
 
 Find companies based on what they're doing — hiring, posting, or using specific technologies. This skill checks if a signal is already tracking what the user wants, returns results if so, or deploys a new signal if not.
 
-If the user is looking for **people** (not companies), use `skills/find-people/SKILL.md` instead.
+If the user is looking for **people** (not companies), use the `find-people` skill instead.
 If the user is asking about a **specific company**, use account intelligence or enterprise research instead.
 
 ## When to Use This Skill

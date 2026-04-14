@@ -7,7 +7,7 @@ description: Find people posting about topics, changing jobs, or engaging with c
 
 Find specific people based on what they're doing — posting about topics, changing jobs, or engaging with competitors. This skill checks if a signal is already tracking what the user wants, returns results if so, or deploys a new signal if not.
 
-If the user is looking for **companies** (not people), use `find_companies_that_have_signals.md` instead.
+If the user is looking for **companies** (not people), use the `find-companies` skill instead.
 
 ## When to Use This Skill
 

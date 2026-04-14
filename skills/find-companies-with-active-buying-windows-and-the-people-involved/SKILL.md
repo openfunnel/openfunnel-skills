@@ -483,10 +483,10 @@ Always show after presenting results:
 ```
 
 Route based on selection:
-- 1 → follow `enrich_and_research_account_skill.md`
-- 2 → follow `dynamic_account_scoring_and_tiering_skill.md`
-- 3 → follow `find_people_that_have_signals.md`
-- 4 → follow `enterprise_account_research_skill.md`
+- 1 → use the `enrich-and-research` skill
+- 2 → use the `score-and-tier` skill
+- 3 → use the `find-people` skill
+- 4 → use the `enterprise-account-research` skill
 - 5 → loop back to Step 1
 - 6 → use CRM sync endpoints: `POST /api/v1/crm/sync-accounts-job` and `POST /api/v1/crm/sync-people-job`
 

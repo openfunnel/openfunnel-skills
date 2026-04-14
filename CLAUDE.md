@@ -30,13 +30,13 @@ Do not skip skills to "save time." Do not call endpoints without checking if a s
 
 ---
 
-## Version Check
+## Distribution
 
-On first interaction, silently check if the installed version is the latest:
-1. Run `npm view openfunnel version` to get the latest published version
-2. Compare with the installed version from `node_modules/openfunnel/package.json`
-3. If out of date, run `npm update openfunnel` automatically — do not ask the user
-4. If update fails (offline, permissions, etc.), continue silently — do not block the interaction
+OpenFunnel is distributed as a skills package.
+
+- Prefer `npx skills add openfunnel/openfunnel` over `npm install openfunnel`
+- Treat `skills/` as the source of truth
+- Do not rely on `node_modules/openfunnel` being present
 
 ---
 
@@ -64,28 +64,28 @@ Every request falls into one of these patterns. Route accordingly.
 User Request
   │
   ├─ SPECIFIC COMPANY ("Tell me about Acme Corp")
-  │   → Read skills/enrich-and-research-account/SKILL.md and follow its workflow
+  │   → Read skills/enrich-and-research/SKILL.md and follow its workflow
   │
   ├─ FIND COMPANIES ("Companies hiring for Kubernetes", "posting about SOC2")
-  │   → Read skills/find-companies-that-have-simple-signals/SKILL.md and follow its workflow
+  │   → Read skills/find-companies/SKILL.md and follow its workflow
   │
   ├─ FIND PEOPLE ("Find decision-makers posting about X")
-  │   → Read skills/find-people-that-have-simple-signals/SKILL.md and follow its workflow
+  │   → Read skills/find-people/SKILL.md and follow its workflow
   │
   ├─ BULK CONTACT ENRICHMENT ("Take this list of domains and get contacts + emails")
-  │   → Read skills/bulk_account_contact_enrichment_skill.md and follow its workflow
+  │   → Read skills/bulk-account-contact-enrichment/SKILL.md and follow its workflow
   │
   ├─ SCORING ("Score these accounts", "Tier my pipeline")
-  │   → Read skills/static-account-scoring/SKILL.md or skills/dynamic-account-scoring-and-tiering/SKILL.md
+  │   → Read skills/account-scoring/SKILL.md or skills/score-and-tier/SKILL.md
   │
   ├─ ENTERPRISE + PAIN ("Which team at Capital One needs agent evals?")
   │   → Read skills/enterprise-account-research/SKILL.md
   │
   ├─ ENRICHMENT ("Enrich Acme Corp", "Who are the decision-makers?")
-  │   → Read skills/enrich-and-research-account/SKILL.md
+  │   → Read skills/enrich-and-research/SKILL.md
   │
   └─ ADVANCED SETUP ("Set up my ICP", "Connect Salesforce", "Block competitors", "Configure integrations")
-      → Read skills/setup-your-openfunnel-account/SKILL.md and follow its workflow
+      → Read skills/advanced-account-setup/SKILL.md and follow its workflow
 ```
 
 ---
@@ -112,14 +112,14 @@ Existing data is instant and free. Only search or deploy agents when no signal c
 Read these files only when routed to them by the workflow above.
 
 ### Skills — `skills/`
-- `skills/find-companies-that-have-simple-signals/SKILL.md` — Find companies by what they're hiring for, posting about, or what tech they use
-- `skills/find-people-that-have-simple-signals/SKILL.md` — Find people posting about topics, changing jobs, or engaging with competitor content
-- `skills/bulk_account_contact_enrichment/SKILL.md` — Turn a list of domains or accounts into relevant contacts with work email coverage
-- `skills/enrich-and-research-account/SKILL.md` — Look up a company, enrich it with people and signals, and get an attack strategy
+- `skills/find-companies/SKILL.md` — Find companies by what they're hiring for, posting about, or what tech they use
+- `skills/find-people/SKILL.md` — Find people posting about topics, changing jobs, or engaging with competitor content
+- `skills/bulk-account-contact-enrichment/SKILL.md` — Turn a list of domains or accounts into relevant contacts with work email coverage
+- `skills/enrich-and-research/SKILL.md` — Look up a company, enrich it with people and signals, and get an attack strategy
 - `skills/enterprise-account-research/SKILL.md` — Break into F500 accounts — find which team has the pain, who leads it, and the evidence
-- `skills/static-account-scoring/SKILL.md` — Score accounts 0-100 on pain-point relevance with evidence and reasoning
-- `skills/dynamic-account-scoring-and-tiering/SKILL.md` — Score accounts, bucket into tiers, and re-score as new signals come in
-- `skills/setup-your-openfunnel-account/SKILL.md` — Advanced account setup — ICP profiles, blocklists, and integrations (Salesforce, HubSpot, Slack)
+- `skills/account-scoring/SKILL.md` — Score accounts 0-100 on pain-point relevance with evidence and reasoning
+- `skills/score-and-tier/SKILL.md` — Score accounts, bucket into tiers, and re-score as new signals come in
+- `skills/advanced-account-setup/SKILL.md` — Advanced account setup — ICP profiles, blocklists, and integrations (Salesforce, HubSpot, Slack)
 
 ### API — `api/`
 - `api/client.ts` — All endpoint wrappers with JSDoc. Read this to understand the API shape (endpoints, params, auth headers), then make your own fetch calls.

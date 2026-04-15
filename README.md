@@ -18,9 +18,6 @@ npx skills add openfunnel/openfunnel --list
 
 # Install specific skills only
 npx skills add openfunnel/openfunnel --skill find-companies-having-simple-signals --skill enrich-and-research
-
-# Install from a local checkout while developing
-npx skills add .
 ```
 
 OpenFunnel follows the open `SKILL.md` standard used by `skills`, so it can be installed into Cursor, Claude Code, Codex, and other compatible agents.

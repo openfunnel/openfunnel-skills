@@ -1,6 +1,8 @@
-# OpenFunnel
+# OpenFunnel Skills
 
-OpenFunnel is a Market Events Intelligence Platform for GTM Teams.
+This is the OpenFunnel skills package — agent-native workflows built on top of the OpenFunnel platform.
+
+**OpenFunnel** is a Market Events Intelligence Platform for GTM Teams.
 
 ### What are Market Events for GTM?
 

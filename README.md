@@ -7,7 +7,7 @@ It adds time-sensitive GTM intelligence on top of static account lists so agents
 ## Install
 
 ```bash
-npx skills add openfunnel/openfunnel
+npx skills add openfunnel/openfunnel --all
 ```
 
 Useful commands:

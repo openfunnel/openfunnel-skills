@@ -64,28 +64,28 @@ Every request falls into one of these patterns. Route accordingly.
 ```
 User Request
   │
-  ├─ SPECIFIC COMPANY ("Tell me about Acme Corp")
+  ├─ SPECIFIC COMPANY ("Research Ramp", "What's happening at Vercel right now?")
   │   → Use the `enrich-and-research` skill and follow its workflow
   │
-  ├─ FIND COMPANIES ("Companies hiring for Kubernetes", "posting about SOC2")
+  ├─ BUYING WINDOWS ("Find B2B SaaS companies migrating off Heroku", "Mid-market companies hiring for AI evaluation")
+  │   → Use the `find-icp-companies-with-active-buying-windows-and-the-people-involved` skill and follow its workflow
+  │
+  ├─ FIND COMPANIES ("Companies hiring AI engineers", "Find companies posting about SOC2 compliance")
   │   → Use the `find-companies` skill and follow its workflow
   │
-  ├─ FIND PEOPLE ("Find decision-makers posting about X")
+  ├─ FIND PEOPLE ("Find people posting about adding MCP in production", "Who's engaging with our competitor's LinkedIn content")
   │   → Use the `find-people` skill and follow its workflow
   │
-  ├─ BULK CONTACT ENRICHMENT ("Take this list of domains and get contacts + emails")
+  ├─ BULK CONTACT ENRICHMENT ("Take this list of domains and get me the best contacts plus emails")
   │   → Use the `bulk-account-contact-enrichment` skill and follow its workflow
   │
   ├─ SCORING ("Score these accounts", "Tier my pipeline")
   │   → Use the `account-scoring` or `score-and-tier` skill
   │
-  ├─ ENTERPRISE + PAIN ("Which team at Capital One needs agent evals?")
+  ├─ ENTERPRISE + PAIN ("Which team at Capital One needs agent evals?", "Find who at Adobe is working on AI guardrails")
   │   → Use the `enterprise-account-research` skill
   │
-  ├─ ENRICHMENT ("Enrich Acme Corp", "Who are the decision-makers?")
-  │   → Use the `enrich-and-research` skill
-  │
-  └─ ADVANCED SETUP ("Set up my ICP", "Connect Salesforce", "Block competitors", "Configure integrations")
+  └─ ADVANCED SETUP ("Set up my ICP", "Connect Salesforce", "Block competitors")
       → Use the `advanced-account-setup` skill and follow its workflow
 ```
 
@@ -113,6 +113,7 @@ Existing data is instant and free. Only search or deploy agents when no signal c
 Read these files only when routed to them by the workflow above.
 
 ### Skills
+- `find-icp-companies-with-active-buying-windows-and-the-people-involved` — Find ICP companies with inferred buying windows and the people involved
 - `find-companies` — Find companies by what they're hiring for, posting about, or what tech they use
 - `find-people` — Find people posting about topics, changing jobs, or engaging with competitor content
 - `bulk-account-contact-enrichment` — Turn a list of domains or accounts into relevant contacts with work email coverage

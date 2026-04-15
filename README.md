@@ -6,21 +6,11 @@ It adds time-sensitive GTM intelligence on top of static account lists so agents
 
 ## Install
 
-Recommended for portable, cross-agent installs:
-
 ```bash
 npx skills add openfunnel/openfunnel
 ```
 
-You can also install from npm:
-
-```bash
-npm install openfunnel
-```
-
-For most agent workflows, prefer `npx skills add`. The npm package is useful when you want OpenFunnel available as a dependency and want install-time setup to inject OpenFunnel guidance into the target project's `CLAUDE.md`.
-
-Useful `skills` commands:
+Useful commands:
 
 ```bash
 # Preview discoverable skills

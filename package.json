@@ -1,0 +1,40 @@
+{
+  "name": "openfunnel",
+  "version": "0.2.15",
+  "description": "OpenFunnel skills for finding active pain-points and buying windows in your Ideal Customer Profile.",
+  "type": "module",
+  "author": "OpenFunnel <hello@openfunnel.ai> (https://openfunnel.ai)",
+  "homepage": "https://openfunnel.ai",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/openfunnel/openfunnel"
+  },
+  "scripts": {
+    "postinstall": "node postinstall.js"
+  },
+  "files": [
+    "CLAUDE.md",
+    "README.md",
+    "postinstall.js",
+    "api/client.ts",
+    "skills/**",
+    ".claude-plugin/plugin.json"
+  ],
+  "keywords": [
+    "openfunnel",
+    "skills",
+    "agent-skills",
+    "gtm",
+    "claude-code",
+    "sales-intelligence",
+    "icp",
+    "buying-signals",
+    "intent-data",
+    "signals",
+    "revops"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}

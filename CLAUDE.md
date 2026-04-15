@@ -32,9 +32,10 @@ Do not skip skills to "save time." Do not call endpoints without checking if a s
 
 ## Distribution
 
-OpenFunnel is distributed as a skills package.
+OpenFunnel is distributed as both a skills package and an npm package.
 
-- Prefer `npx skills add openfunnel/openfunnel` over `npm install openfunnel`
+- Prefer `npx skills add openfunnel/openfunnel` for cross-agent skill installs
+- `npm install openfunnel` is also supported for npm-based distribution
 - Treat `skills/` as the source of truth
 - Do not rely on `node_modules/openfunnel` being present
 

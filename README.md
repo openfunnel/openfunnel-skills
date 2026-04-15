@@ -6,13 +6,21 @@ It continuously monitors changes across companies and people, then helps GTM tea
 
 ## Install
 
-Install these skills into any compatible agent-enabled repo with:
+Recommended for portable, cross-agent installs:
 
 ```bash
 npx skills add openfunnel/openfunnel
 ```
 
-Useful variants:
+You can also install from npm:
+
+```bash
+npm install openfunnel
+```
+
+The npm package keeps this repo publishable on npm and injects OpenFunnel guidance into the target project's `CLAUDE.md` during install. For agent-agnostic skill installation, prefer `npx skills add`.
+
+Useful `skills` variants:
 
 ```bash
 # Preview discoverable skills
@@ -26,6 +34,16 @@ npx skills add .
 ```
 
 This repo follows the open `SKILL.md` standard used by `skills`, so it can be installed into Cursor, Claude Code, Codex, and other compatible agents.
+
+## Local Smoke Test
+
+Before publishing to npm, run:
+
+```bash
+bash scripts/smoke-test-npm.sh
+```
+
+This packs the local package, installs it into a throwaway repo, and verifies that `CLAUDE.md` is injected exactly once.
 
 ## Available Skills
 

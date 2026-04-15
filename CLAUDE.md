@@ -58,8 +58,14 @@ User Request
   ├─ PAIN-POINTS ("B2B SaaS companies migrating off Heroku that already have a DevOps team", "Mid-market healthcare companies hiring for their first CISO")
   │   → Use the `find-icp-companies-with-active-pain-points-and-the-people-involved` skill and follow its workflow
   │
-  ├─ FIND COMPANIES ("Companies hiring AI engineers", "Find companies posting about SOC2 compliance")
-  │   → Use the `find-companies-having-simple-signals` skill and follow its workflow
+  ├─ HIRING SIGNALS ("Companies hiring to implement AI guardrails", "Find companies hiring to migrate from Heroku to AWS")
+  │   → Use the `find-companies-hiring-to-solve-specific-problems` skill and follow its workflow
+  │
+  ├─ SOCIAL SIGNALS ("Companies posting about their Series A", "Find companies posting about attending RSAC")
+  │   → Use the `find-companies-posting-about-specific-things` skill and follow its workflow
+  │
+  ├─ TECH STACK ("Companies using Snowflake", "Find companies running Kubernetes")
+  │   → Use the `find-companies-using-specific-tech-stack` skill and follow its workflow
   │
   ├─ FIND PEOPLE ("Find people posting about adding MCP in production", "Who's engaging with our competitor's LinkedIn content")
   │   → Use the `find-people-having-simple-signals` skill and follow its workflow
@@ -102,7 +108,9 @@ Read these files only when routed to them by the workflow above.
 
 ### Skills
 - `find-icp-companies-with-active-pain-points-and-the-people-involved` — Find ICP companies with inferred pain-points from live company and people events, and the people involved
-- `find-companies-having-simple-signals` — Find companies by what they're hiring for, posting about, or what tech they use
+- `find-companies-hiring-to-solve-specific-problems` — Find companies hiring to solve specific problems (daily)
+- `find-companies-posting-about-specific-things` — Find companies posting about specific things on socials (daily)
+- `find-companies-using-specific-tech-stack` — Find companies using specific tech stack (daily)
 - `find-people-having-simple-signals` — Find people posting about topics, changing jobs, or engaging with competitor content
 - `enrich-accounts-with-contacts-and-emails` — Turn a list of domains or accounts into relevant contacts with work email coverage
 - `enrich-and-research` — Look up a company, enrich it with people and signals, and get an attack strategy

@@ -12,15 +12,25 @@ If the user is asking about a **specific company**, use account intelligence or 
 
 ## API Calls
 
-All API calls in this skill use the bundled `api.sh` wrapper. Never read or reference API credentials directly.
+All API calls in this skill use the bundled `api.sh` wrapper located in the same directory as this SKILL.md file. Never read or reference API credentials directly.
+
+First, resolve the path to `api.sh` relative to this file's location:
+
+```bash
+API="$(dirname "$(find ~/.agents/skills -name SKILL.md -path "*/find-companies-having-simple-signals/*" 2>/dev/null | head -1)")/api.sh"
+```
+
+Then use `$API` for all calls:
 
 ```bash
 # POST with body
-bash api.sh POST /api/v1/endpoint '{"key": "value"}'
+bash "$API" POST /api/v1/endpoint '{"key": "value"}'
 
 # GET without body
-bash api.sh GET /api/v1/endpoint
+bash "$API" GET /api/v1/endpoint
 ```
+
+All `bash api.sh` references below assume `$API` has been set.
 
 ## When to Use This Skill
 

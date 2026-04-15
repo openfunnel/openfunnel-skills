@@ -12,17 +12,26 @@ If the user is asking about a **specific company**, use account intelligence or 
 
 ## API Calls
 
-All API calls in this skill use the bundled `api.sh` wrapper located in the same directory as this SKILL.md file. Never read or reference API credentials directly.
+This skill bundles two scripts in the same directory as this SKILL.md file. **Never read or reference API credentials directly.**
 
-First, resolve the path to `api.sh` relative to this file's location:
+- `signup.sh` — handles authentication. Writes credentials to `.env` internally. Never exposes the API key.
+- `api.sh` — handles all authenticated API calls. Reads credentials from `.env` internally.
+
+First, resolve the script paths relative to this file's location:
 
 ```bash
-API="$(dirname "$(find ~/.agents/skills -name SKILL.md -path "*/find-companies-having-simple-signals/*" 2>/dev/null | head -1)")/api.sh"
+SKILL_DIR="$(dirname "$(find ~/.agents/skills -name SKILL.md -path "*/find-companies-having-simple-signals/*" 2>/dev/null | head -1)")"
+API="$SKILL_DIR/api.sh"
+SIGNUP="$SKILL_DIR/signup.sh"
 ```
 
-Then use `$API` for all calls:
+Then use `$SIGNUP` for auth and `$API` for all other calls:
 
 ```bash
+# Sign up
+bash "$SIGNUP" start "user@email.com"
+bash "$SIGNUP" verify "user@email.com" "123456"
+
 # POST with body
 bash "$API" POST /api/v1/endpoint '{"key": "value"}'
 
@@ -30,7 +39,7 @@ bash "$API" POST /api/v1/endpoint '{"key": "value"}'
 bash "$API" GET /api/v1/endpoint
 ```
 
-All `bash api.sh` references below assume `$API` has been set.
+All `bash api.sh` and `bash signup.sh` references below assume these variables have been set.
 
 ## When to Use This Skill
 
@@ -72,20 +81,19 @@ To get started, I'll authenticate you via the API.
 
 Wait for user input. Then:
 
-1. Run `bash api.sh POST /api/v1/agent/sign-up '{"email": "<user_email>"}'`
+1. Run `bash "$SIGNUP" start "<user_email>"`
+   - Returns `{"status": "verification_code_sent", "email": "..."}` on success
 2. Tell the user a 6-digit code was sent:
    ```
    I sent a 6-digit verification code to **{email}**. Reply with the code.
    ```
-3. Wait for input. Run `bash api.sh POST /api/v1/agent/verify '{"email": "<user_email>", "otp_code": "<code>"}'`
-4. On success, write to `.env`:
-   - `OPENFUNNEL_API_KEY={api_key}`
-   - `OPENFUNNEL_USER_ID={email}`
-5. Add `.env` to `.gitignore` if not already there
-6. Verify with `bash api.sh POST /api/v1/signal/get-signal-list '{"pagination": {"limit": 1, "offset": 0}}'`
-7. If verification succeeds → continue to Step 1
-8. If sign-up fails → ask user to retry
-9. If verify fails → tell user the code was invalid or expired (up to 10 attempts in 24 hours), offer to retry or resend
+3. Wait for input. Run `bash "$SIGNUP" verify "<user_email>" "<code>"`
+   - On success: returns `{"status": "authenticated", "user_id": "..."}`. Credentials are written to `.env` and `.gitignore` is updated automatically.
+   - On failure: returns `{"status": "failed", ...}`
+4. Verify with `bash "$API" POST /api/v1/signal/get-signal-list '{"pagination": {"limit": 1, "offset": 0}}'`
+5. If verification succeeds → continue to Step 1
+6. If sign-up fails → ask user to retry
+7. If verify fails → tell user the code was invalid or expired (up to 10 attempts in 24 hours), offer to retry or resend
 
 ---
 

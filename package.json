@@ -16,7 +16,6 @@
     "CLAUDE.md",
     "README.md",
     "postinstall.js",
-    "api/client.ts",
     "skills/**",
     ".claude-plugin/plugin.json"
   ],

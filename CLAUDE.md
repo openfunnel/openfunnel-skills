@@ -18,18 +18,6 @@ These are opinions and perspectives learned from working with hundreds of GTM te
 
 ---
 
-## How to Handle Requests
-
-Every user request should map to a skill or a specific API endpoint. Follow this priority:
-
-1. **Skill first.** If a request maps to a skill in the routing table below, read that skill file and follow its workflow exactly. Skills are optimized for speed, accuracy, edge cases, and domain knowledge. They get better over time. Don't skip them.
-2. **API second.** If no skill matches but the request maps to a specific API endpoint in `api/client.ts`, use that endpoint directly. The API sits on top of OpenFunnel's time-aware data layer — signals, indexes, enrichment, team extraction. Even a bare API call is accessing the intelligence layer.
-3. **Custom code only as a last resort.** Only if no skill and no API endpoint covers the request. Custom code bypasses the data layer entirely and has no guarantees. Prefer composing known API endpoints over writing something from scratch.
-
-Do not skip skills to "save time." Do not call endpoints without checking if a skill already handles that workflow. The skills and API are the product.
-
----
-
 ## Distribution
 
 OpenFunnel is distributed as both a skills package and an npm package.
@@ -50,7 +38,7 @@ If either is missing:
 2. Ask for their API key and User ID
 3. Write both to `.env` in the project root
 4. Add `.env` to `.gitignore` if not already there
-5. Verify credentials work by calling `POST /signal/get-signal-list` (see `api/client.ts` for shape)
+5. Verify credentials work by calling `POST /signal/get-signal-list`
 6. Show available skills — these are what you can do with OpenFunnel
 
 If credentials are present, on first interaction show the available skills so the user knows what's possible. Then route their request.
@@ -71,13 +59,13 @@ User Request
   │   → Use the `find-icp-companies-with-active-buying-windows-and-the-people-involved` skill and follow its workflow
   │
   ├─ FIND COMPANIES ("Companies hiring AI engineers", "Find companies posting about SOC2 compliance")
-  │   → Use the `find-companies` skill and follow its workflow
+  │   → Use the `find-companies-having-simple-signals` skill and follow its workflow
   │
   ├─ FIND PEOPLE ("Find people posting about adding MCP in production", "Who's engaging with our competitor's LinkedIn content")
-  │   → Use the `find-people` skill and follow its workflow
+  │   → Use the `find-people-having-simple-signals` skill and follow its workflow
   │
   ├─ BULK CONTACT ENRICHMENT ("Take this list of domains and get me the best contacts plus emails")
-  │   → Use the `bulk-account-contact-enrichment` skill and follow its workflow
+  │   → Use the `enrich-accounts-with-contacts-and-emails` skill and follow its workflow
   │
   ├─ SCORING ("Score these accounts", "Tier my pipeline")
   │   → Use the `account-scoring` or `score-and-tier` skill
@@ -114,14 +102,12 @@ Read these files only when routed to them by the workflow above.
 
 ### Skills
 - `find-icp-companies-with-active-buying-windows-and-the-people-involved` — Find ICP companies with inferred buying windows and the people involved
-- `find-companies` — Find companies by what they're hiring for, posting about, or what tech they use
-- `find-people` — Find people posting about topics, changing jobs, or engaging with competitor content
-- `bulk-account-contact-enrichment` — Turn a list of domains or accounts into relevant contacts with work email coverage
+- `find-companies-having-simple-signals` — Find companies by what they're hiring for, posting about, or what tech they use
+- `find-people-having-simple-signals` — Find people posting about topics, changing jobs, or engaging with competitor content
+- `enrich-accounts-with-contacts-and-emails` — Turn a list of domains or accounts into relevant contacts with work email coverage
 - `enrich-and-research` — Look up a company, enrich it with people and signals, and get an attack strategy
 - `enterprise-account-research` — Break into F500 accounts and find which team has the pain, who leads it, and the evidence
 - `account-scoring` — Score accounts 0-100 on pain-point relevance with evidence and reasoning
 - `score-and-tier` — Score accounts, bucket into tiers, and re-score as new signals come in
 - `advanced-account-setup` — Advanced account setup for ICPs, blocklists, and integrations
 
-### API — `api/`
-- `api/client.ts` — All endpoint wrappers with JSDoc. Read this to understand the API shape (endpoints, params, auth headers), then make your own fetch calls.

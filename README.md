@@ -27,7 +27,10 @@ Useful `skills` commands:
 npx skills add openfunnel/openfunnel --list
 
 # Install specific skills only
-npx skills add openfunnel/openfunnel --skill find-companies --skill enrich-and-research
+npx skills add openfunnel/openfunnel --skill find-companies-having-simple-signals --skill enrich-and-research
+
+# Install from a local checkout while developing
+npx skills add .
 ```
 
 OpenFunnel follows the open `SKILL.md` standard used by `skills`, so it can be installed into Cursor, Claude Code, Codex, and other compatible agents.
@@ -42,15 +45,15 @@ OpenFunnel follows the open `SKILL.md` standard used by `skills`, so it can be i
 
 ## Available Skills
 
-- `find-companies`: Find companies by what they are hiring for, posting about, or signaling in market.
-- `find-people`: Find people tied to topics, job changes, and competitor engagement.
+- `find-companies-having-simple-signals`: Find companies by what they are hiring for, posting about, or signaling in market.
+- `find-people-having-simple-signals`: Find people tied to topics, job changes, and competitor engagement.
 - `enrich-and-research`: Enrich a company with people, signals, and a recommended attack strategy.
 - `enterprise-account-research`: Identify which team inside a large account has the pain, who leads it, and why now.
-- `bulk-account-contact-enrichment`: Turn a list of accounts or domains into relevant contacts with work email coverage.
+- `enrich-accounts-with-contacts-and-emails`: Turn a list of accounts or domains into relevant contacts with work email coverage.
 - `account-scoring`: Score accounts from 0-100 using evidence-backed pain-point relevance.
 - `score-and-tier`: Score accounts, group them into tiers, and re-score as new signals arrive.
 - `advanced-account-setup`: Configure ICPs, integrations, and account-level controls.
-- `find-companies-with-active-buying-windows-and-the-people-involved`: Combine account discovery with contact discovery around active buying windows.
+- `find-icp-companies-with-active-buying-windows-and-the-people-involved`: Combine account discovery with contact discovery around active buying windows.
 
 ## Setup
 
@@ -64,6 +67,11 @@ OPENFUNNEL_USER_ID=your-user-id
 These values are stored in the target repo's `.env`. If needed, OpenFunnel will also add `.env` to `.gitignore`.
 
 Get your credentials at [openfunnel.ai](https://openfunnel.ai).
+
+## Repo Structure
+
+- `skills/` contains the installable skills
+- `CLAUDE.md` contains repo-level operating guidance for agents working inside this repository
 
 ## Docs
 

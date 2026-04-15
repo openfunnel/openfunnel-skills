@@ -1,9 +1,9 @@
 ---
-name: bulk-account-contact-enrichment
+name: enrich-accounts-with-contacts-and-emails
 description: Enrich a list of company domains into account IDs, relevant contacts, and work emails. Use when the user has multiple accounts or domains and wants OpenFunnel to return account-level contact lists with email coverage.
 ---
 
-# Bulk Account Contact Enrichment Skill
+# Enrich Accounts with Contacts and Emails
 
 Resolve one or more company domains in a batch, discover relevant people at each account, enrich missing work emails, and return a clean account-by-account contact list.
 
@@ -27,6 +27,114 @@ If the user wants **contacts + emails for one company**, this skill still applie
 ---
 
 ## Workflow
+
+### 0. Agent Auth Check
+
+Before anything, check that `.env` contains `OPENFUNNEL_API_KEY` and `OPENFUNNEL_USER_ID`.
+
+**If both exist:** skip to Step 1.
+
+**If either is missing:**
+
+```
+### Welcome to OpenFunnel
+
+OpenFunnel finds companies with active pain points — not static lists,
+but companies showing buying signals right now.
+
+To get started, I'll authenticate you via the API and fetch your key.
+
+**Step 0: Agent auth** — what's your work email?
+```
+
+Wait for user input. Then:
+
+1. Call `POST /api/v1/agent/sign-up` with:
+
+```json
+{
+  "email": "<user_email>"
+}
+```
+
+2. If the call succeeds, tell the user a 6-digit verification code was sent and ask for it:
+
+```
+I sent a 6-digit verification code to **{email}**.
+
+Reply with the code and I'll finish authentication.
+```
+
+3. Wait for user input. Then call `POST /api/v1/agent/verify` with:
+
+```json
+{
+  "email": "<user_email>",
+  "otp_code": "<6_digit_code>"
+}
+```
+
+4. On success, write these values to `.env` in the project root:
+   - `OPENFUNNEL_API_KEY={api_key}` from the verify response
+   - `OPENFUNNEL_USER_ID={email}` from the verify response
+
+5. Add `.env` to `.gitignore` if not already there.
+
+6. Verify credentials by calling `POST /api/v1/signal/get-signal-list` with:
+
+```json
+{
+  "pagination": { "limit": 1, "offset": 0 }
+}
+```
+
+7. If verification succeeds → continue to ICP check.
+
+8. If sign-up fails → tell the user the email could not be authenticated and ask them to retry.
+
+9. If verify fails → tell the user the code was invalid or expired, explain they get up to 10 attempts within 24 hours, and ask whether to retry the code or send a new one by calling sign-up again.
+
+### ICP Check
+
+After auth, fetch ICP profiles via `GET /api/v1/icp/list`.
+
+**If ICPs exist:** note the available ICPs and continue to Step 1.
+
+**If no ICPs exist:**
+
+```
+You don't have an ICP profile yet. A quick one will make results much sharper —
+it filters by company size, location, and the roles you're targeting.
+
+1. **Quick setup** (recommended) — takes 30 seconds
+2. **Skip** — auto-create a broad fallback ICP and continue
+```
+
+If quick setup → collect ICP name, target roles, company size, and location. Create via `POST /api/v1/icp/create`.
+
+If skip → auto-create a broad fallback ICP:
+
+```json
+{
+  "name": "Broad Default ICP",
+  "target_roles": ["Any"],
+  "employee_ranges": ["1-10", "11-50", "51-200", "201-500", "501-1000", "1001-5000", "5001-10000", "10001+"],
+  "location": ["Any"]
+}
+```
+
+Call `POST /api/v1/icp/create`, then tell the user:
+
+```
+I created a default ICP profile: **{name}** (ID: {id})
+
+This keeps things running. For sharper results, set up a proper ICP segment
+with your target roles, company size, and location using the `advanced-account-setup` skill.
+```
+
+Continue to Step 1.
+
+---
 
 ### 1. Understand the input
 

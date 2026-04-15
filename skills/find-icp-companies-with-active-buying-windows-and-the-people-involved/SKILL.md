@@ -1,9 +1,9 @@
 ---
-name: find-companies-with-active-buying-windows-and-the-people-involved
+name: find-icp-companies-with-active-buying-windows-and-the-people-involved
 description: Find ICP companies with active, inferred buying windows and the people involved using the TAQ model — Trait (who they are), Activity (what they're doing now), Qualifier (what they already have)
 ---
 
-# Find Companies with Active Buying Windows and the People Involved
+# Find ICP Companies with Active Buying Windows and the People Involved
 
 Find ICP companies with inferred buying windows — where a combination of who they are (trait), what they're doing right now (activity), and what they already have in place (qualifier) signals they're ready to buy. Uses the TAQ model to build a precise search through a guided walkthrough.
 
@@ -11,12 +11,12 @@ Instead of picking signal types (hiring vs social vs tech), describe the pain an
 
 ## When to Use This Skill
 
-- "Find companies that need observability tooling"
-- "Companies struggling with API security"
-- "Find B2B SaaS companies migrating off Heroku"
-- "Mid-market companies hiring for AI evaluation"
-- "Find companies building voice agents that already use Twilio"
-- "Source accounts for my outbound pipeline"
+- "B2B SaaS companies migrating off Heroku that already have a DevOps team"
+- "Mid-market healthcare companies hiring for their first CISO"
+- "Developer tools companies posting about SOC2 that already sell to enterprise"
+- "Fintech startups scaling their engineering team after a Series B"
+- "Companies building AI agents that are hiring for evaluation and testing roles"
+- "E-commerce companies posting about replatforming that already use Stripe"
 
 ## Agent Rules
 
@@ -222,10 +222,10 @@ Wait for user input.
 **If the user types "skip":**
 
 1. Create a broad fallback ICP with the most liberal valid filters:
-   - `name`: auto-generated descriptive name like `"Broad US Any Role"`
+   - `name`: auto-generated descriptive name like `"Broad Default ICP"`
    - `target_roles`: `["Any"]`
    - `employee_ranges`: `["1-10", "11-50", "51-200", "201-500", "501-1000", "1001-5000", "5001-10000", "10001+"]`
-   - `location`: `["us"]` (fixed fallback HQ location, no lookup needed)
+   - `location`: `["Any"]`
 2. Call `POST /api/v1/icp/create` with:
 
 ```json
@@ -233,7 +233,7 @@ Wait for user input.
   "name": "<auto_generated_broad_icp_name>",
   "target_roles": ["Any"],
   "employee_ranges": ["1-10", "11-50", "51-200", "201-500", "501-1000", "1001-5000", "5001-10000", "10001+"],
-  "location": ["us"]
+  "location": ["Any"]
 }
 ```
 
@@ -371,7 +371,7 @@ Using this ICP for your search.
   "name": "<auto_generated_broad_icp_name>",
   "target_roles": ["Any"],
   "employee_ranges": ["1-10", "11-50", "51-200", "201-500", "501-1000", "1001-5000", "5001-10000", "10001+"],
-  "location": ["us"]
+  "location": ["Any"]
 }
 ```
 
@@ -380,7 +380,7 @@ Using this ICP for your search.
 ```
 No ICP details provided, so I created a broad fallback ICP: **{name}** (ID: {id})
 
-This keeps the search deployable while using the least restrictive valid ICP for US companies.
+This keeps the search deployable while using the least restrictive valid ICP.
 ```
 
 ---
@@ -485,7 +485,7 @@ Always show after presenting results:
 Route based on selection:
 - 1 → use the `enrich-and-research` skill
 - 2 → use the `score-and-tier` skill
-- 3 → use the `find-people` skill
+- 3 → use the `find-people-having-simple-signals` skill
 - 4 → use the `enterprise-account-research` skill
 - 5 → loop back to Step 1
 - 6 → use CRM sync endpoints: `POST /api/v1/crm/sync-accounts-job` and `POST /api/v1/crm/sync-people-job`

@@ -1,5 +1,5 @@
 ---
-name: find-people
+name: find-people-having-simple-signals
 description: Find people posting about topics, changing jobs, or engaging with competitor content
 ---
 
@@ -7,7 +7,7 @@ description: Find people posting about topics, changing jobs, or engaging with c
 
 Find specific people based on what they're doing — posting about topics, changing jobs, or engaging with competitors. This skill checks if a signal is already tracking what the user wants, returns results if so, or deploys a new signal if not.
 
-If the user is looking for **companies** (not people), use the `find-companies` skill instead.
+If the user is looking for **companies** (not people), use the `find-companies-having-simple-signals` skill instead.
 
 ## When to Use This Skill
 
@@ -236,16 +236,42 @@ Other options:
 Set any of these, or "deploy" to go with defaults.
 ```
 
-If the user has no ICP profiles:
+**If the user types "none" or skips ICP selection:**
+
+Auto-create a broad fallback ICP:
+
+```json
+{
+  "name": "<auto_generated_broad_icp_name>",
+  "target_roles": ["Any"],
+  "employee_ranges": ["1-10", "11-50", "51-200", "201-500", "501-1000", "1001-5000", "5001-10000", "10001+"],
+  "location": ["Any"]
+}
+```
+
+Call `POST /api/v1/icp/create` with the above, then tell the user:
 
 ```
-You don't have any ICP profiles set up yet. Results won't be filtered against an ICP.
-You can create one in the OpenFunnel UI to qualify future signals.
+No ICP selected, so I created a broad fallback ICP: **{name}** (ID: {id})
 
-Deploy anyway? (yes / no)
+Using this ICP for your signal.
 ```
 
-Wait for user input. Then deploy with the selected ICP ID.
+**If the user has no ICP profiles:**
+
+```
+You don't have an ICP profile yet. A quick one will make results much sharper —
+it filters by company size, location, and the roles you're targeting.
+
+1. **Quick setup** (recommended) — takes 30 seconds
+2. **Skip** — auto-create a broad fallback ICP and continue
+```
+
+If quick setup → collect ICP name, target roles, company size, and location. Create via `POST /api/v1/icp/create`.
+
+If skip → auto-create the broad fallback ICP as above.
+
+Then deploy with the selected or created ICP ID.
 
 ### 6. Post-deploy
 

@@ -69,9 +69,49 @@ Wait for user input. Then:
    - `OPENFUNNEL_USER_ID={email}`
 5. Add `.env` to `.gitignore` if not already there
 6. Verify with `POST /api/v1/signal/get-signal-list { "pagination": { "limit": 1, "offset": 0 } }`
-7. If verification succeeds → continue to Part 1
+7. If verification succeeds → continue to ICP check
 8. If sign-up fails → ask user to retry
 9. If verify fails → tell user the code was invalid or expired (up to 10 attempts in 24 hours), offer to retry or resend
+
+### ICP Check
+
+After auth, fetch ICP profiles via `GET /api/v1/icp/list`.
+
+**If ICPs exist:** note the available ICPs and continue to Part 1.
+
+**If no ICPs exist:**
+
+```
+You don't have an ICP profile yet. A quick one will make results much sharper —
+it filters by company size, location, and the roles you're targeting.
+
+1. **Quick setup** (recommended) — takes 30 seconds
+2. **Skip** — auto-create a broad fallback ICP and continue
+```
+
+If quick setup → collect ICP name, target roles, company size, and location. Create via `POST /api/v1/icp/create`.
+
+If skip → auto-create a broad fallback ICP:
+
+```json
+{
+  "name": "Broad Default ICP",
+  "target_roles": ["Any"],
+  "employee_ranges": ["1-10", "11-50", "51-200", "201-500", "501-1000", "1001-5000", "5001-10000", "10001+"],
+  "location": ["Any"]
+}
+```
+
+Call `POST /api/v1/icp/create`, then tell the user:
+
+```
+I created a default ICP profile: **{name}** (ID: {id})
+
+This keeps things running. For sharper results, set up a proper ICP segment
+with your target roles, company size, and location using the `advanced-account-setup` skill.
+```
+
+Continue to Part 1.
 
 ---
 

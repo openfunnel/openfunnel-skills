@@ -1,8 +1,8 @@
 # OpenFunnel
 
-OpenFunnel is a skills package for finding active pain-points and buying windows in your Ideal Customer Profile.
+OpenFunnel is an agent skills package for finding active pain points and buying windows inside your ideal customer profile.
 
-It continuously monitors changes across companies and people, then helps GTM teams turn those changes into usable buying signals, audiences, account research, and contact enrichment workflows.
+It adds time-sensitive GTM intelligence on top of static account lists so agents can find relevant companies, identify the right team, surface evidence, and turn signals into action.
 
 ## Install
 
@@ -18,9 +18,9 @@ You can also install from npm:
 npm install openfunnel
 ```
 
-The npm package keeps this repo publishable on npm and injects OpenFunnel guidance into the target project's `CLAUDE.md` during install. For agent-agnostic skill installation, prefer `npx skills add`.
+For most agent workflows, prefer `npx skills add`. The npm package is useful when you want OpenFunnel available as a dependency and want install-time setup to inject OpenFunnel guidance into the target project's `CLAUDE.md`.
 
-Useful `skills` variants:
+Useful `skills` commands:
 
 ```bash
 # Preview discoverable skills
@@ -28,55 +28,46 @@ npx skills add openfunnel/openfunnel --list
 
 # Install specific skills only
 npx skills add openfunnel/openfunnel --skill find-companies --skill enrich-and-research
-
-# Install from a local checkout while developing
-npx skills add .
 ```
 
-This repo follows the open `SKILL.md` standard used by `skills`, so it can be installed into Cursor, Claude Code, Codex, and other compatible agents.
+OpenFunnel follows the open `SKILL.md` standard used by `skills`, so it can be installed into Cursor, Claude Code, Codex, and other compatible agents.
 
-## Local Smoke Test
+## What You Get
 
-Before publishing to npm, run:
-
-```bash
-bash scripts/smoke-test-npm.sh
-```
-
-This packs the local package, installs it into a throwaway repo, and verifies that `CLAUDE.md` is injected exactly once.
+- Search for companies based on hiring, posting activity, technology usage, and other live buying signals.
+- Find people connected to relevant pain, role changes, and in-market activity.
+- Enrich accounts with team context, contacts, and work email coverage.
+- Research large enterprise accounts to identify the team with the highest likelihood of pain.
+- Score and tier accounts based on evidence-backed relevance.
 
 ## Available Skills
 
-- `find-companies`
-- `find-people`
-- `enrich-and-research`
-- `enterprise-account-research`
-- `bulk-account-contact-enrichment`
-- `account-scoring`
-- `score-and-tier`
-- `advanced-account-setup`
-- `find-companies-with-active-buying-windows-and-the-people-involved`
+- `find-companies`: Find companies by what they are hiring for, posting about, or signaling in market.
+- `find-people`: Find people tied to topics, job changes, and competitor engagement.
+- `enrich-and-research`: Enrich a company with people, signals, and a recommended attack strategy.
+- `enterprise-account-research`: Identify which team inside a large account has the pain, who leads it, and why now.
+- `bulk-account-contact-enrichment`: Turn a list of accounts or domains into relevant contacts with work email coverage.
+- `account-scoring`: Score accounts from 0-100 using evidence-backed pain-point relevance.
+- `score-and-tier`: Score accounts, group them into tiers, and re-score as new signals arrive.
+- `advanced-account-setup`: Configure ICPs, integrations, and account-level controls.
+- `find-companies-with-active-buying-windows-and-the-people-involved`: Combine account discovery with contact discovery around active buying windows.
 
 ## Setup
 
-On first use, the skills will ask for:
+On first use, OpenFunnel will ask for:
 
 ```dotenv
 OPENFUNNEL_API_KEY=your-api-key
 OPENFUNNEL_USER_ID=your-user-id
 ```
 
-They are stored in the target repo's `.env`. Get your credentials at [openfunnel.ai](https://openfunnel.ai).
+These values are stored in the target repo's `.env`. If needed, OpenFunnel will also add `.env` to `.gitignore`.
 
-## Repo Structure
-
-- `skills/` contains the installable skills
-- `api/client.ts` contains endpoint wrappers and API shape references
-- `CLAUDE.md` contains repo-level operating guidance for agents working inside this repository
+Get your credentials at [openfunnel.ai](https://openfunnel.ai).
 
 ## Docs
 
-- [docs.openfunnel.dev](https://docs.openfunnel.dev)
+- [Documentation](https://docs.openfunnel.dev)
 - [API Reference](https://docs.openfunnel.dev/api-reference)
 
 ## License

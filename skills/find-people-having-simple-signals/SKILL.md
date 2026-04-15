@@ -1,9 +1,9 @@
 ---
 name: find-people-having-simple-signals
-description: Find people posting about topics, changing jobs, or engaging with competitor content
+description: Find people posting about topics, changing jobs, or engaging with competitor content (daily)
 ---
 
-# Find People Skill
+# Find People Having Simple Signals (Daily)
 
 Find specific people based on what they're doing — posting about topics, changing jobs, or engaging with competitors. This skill checks if a signal is already tracking what the user wants, returns results if so, or deploys a new signal if not.
 
@@ -143,7 +143,7 @@ Four people signal types:
 
 **Timeframe:** Last day to last year.
 
-**Deploy:** `POST /api/v1/signal/deploy/social-listening-agent { name, search_query, signal_target: "people", timeframe, icp_id }`
+**Deploy:** `POST /api/v1/signal/deploy/social-listening-agent { name, search_query, signal_target: "people", timeframe, icp_id, repeat }`
 
 ---
 
@@ -186,7 +186,7 @@ The 2-month window from job posted → person hired is the buying window. A new 
 
 **Timeframe:** Last day to last year. Default: 7 days.
 
-**Deploy:** `POST /api/v1/signal/deploy/competitor-engagement-agent { name, linkedin_url, timeframe, icp_id }`
+**Deploy:** `POST /api/v1/signal/deploy/competitor-engagement-agent { name, linkedin_url, timeframe, icp_id, repeat }`
 
 ---
 
@@ -206,7 +206,7 @@ The 2-month window from job posted → person hired is the buying window. A new 
 
 **Timeframe:** Default: 7 days.
 
-**Deploy:** `POST /api/v1/signal/deploy/competitor-activity-agent { name, linkedin_url, timeframe, icp_id }`
+**Deploy:** `POST /api/v1/signal/deploy/competitor-activity-agent { name, linkedin_url, timeframe, icp_id, repeat }`
 
 ---
 

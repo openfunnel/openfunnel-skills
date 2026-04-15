@@ -1,14 +1,26 @@
 ---
 name: find-companies-having-simple-signals
-description: Find companies by what they're hiring for, posting about, or what tech they use
+description: Find companies by what they're hiring for, posting about, or what tech they use (daily)
 ---
 
-# Find Accounts Skill
+# Find Companies Having Simple Signals (Daily)
 
 Find companies based on what they're doing — hiring, posting, or using specific technologies. This skill checks if a signal is already tracking what the user wants, returns results if so, or deploys a new signal if not.
 
 If the user is looking for **people** (not companies), use the `find-people-having-simple-signals` skill instead.
 If the user is asking about a **specific company**, use account intelligence or enterprise research instead.
+
+## API Calls
+
+All API calls in this skill use the bundled `api.sh` wrapper. Never read or reference API credentials directly.
+
+```bash
+# POST with body
+bash api.sh POST /api/v1/endpoint '{"key": "value"}'
+
+# GET without body
+bash api.sh GET /api/v1/endpoint
+```
 
 ## When to Use This Skill
 
@@ -24,6 +36,7 @@ If the user is asking about a **specific company**, use account intelligence or 
 2. **Don't guess the signal type.** If ambiguous (could be hiring or social), ask.
 3. **Close match ≠ loose match.** "Building voice AI agents" ≈ "building voice agents" but ≠ "building in-house voice agents." If you have to think about it, it's not a match.
 4. **Present what the API returns.** No fabrication, no inference.
+5. **Never output or log API credentials.** All authenticated calls go through `api.sh`.
 
 ---
 
@@ -49,17 +62,17 @@ To get started, I'll authenticate you via the API.
 
 Wait for user input. Then:
 
-1. Call `POST /api/v1/agent/sign-up` with `{ "email": "<user_email>" }`
+1. Run `bash api.sh POST /api/v1/agent/sign-up '{"email": "<user_email>"}'`
 2. Tell the user a 6-digit code was sent:
    ```
    I sent a 6-digit verification code to **{email}**. Reply with the code.
    ```
-3. Wait for input. Call `POST /api/v1/agent/verify` with `{ "email": "<user_email>", "otp_code": "<code>" }`
+3. Wait for input. Run `bash api.sh POST /api/v1/agent/verify '{"email": "<user_email>", "otp_code": "<code>"}'`
 4. On success, write to `.env`:
    - `OPENFUNNEL_API_KEY={api_key}`
    - `OPENFUNNEL_USER_ID={email}`
 5. Add `.env` to `.gitignore` if not already there
-6. Verify with `POST /api/v1/signal/get-signal-list { "pagination": { "limit": 1, "offset": 0 } }`
+6. Verify with `bash api.sh POST /api/v1/signal/get-signal-list '{"pagination": {"limit": 1, "offset": 0}}'`
 7. If verification succeeds → continue to Step 1
 8. If sign-up fails → ask user to retry
 9. If verify fails → tell user the code was invalid or expired (up to 10 attempts in 24 hours), offer to retry or resend
@@ -72,7 +85,7 @@ What activity or behavior is the user looking for? If unclear, ask.
 
 ### 2. Check existing signals
 
-`POST /api/v1/signal/get-signal-list` → get all currently deployed signals.
+Run `bash api.sh POST /api/v1/signal/get-signal-list '{"pagination": {"limit": 100, "offset": 0}}'` to get all currently deployed signals.
 
 A signal is unique by **query + ICP pair**. The same query with a different ICP is a different signal and needs separate deployment. When checking for matches, compare BOTH:
 
@@ -112,7 +125,7 @@ Wait for user input.
 
 ### 3. Get results from existing signal
 
-`POST /api/v1/signal/ { signal_id }` → returns accounts and people matched by this signal.
+Run `bash api.sh POST /api/v1/signal/ '{"signal_id": <id>}'` to get accounts and people matched by this signal.
 
 ```
 ### Results from: {signal_name}
@@ -120,7 +133,7 @@ Wait for user input.
 **{total_accounts} accounts found | {total_people} people found**
 ```
 
-If the user wants full details, pull with `POST /api/v2/account/batch { account_ids: [...] }`.
+If the user wants full details, run `bash api.sh POST /api/v2/account/batch '{"account_ids": [<ids>]}'`.
 
 After presenting:
 
@@ -153,7 +166,7 @@ Three company signal types:
 
 **Timeframe:** Last day to last year. Default: last 3 months.
 
-**Deploy:** `POST /api/v1/signal/deploy/deep-hiring-agent { name, search_query, timeframe, icp_id }`
+**Deploy:** `bash api.sh POST /api/v1/signal/deploy/deep-hiring-agent '{"name": "<name>", "search_query": "<query>", "timeframe": <days>, "icp_id": <id>, "repeat": <true|false>}'`
 
 ---
 
@@ -177,7 +190,7 @@ Three company signal types:
 
 **Timeframe:** Last day to last year.
 
-**Deploy:** `POST /api/v1/signal/deploy/social-listening-agent { name, search_query, signal_target: "account", timeframe, icp_id }`
+**Deploy:** `bash api.sh POST /api/v1/signal/deploy/social-listening-agent '{"name": "<name>", "search_query": "<query>", "signal_target": "account", "timeframe": <days>, "icp_id": <id>, "repeat": <true|false>}'`
 
 ---
 
@@ -194,7 +207,7 @@ Three company signal types:
 
 **Timeframe:** Last day to last year. Default: last 3 months.
 
-**Deploy:** `POST /api/v1/signal/deploy/technography-search-agent { name, technographic_list, technographic_variations, technography_context, timeframe, icp_id }`
+**Deploy:** `bash api.sh POST /api/v1/signal/deploy/technography-search-agent '{"name": "<name>", "technographic_list": ["<tech>"], "technographic_variations": ["<variations>"], "technography_context": "<context>", "timeframe": <days>, "icp_id": <id>, "repeat": <true|false>}'`
 
 ---
 
@@ -210,7 +223,7 @@ This could be tracked through hiring signals or social signals. Which would be m
 
 ### 5. Confirm before deploying
 
-First, fetch available ICP profiles via `GET /api/v1/icp/list`. If the user has ICPs, present them:
+First, fetch available ICP profiles: `bash api.sh GET /api/v1/icp/list`. If the user has ICPs, present them:
 
 ```
 I'll deploy a **{signal type}** signal:
@@ -238,16 +251,11 @@ Set any of these, or "deploy" to go with defaults.
 
 Auto-create a broad fallback ICP:
 
-```json
-{
-  "name": "<auto_generated_broad_icp_name>",
-  "target_roles": ["Any"],
-  "employee_ranges": ["1-10", "11-50", "51-200", "201-500", "501-1000", "1001-5000", "5001-10000", "10001+"],
-  "location": ["Any"]
-}
+```bash
+bash api.sh POST /api/v1/icp/create '{"name": "Broad Default ICP", "target_roles": ["Any"], "employee_ranges": ["1-10", "11-50", "51-200", "201-500", "501-1000", "1001-5000", "5001-10000", "10001+"], "location": ["Any"]}'
 ```
 
-Call `POST /api/v1/icp/create` with the above, then tell the user:
+Then tell the user:
 
 ```
 No ICP selected, so I created a broad fallback ICP: **{name}** (ID: {id})
@@ -265,7 +273,7 @@ it filters by company size, location, and the roles you're targeting.
 2. **Skip** — auto-create a broad fallback ICP and continue
 ```
 
-If quick setup → collect ICP name, target roles, company size, and location. Create via `POST /api/v1/icp/create`.
+If quick setup → collect ICP name, target roles, company size, and location. Create via `bash api.sh POST /api/v1/icp/create '{"name": "<name>", "target_roles": ["<roles>"], "employee_ranges": ["<ranges>"], "location": ["<location>"]}'`.
 
 If skip → auto-create the broad fallback ICP as above.
 
@@ -282,4 +290,4 @@ Results come in as they're found — just say "check on {signal_name}" anytime.
 
 ### 7. Check back
 
-`POST /api/v1/signal/ { signal_id }` → present whatever accounts and people have been found so far.
+Run `bash api.sh POST /api/v1/signal/ '{"signal_id": <id>}'` to get results found so far.

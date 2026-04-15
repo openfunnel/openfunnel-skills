@@ -1,9 +1,9 @@
 ---
 name: find-icp-companies-with-active-buying-windows-and-the-people-involved
-description: Find ICP companies with active, inferred buying windows and the people involved using the TAQ model — Trait (who they are), Activity (what they're doing now), Qualifier (what they already have)
+description: Find ICP companies with active, inferred buying windows and the people involved (daily) using the TAQ model — Trait (who they are), Activity (what they're doing now), Qualifier (what they already have)
 ---
 
-# Find ICP Companies with Active Buying Windows and the People Involved
+# Find ICP Companies with Active Buying Windows and the People Involved (Daily)
 
 Find ICP companies with inferred buying windows — where a combination of who they are (trait), what they're doing right now (activity), and what they already have in place (qualifier) signals they're ready to buy. Uses the TAQ model to build a precise search through a guided walkthrough.
 

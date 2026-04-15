@@ -1,8 +1,23 @@
 # OpenFunnel
 
-OpenFunnel is an agent skills package for finding active pain points and buying windows inside your ideal customer profile.
+OpenFunnel is a Market Events Intelligence Platform for GTM Teams.
 
-It adds time-sensitive GTM intelligence on top of static account lists so agents can find relevant companies, identify the right team, surface evidence, and turn signals into action.
+### What are Market Events for GTM?
+
+50M companies and 1B people are moving daily in time, facing new problems you can help with:
+
+- Jobs open up to solve very specific pain-points
+- People and teams join to work on specific problems
+
+OpenFunnel is a time-aware context graph across 1B people and 50M companies that continuously streams the custom defined events that indicate pain-points.
+
+### Why does this matter for GTM?
+
+Events in the external world, when inferred, can:
+
+- Detect pain-points
+- Signal intent to solve a problem
+- Predict upcoming buying windows
 
 ## Install
 

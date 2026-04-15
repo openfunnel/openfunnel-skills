@@ -1,7 +1,7 @@
 {
   "name": "openfunnel",
   "version": "0.2.15",
-  "description": "OpenFunnel skills for finding active pain-points and buying windows in your Ideal Customer Profile.",
+  "description": "Market Events Intelligence Platform for GTM Teams. A time-aware context graph across 1B people and 50M companies that continuously streams custom defined events that indicate pain-points.",
   "type": "module",
   "author": "OpenFunnel <hello@openfunnel.ai> (https://openfunnel.ai)",
   "homepage": "https://openfunnel.ai",

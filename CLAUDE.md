@@ -1,6 +1,6 @@
 # OpenFunnel
 
-Search for active pain-points and buying windows in your Ideal Customer Profile. Layers dynamic, time-sensitive intelligence on top of static ICP definitions.
+Infer pain-points from live company and people events across your Ideal Customer Profile. Inferred pain-points are leading indicators of buying behavior.
 
 ---
 
@@ -55,8 +55,8 @@ User Request
   ├─ SPECIFIC COMPANY ("Research Ramp", "What's happening at Vercel right now?")
   │   → Use the `enrich-and-research` skill and follow its workflow
   │
-  ├─ BUYING WINDOWS ("Find B2B SaaS companies migrating off Heroku", "Mid-market companies hiring for AI evaluation")
-  │   → Use the `find-icp-companies-with-active-buying-windows-and-the-people-involved` skill and follow its workflow
+  ├─ PAIN-POINTS ("B2B SaaS companies migrating off Heroku that already have a DevOps team", "Mid-market healthcare companies hiring for their first CISO")
+  │   → Use the `find-icp-companies-with-active-pain-points-and-the-people-involved` skill and follow its workflow
   │
   ├─ FIND COMPANIES ("Companies hiring AI engineers", "Find companies posting about SOC2 compliance")
   │   → Use the `find-companies-having-simple-signals` skill and follow its workflow
@@ -101,7 +101,7 @@ Existing data is instant and free. Only search or deploy agents when no signal c
 Read these files only when routed to them by the workflow above.
 
 ### Skills
-- `find-icp-companies-with-active-buying-windows-and-the-people-involved` — Find ICP companies with inferred buying windows and the people involved
+- `find-icp-companies-with-active-pain-points-and-the-people-involved` — Find ICP companies with inferred pain-points from live company and people events, and the people involved
 - `find-companies-having-simple-signals` — Find companies by what they're hiring for, posting about, or what tech they use
 - `find-people-having-simple-signals` — Find people posting about topics, changing jobs, or engaging with competitor content
 - `enrich-accounts-with-contacts-and-emails` — Turn a list of domains or accounts into relevant contacts with work email coverage

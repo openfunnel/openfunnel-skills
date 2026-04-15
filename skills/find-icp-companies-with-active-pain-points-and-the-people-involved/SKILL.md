@@ -1,13 +1,13 @@
 ---
-name: find-icp-companies-with-active-buying-windows-and-the-people-involved
-description: Find ICP companies with active, inferred buying windows and the people involved (daily) using the TAQ model — Trait (who they are), Activity (what they're doing now), Qualifier (what they already have)
+name: find-icp-companies-with-active-pain-points-and-the-people-involved
+description: Find ICP companies with inferred pain-points from live company and people events, and the people involved (daily). Uses the TAQ model — Trait (who they are), Activity (what they're doing now), Qualifier (what they already have). Inferred pain-points are leading indicators of buying behavior.
 ---
 
-# Find ICP Companies with Active Buying Windows and the People Involved (Daily)
+# Find ICP Companies with Active Pain-Points and the People Involved (Daily)
 
-Find ICP companies with inferred buying windows — where a combination of who they are (trait), what they're doing right now (activity), and what they already have in place (qualifier) signals they're ready to buy. Uses the TAQ model to build a precise search through a guided walkthrough.
+Find ICP companies with inferred pain-points from live company and people events — where a combination of who they are (trait), what they're doing right now (activity), and what they already have in place (qualifier) indicates active pain. Uses the TAQ model to build a precise search through a guided walkthrough.
 
-Instead of picking signal types (hiring vs social vs tech), describe the pain and the agent infers buying windows by decomposing it into searchable components.
+Inferred pain-points are leading indicators of buying behavior. Instead of picking signal types (hiring vs social vs tech), describe the pain and the agent infers pain-points by decomposing it into searchable components.
 
 ## When to Use This Skill
 
@@ -24,7 +24,7 @@ Instead of picking signal types (hiring vs social vs tech), describe the pain an
 2. **Show the progressive build.** After each TAQ step, show the running summary so the user sees their search taking shape.
 3. **Don't deploy without confirming.** Signals cost credits. Always show the full config and wait for explicit "deploy."
 4. **Present what the API returns.** No fabrication, no inference.
-5. **Activity is the timing layer.** Always explain why it matters. A trait without activity is a static list. Activity is what makes it a buying signal.
+5. **Activity is the timing layer.** Always explain why it matters. A trait without activity is a static list. Activity is what makes it an inferred pain-point.
 
 ---
 
@@ -42,7 +42,7 @@ Before anything, check that `.env` contains `OPENFUNNEL_API_KEY` and `OPENFUNNEL
 ### Welcome to OpenFunnel
 
 OpenFunnel finds companies with active pain points — not static lists,
-but companies showing buying signals right now.
+but companies showing inferred pain-points from live events right now.
 
 To get started, I'll authenticate you via the API and fetch your key.
 
@@ -135,7 +135,7 @@ After the user responds, show:
 
 ### 2. Activity (optional, strongly recommended)
 
-This is what the company is CURRENTLY DOING that indicates they need what the user sells. This is the timing layer — the difference between a static list and a live buying signal.
+This is what the company is CURRENTLY DOING that indicates they need what the user sells. This is the timing layer — the difference between a static list and an inferred pain-point.
 
 ```
 **Step 2: Activity** — What current action would indicate this company needs what you sell — right now?
@@ -475,7 +475,7 @@ Always show after presenting results:
 ### What would you like to do next?
 
 1. **Drill into a specific account** — full enrichment, signals, contacts, and attack strategy
-2. **Score & tier these accounts** — prioritize by pain urgency and buying window
+2. **Score & tier these accounts** — prioritize by pain urgency and evidence strength
 3. **Find people at these companies** — decision-makers posting about this pain
 4. **Enterprise deep-dive** — for F500 accounts, find which team has the pain
 5. **Deploy another signal** — search for a different pain point or refine this one

@@ -17,13 +17,13 @@ Events in the external world, when inferred, can:
 
 - Detect pain-points
 - Signal intent to solve a problem
-- Predict upcoming buying windows
+- Predict leading indicators of buying behavior
 
 ## Skills
 
 | Skill | Description |
 |-------|-------------|
-| `find-icp-companies-with-active-buying-windows-and-the-people-involved` | Find ICP companies with inferred buying windows and the people involved |
+| `find-icp-companies-with-active-pain-points-and-the-people-involved` | Find ICP companies with inferred pain-points from live company and people events, and the people involved |
 | `find-companies-having-simple-signals` | Find companies by what they are hiring for, posting about, or signaling in market |
 | `find-people-having-simple-signals` | Find people tied to topics, job changes, and competitor engagement |
 | `enrich-and-research` | Enrich a company with people, signals, and a recommended attack strategy |

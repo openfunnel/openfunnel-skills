@@ -40,7 +40,7 @@ Before anything, check that `.env` contains `OPENFUNNEL_API_KEY` and `OPENFUNNEL
 ```
 ### Welcome to OpenFunnel
 
-OpenFunnel searches for active pain-points and buying windows in your Ideal Customer Profile.
+OpenFunnel infers pain-points from live company and people events across your Ideal Customer Profile. Inferred pain-points are leading indicators of buying behavior.
 
 To get started, I'll authenticate you via the API.
 

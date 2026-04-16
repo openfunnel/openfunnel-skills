@@ -21,9 +21,17 @@ Events in the external world, when inferred, can:
 
 ### The problem today
 
-Most sales and GTM teams aren't watching market movements closely — because they're difficult to index, capture, and draw inference from. This leaves pipeline on the table. Things change within companies before a buying window shows up — a new hire, a migration, a team being built from scratch. By the time it's obvious, competitors are already in the deal.
+Most sales and GTM teams aren't watching market movements closely. They're difficult to index, capture, and draw inference from. This leaves pipeline on the table.
 
-Having these market events captured means GTM teams can be faster, unlock more pipeline, and be genuinely helpful to prospects when pain is just emerging — not after everyone else has noticed.
+Things change within companies before a buying window shows up:
+
+- A new hire to solve a specific problem that your software can help with
+- A migration from one platform to another
+- A team being built out to expand into specific categories
+
+By the time it's obvious, competitors are already in the deal.
+
+Having these market events captured means GTM teams can be faster, unlock more pipeline, and be genuinely helpful to prospects when pain is just emerging.
 
 ### You don't need another list. You need an informer agent.
 

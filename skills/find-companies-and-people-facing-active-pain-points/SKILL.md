@@ -1,9 +1,9 @@
 ---
-name: find-icp-companies-with-active-pain-points-and-the-people-involved
-description: Find ICP companies with inferred pain-points from live company and people events, and the people involved (daily). Uses the TAQ model — Trait (who they are), Activity (what they're doing now), Qualifier (what they already have). Inferred pain-points are leading indicators of buying behavior.
+name: find-companies-and-people-facing-active-pain-points
+description: Find companies and people facing active pain-points (daily). Inferred from live company and people events using the TAQ model — Trait (who they are), Activity (what they're doing now), Qualifier (what they already have). Inferred pain-points are leading indicators of buying behavior.
 ---
 
-# Find ICP Companies with Active Pain-Points and the People Involved (Daily)
+# Find Companies and People Facing Active Pain-Points (Daily)
 
 Find ICP companies with inferred pain-points from live company and people events — where a combination of who they are (trait), what they're doing right now (activity), and what they already have in place (qualifier) indicates active pain. Uses the TAQ model to build a precise search through a guided walkthrough.
 
@@ -17,6 +17,23 @@ Inferred pain-points are leading indicators of buying behavior. Instead of picki
 - "Fintech startups scaling their engineering team after a Series B"
 - "Companies building AI agents that are hiring for evaluation and testing roles"
 - "E-commerce companies posting about replatforming that already use Stripe"
+
+## API Calls
+
+This skill bundles two scripts in the same directory as this SKILL.md file. **Never read or reference API credentials directly.**
+
+- `signup.sh` — handles authentication. Writes credentials to `.env` internally. Never exposes the API key.
+- `api.sh` — handles all authenticated API calls. Reads credentials from `.env` internally.
+
+First, resolve the script paths relative to this file's location:
+
+```bash
+SKILL_DIR="$(dirname "$(find ~/.agents/skills -name SKILL.md -path "*/find-companies-and-people-facing-active-pain-points/*" 2>/dev/null | head -1)")"
+API="$SKILL_DIR/api.sh"
+SIGNUP="$SKILL_DIR/signup.sh"
+```
+
+Then use `$SIGNUP` for auth and `$API` for all other calls.
 
 ## Agent Rules
 
@@ -33,11 +50,15 @@ Inferred pain-points are leading indicators of buying behavior. Instead of picki
 
 ### 0. Agent Auth Check
 
-Before anything, check that `.env` contains `OPENFUNNEL_API_KEY` and `OPENFUNNEL_USER_ID`.
+Before anything, test if credentials are working by running:
 
-**If both exist:** skip to Step 1.
+```bash
+bash "$API" POST /api/v1/signal/get-signal-list '{"pagination": {"limit": 1, "offset": 0}}'
+```
 
-**If either is missing:**
+**If the call succeeds** (returns JSON with `signals`): skip to Step 1.
+
+**If the call fails** (returns an error or missing credentials message):
 
 ```
 ### Welcome to OpenFunnel
@@ -52,13 +73,7 @@ To get started, I'll authenticate you via the API and fetch your key.
 
 Wait for user input. Then:
 
-1. Call `POST /api/v1/agent/sign-up` with:
-
-```json
-{
-  "email": "<user_email>"
-}
-```
+1. Call `bash "$SIGNUP" start "<user_email>"`
 
 2. If the call succeeds, tell the user a 6-digit verification code was sent and ask for it:
 
@@ -68,34 +83,15 @@ I sent a 6-digit verification code to **{email}**.
 Reply with the code and I'll finish authentication.
 ```
 
-3. Wait for user input. Then call `POST /api/v1/agent/verify` with:
+3. Wait for user input. Then call `bash "$SIGNUP" verify "<user_email>" "<code>"`
 
-```json
-{
-  "email": "<user_email>",
-  "otp_code": "<6_digit_code>"
-}
-```
+The response is: `{"status": "authenticated", "user_id": "..."}`. Credentials are written to `.env` and `.gitignore` is updated automatically.
 
-4. On success, write these values to `.env` in the project root:
-   - `OPENFUNNEL_API_KEY={api_key}` from the verify response
-   - `OPENFUNNEL_USER_ID={email}` from the verify response
+4. If authentication succeeds → continue to Step 1.
 
-5. Add `.env` to `.gitignore` if not already there.
+5. If sign-up fails → tell the user the email could not be authenticated and ask them to retry.
 
-6. Verify credentials by calling `POST /api/v1/signal/get-signal-list` with:
-
-```json
-{
-  "pagination": { "limit": 1, "offset": 0 }
-}
-```
-
-7. If verification succeeds → continue to Step 1.
-
-8. If sign-up fails → tell the user the email could not be authenticated and ask them to retry.
-
-9. If verify fails → tell the user the code was invalid or expired, explain they get up to 10 attempts within 24 hours, and ask whether to retry the code or send a new one by calling sign-up again.
+6. If verify fails → tell the user the code was invalid or expired, explain they get up to 10 attempts within 24 hours, and ask whether to retry the code or send a new one by calling sign-up again.
 
 ---
 
@@ -205,7 +201,7 @@ After the user responds, show the completed TAQ:
 
 ### 4. ICP Check
 
-Fetch available ICP profiles via `GET /api/v1/icp/list`.
+Fetch available ICP profiles via `bash "$API" GET /api/v1/icp/list`.
 
 **If ICPs exist:**
 
@@ -227,7 +223,7 @@ Wait for user input.
    - `target_roles`: `["Any"]`
    - `employee_ranges`: `["1-10", "11-50", "51-200", "201-500", "501-1000", "1001-5000", "5001-10000", "10001+"]`
    - `location`: `["Any"]`
-2. Call `POST /api/v1/icp/create` with:
+2. Call `bash "$API" POST /api/v1/icp/create '<json_body>'` with:
 
 ```json
 {
@@ -260,7 +256,7 @@ Wait for user input.
 
 **If quick setup chosen:**
 
-1. Fetch `GET /api/v1/icp/options` to get valid values for locations.
+1. Fetch `bash "$API" GET /api/v1/icp/options` to get valid values for locations.
 
 2. Present the fields:
 
@@ -341,7 +337,7 @@ You can leave funding empty, or provide a single stage, or a min/max range.
 Create this ICP? (yes / edit)
 ```
 
-4. If yes → `POST /api/v1/icp/create` with:
+4. If yes → `bash "$API" POST /api/v1/icp/create '<json_body>'` with:
 
 ```json
 {
@@ -418,7 +414,7 @@ If "edit" → ask what to change, update, re-confirm.
 
 If "yes" → deploy:
 
-`POST /api/v1/signal/deploy/deep-company-search-agent` with:
+`bash "$API" POST /api/v1/signal/deploy/deep-company-search-agent '<json_body>'` with:
 
 ```json
 {
@@ -451,7 +447,7 @@ Results come in as they're found — say "check on {signal_name}" anytime.
 
 When the user checks back:
 
-`POST /api/v1/signal/ { signal_id }` → present accounts and people.
+`bash "$API" POST /api/v1/signal/ '{"signal_id": <signal_id>}'` → present accounts and people.
 
 ```
 ### Results from: {signal_name}
@@ -464,7 +460,7 @@ When the user checks back:
 | 2 | ... | ... | ... |
 ```
 
-If the user wants full details on specific accounts, pull with `POST /api/v2/account/batch { account_ids: [...] }`.
+If the user wants full details on specific accounts, pull with `bash "$API" POST /api/v2/account/batch '{"account_ids": [...]}'`.
 
 ---
 
@@ -489,108 +485,5 @@ Route based on selection:
 - 3 → use the `find-people-having-simple-signals` skill
 - 4 → use the `enterprise-account-research` skill
 - 5 → loop back to Step 1
-- 6 → use CRM sync endpoints: `POST /api/v1/crm/sync-accounts-job` and `POST /api/v1/crm/sync-people-job`
+- 6 → use CRM sync endpoints: `bash "$API" POST /api/v1/crm/sync-accounts-job '<json_body>'` and `bash "$API" POST /api/v1/crm/sync-people-job '<json_body>'`
 
----
-
-## API Reference
-
-**Base URL:** `https://api.openfunnel.dev`
-
-**Required headers (authenticated requests after Step 0):**
-
-| Header | Value |
-|--------|-------|
-| `X-API-Key` | Your OpenFunnel API key (from `.env` → `OPENFUNNEL_API_KEY`, returned by `POST /api/v1/agent/verify`) |
-| `X-User-ID` | Your verified email (from `.env` → `OPENFUNNEL_USER_ID`, stored from the `email` field returned by `POST /api/v1/agent/verify`) |
-| `Content-Type` | `application/json` |
-
-**Endpoints used by this skill:**
-
-### Agent Sign Up
-- **Method:** `POST`
-- **Path:** `/api/v1/agent/sign-up`
-- **Body:**
-  - `email` (string, required) — Email address to send the 6-digit verification code to
-- **Response:** `{ email, message }`
-
-### Agent Verify
-- **Method:** `POST`
-- **Path:** `/api/v1/agent/verify`
-- **Body:**
-  - `email` (string, required) — Email address used during sign-up
-  - `otp_code` (string, required) — 6-digit verification code
-- **Response:** `{ email, api_key, is_new_user }`
-
-### Deploy Deep Company Search Signal
-- **Method:** `POST`
-- **Path:** `/api/v1/signal/deploy/deep-company-search-agent`
-- **Body:**
-  - `name` (string, required) — Signal run identifier
-  - `trait` (string, required) — Company descriptor: industry, specific description, or services offered
-  - `activity` (string, optional) — Current company actions indicating buying intent or emerging challenges
-  - `qualifier` (string, optional) — Existing company capabilities (deal-breaker conditions)
-  - `icp_id` (integer, optional) — ICP profile ID for result filtering
-  - `repeat` (boolean, optional) — Daily recurrence toggle (default: false)
-  - `account_audience_name` (string, optional) — Audience name for auto-adding discovered accounts
-  - `people_audience_name` (string, optional) — Audience name for people enrichment
-  - `max_credit_limit` (integer, optional) — Credit consumption cap
-  - `enable_safe_crm_addition` (boolean, optional) — Auto-add accounts to CRM (default: false)
-  - `auto_enrich_people_emails` (boolean, optional) — Enrich contacts with work emails (default: false)
-- **Response:** `{}`
-
-### Verify Credentials / List Signals
-- **Method:** `POST`
-- **Path:** `/api/v1/signal/get-signal-list`
-- **Body:** `{ "pagination": { "limit": 1, "offset": 0 } }`
-- **Response:** `{ signals: [...], total_count, pagination }`
-
-### Get Signal Results
-- **Method:** `POST`
-- **Path:** `/api/v1/signal/`
-- **Body:** `{ "signal_id": <id> }`
-- **Response:** `{ signal_id, signal_name, signal_type, status, total_accounts, total_people, account_ids, signal_people: [...] }`
-
-### Get Account Details (V2 Batch)
-- **Method:** `POST`
-- **Path:** `/api/v2/account/batch`
-- **Body:** `{ "account_ids": [<ids>] }`
-- **Response:** Full account details with inline signal content, contacts, and CRM data
-
-### List ICP Profiles
-- **Method:** `GET`
-- **Path:** `/api/v1/icp/list`
-- **Response:** `{ icps: [{ id, name, target_roles, ... }], total_count }`
-
-### ICP Options (valid filter values)
-- **Method:** `GET`
-- **Path:** `/api/v1/icp/options`
-- **Response:** `{ employee_ranges, funding_stages, locations, sub_locations, people_locations, people_sub_locations }`
-
-### Create ICP
-- **Method:** `POST`
-- **Path:** `/api/v1/icp/create`
-- **Body:**
-  - `name` (string, required) — Descriptive ICP name
-  - `target_roles` (string[], required) — Job titles to target
-  - `employee_ranges` (string[], required) — Company size labels from `/icp/options`
-  - `location` (string[], required) — HQ location codes from `/icp/options`
-  - `min_funding` (string, optional) — Funding stage range start
-  - `max_funding` (string, optional) — Funding stage range end
-  - `employee_count_funding_config` (string, optional) — "AND" or "OR"
-  - `sub_locations` (string[], optional) — US state/city codes
-  - `people_locations` (string[], optional) — People location codes
-  - `people_sub_locations` (string[], optional) — People US state/city codes
-- **Response:** `{ icp: { id, name, target_roles, min_employee, max_employee, ... } }`
-
-### CRM Sync — Accounts
-- **Method:** `POST`
-- **Path:** `/api/v1/crm/sync-accounts-job`
-- **Body:** `{ "account_ids": [<ids>], "assigned_user_email": "<optional>" }`
-- **Response:** `{ job_id, status, message, connected_crm, total_records }`
-
-### CRM Sync — People
-- **Method:** `POST`
-- **Path:** `/api/v1/crm/sync-people-job`
-- **Body:** `{ "people_ids": [<ids>], "assigned_user_email": "<optional>" }`
-- **Response:** `{ job_id, status, message, connected_crm, total_records }`

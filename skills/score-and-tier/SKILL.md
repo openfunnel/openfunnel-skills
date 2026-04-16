@@ -38,13 +38,34 @@ This is manual and intentional — bulk deep enriching the entire CRM is too exp
 
 ---
 
+## API Calls
+
+This skill bundles two scripts in the same directory as this SKILL.md file. **Never read or reference API credentials directly.**
+
+- `signup.sh` — handles authentication. Writes credentials to `.env` internally. Never exposes the API key.
+- `api.sh` — handles all authenticated API calls. Reads credentials from `.env` internally.
+
+First, resolve the script paths relative to this file's location:
+
+```bash
+SKILL_DIR="$(dirname "$(find ~/.agents/skills -name SKILL.md -path "*/score-and-tier/*" 2>/dev/null | head -1)")"
+API="$SKILL_DIR/api.sh"
+SIGNUP="$SKILL_DIR/signup.sh"
+```
+
+Then use `$SIGNUP` for auth and `$API` for all other calls.
+
 ## Part 0: Agent Auth Check
 
-Before anything, check that `.env` contains `OPENFUNNEL_API_KEY` and `OPENFUNNEL_USER_ID`.
+Before anything, test if credentials are working by running:
 
-**If both exist:** skip to Part 1.
+```bash
+bash "$API" POST /api/v1/signal/get-signal-list '{"pagination": {"limit": 1, "offset": 0}}'
+```
 
-**If either is missing:**
+**If the call succeeds** (returns JSON with `signals`): skip to Part 1.
+
+**If the call fails** (returns an error or missing credentials message):
 
 ```
 ### Welcome to OpenFunnel
@@ -58,24 +79,21 @@ To get started, I'll authenticate you via the API.
 
 Wait for user input. Then:
 
-1. Call `POST /api/v1/agent/sign-up` with `{ "email": "<user_email>" }`
+1. Run `bash "$SIGNUP" start "<user_email>"`
 2. Tell the user a 6-digit code was sent:
    ```
    I sent a 6-digit verification code to **{email}**. Reply with the code.
    ```
-3. Wait for input. Call `POST /api/v1/agent/verify` with `{ "email": "<user_email>", "otp_code": "<code>" }`
-4. On success, write to `.env`:
-   - `OPENFUNNEL_API_KEY={api_key}`
-   - `OPENFUNNEL_USER_ID={email}`
-5. Add `.env` to `.gitignore` if not already there
-6. Verify with `POST /api/v1/signal/get-signal-list { "pagination": { "limit": 1, "offset": 0 } }`
-7. If verification succeeds → continue to ICP check
-8. If sign-up fails → ask user to retry
-9. If verify fails → tell user the code was invalid or expired (up to 10 attempts in 24 hours), offer to retry or resend
+3. Wait for input. Run `bash "$SIGNUP" verify "<user_email>" "<code>"`
+4. On success, the response is: `{"status": "authenticated", "user_id": "..."}`. Credentials are written to `.env` and `.gitignore` is updated automatically.
+5. Verify with `bash "$API" POST /api/v1/signal/get-signal-list '{"pagination": {"limit": 1, "offset": 0}}'`
+6. If verification succeeds → continue to ICP check
+7. If sign-up fails → ask user to retry
+8. If verify fails → tell user the code was invalid or expired (up to 10 attempts in 24 hours), offer to retry or resend
 
 ### ICP Check
 
-After auth, fetch ICP profiles via `GET /api/v1/icp/list`.
+After auth, fetch ICP profiles via `bash "$API" GET /api/v1/icp/list`.
 
 **If ICPs exist:** note the available ICPs and continue to Part 1.
 
@@ -89,7 +107,7 @@ it filters by company size, location, and the roles you're targeting.
 2. **Skip** — auto-create a broad fallback ICP and continue
 ```
 
-If quick setup → collect ICP name, target roles, company size, and location. Create via `POST /api/v1/icp/create`.
+If quick setup → collect ICP name, target roles, company size, and location. Create via `bash "$API" POST /api/v1/icp/create '<json_body>'`.
 
 If skip → auto-create a broad fallback ICP:
 
@@ -102,7 +120,7 @@ If skip → auto-create a broad fallback ICP:
 }
 ```
 
-Call `POST /api/v1/icp/create`, then tell the user:
+Call `bash "$API" POST /api/v1/icp/create '<json_body>'`, then tell the user:
 
 ```
 I created a default ICP profile: **{name}** (ID: {id})
@@ -159,7 +177,7 @@ Output: every account has a score, reasoning, and tier.
 
 Create a new audience per tier. Each audience is named by tier (e.g. "Tier-1", "Tier-2", "Tier-3") and contains the account IDs that landed in that bucket.
 
-Use `POST https://api.openfunnel.dev/api/v1/audience/create { audience_name, account_ids }` to create each tier audience.
+Use `bash "$API" POST /api/v1/audience/create '{"audience_name": "...", "account_ids": [...]}'` to create each tier audience.
 
 ---
 
@@ -173,11 +191,11 @@ The continuous piece is **new accounts entering the OF universe**. Signals fire 
 
 Runs on a cron (e.g. daily). Uses the alerts API to detect new accounts.
 
-1. **Poll alerts** — `GET https://api.openfunnel.dev/api/v1/insights/alerts { days, limit, offset }` filtered by `view_name` matching the master scoring audience. Returns newly discovered accounts since last check.
+1. **Poll alerts** — `bash "$API" GET /api/v1/insights/alerts '{"days": N, "limit": N, "offset": 0}'` filtered by `view_name` matching the master scoring audience. Returns newly discovered accounts since last check.
 2. **Diff** — compare alert account IDs against already-scored accounts. The delta = new accounts to score.
 3. **Score new accounts** — same lens (pain-based or custom prompt), same rubric, same four dimensions.
 4. **Tier new accounts** — apply the same tier boundaries from init scoring.
-5. **Add to tier audiences** — `POST https://api.openfunnel.dev/api/v1/audience/add-accounts { audience_id, account_ids }` for each tier.
+5. **Add to tier audiences** — `bash "$API" POST /api/v1/audience/add-accounts '{"audience_id": ID, "account_ids": [...]}'` for each tier.
 6. **Enter assignment** — new accounts in each tier are available for assignment (round robin, etc.)
 
 ### What stays the same
@@ -233,18 +251,16 @@ Do signals tell a connected narrative?
 
 ---
 
-## API Calls
+## Runtime
 
-| Step | Endpoint | Description |
-|------|----------|-------------|
-| Step 1 | `POST https://api.openfunnel.dev/api/v1/audience/get-audience-list { limit, offset }` | List audiences for customer to pick source |
-| Step 1 | `POST https://api.openfunnel.dev/api/v1/audience/ { audience_id }` | Get account IDs from source audience |
-| Step 4 | `POST https://api.openfunnel.dev/api/v2/account/batch { account_ids }` | Full details with inline signal content + CRM data |
-| Step 4 | `GET https://api.openfunnel.dev/api/v1/account/{accountId}/timeline { days, limit, offset }` | Chronological events |
-| Step 6 | `POST https://api.openfunnel.dev/api/v1/audience/create { audience_name, account_ids }` | Create tier audience (init) |
-| Part 2 | `GET https://api.openfunnel.dev/api/v1/insights/alerts { days, limit, offset }` | Poll for new accounts in master scoring audience |
-| Part 2 | `POST https://api.openfunnel.dev/api/v1/audience/add-accounts { audience_id, account_ids }` | Add new accounts to existing tier audience |
-
-All endpoints require headers: `X-API-Key`, `X-User-ID`, `Content-Type: application/json`.
+| Step | Call |
+|------|------|
+| Step 1 | `bash "$API" POST /api/v1/audience/get-audience-list '{"limit": N, "offset": 0}'` |
+| Step 1 | `bash "$API" POST /api/v1/audience/ '{"audience_id": ID}'` |
+| Step 4 | `bash "$API" POST /api/v2/account/batch '{"account_ids": [...]}'` |
+| Step 4 | `bash "$API" GET /api/v1/account/{accountId}/timeline '{"days": N, "limit": N, "offset": 0}'` |
+| Step 6 | `bash "$API" POST /api/v1/audience/create '{"audience_name": "...", "account_ids": [...]}'` |
+| Part 2 | `bash "$API" GET /api/v1/insights/alerts '{"days": N, "limit": N, "offset": 0}'` |
+| Part 2 | `bash "$API" POST /api/v1/audience/add-accounts '{"audience_id": ID, "account_ids": [...]}'` |
 
 > **NOTE:** 3 API calls per account (summary + V2 batch + timeline). Large audiences (100+) will be slow.

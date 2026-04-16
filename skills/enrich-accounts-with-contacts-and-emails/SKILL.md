@@ -15,6 +15,23 @@ If the user wants **contacts + emails for one company**, this skill still applie
 - "I have OpenFunnel accounts, now find the people and enrich contact info"
 - "Start from company domains, get account IDs, then return contacts with email addresses"
 
+## API Calls
+
+This skill bundles two scripts in the same directory as this SKILL.md file. **Never read or reference API credentials directly.**
+
+- `signup.sh` — handles authentication. Writes credentials to `.env` internally. Never exposes the API key.
+- `api.sh` — handles all authenticated API calls. Reads credentials from `.env` internally.
+
+First, resolve the script paths relative to this file's location:
+
+```bash
+SKILL_DIR="$(dirname "$(find ~/.agents/skills -name SKILL.md -path "*/enrich-accounts-with-contacts-and-emails/*" 2>/dev/null | head -1)")"
+API="$SKILL_DIR/api.sh"
+SIGNUP="$SKILL_DIR/signup.sh"
+```
+
+Then use `$SIGNUP` for auth and `$API` for all other calls.
+
 ## Agent Rules
 
 1. **Never fabricate contacts or emails.** If OpenFunnel does not return a person or email, say it is missing.
@@ -30,11 +47,15 @@ If the user wants **contacts + emails for one company**, this skill still applie
 
 ### 0. Agent Auth Check
 
-Before anything, check that `.env` contains `OPENFUNNEL_API_KEY` and `OPENFUNNEL_USER_ID`.
+Before anything, test if credentials are working by running:
 
-**If both exist:** skip to Step 1.
+```bash
+bash "$API" POST /api/v1/signal/get-signal-list '{"pagination": {"limit": 1, "offset": 0}}'
+```
 
-**If either is missing:**
+**If the call succeeds** (returns JSON with `signals`): skip to Step 1.
+
+**If the call fails** (returns an error or missing credentials message):
 
 ```
 ### Welcome to OpenFunnel
@@ -49,13 +70,7 @@ To get started, I'll authenticate you via the API and fetch your key.
 
 Wait for user input. Then:
 
-1. Call `POST /api/v1/agent/sign-up` with:
-
-```json
-{
-  "email": "<user_email>"
-}
-```
+1. Run `bash "$SIGNUP" start "<user_email>"`
 
 2. If the call succeeds, tell the user a 6-digit verification code was sent and ask for it:
 
@@ -65,38 +80,21 @@ I sent a 6-digit verification code to **{email}**.
 Reply with the code and I'll finish authentication.
 ```
 
-3. Wait for user input. Then call `POST /api/v1/agent/verify` with:
+3. Wait for user input. Then run `bash "$SIGNUP" verify "<user_email>" "<code>"`
 
-```json
-{
-  "email": "<user_email>",
-  "otp_code": "<6_digit_code>"
-}
-```
+4. On success, the response is: `{"status": "authenticated", "user_id": "..."}`. Credentials are written to `.env` and `.gitignore` is updated automatically.
 
-4. On success, write these values to `.env` in the project root:
-   - `OPENFUNNEL_API_KEY={api_key}` from the verify response
-   - `OPENFUNNEL_USER_ID={email}` from the verify response
+5. Verify with `bash "$API" POST /api/v1/signal/get-signal-list '{"pagination": {"limit": 1, "offset": 0}}'`
 
-5. Add `.env` to `.gitignore` if not already there.
+6. If verification succeeds → continue to ICP check.
 
-6. Verify credentials by calling `POST /api/v1/signal/get-signal-list` with:
+7. If sign-up fails → tell the user the email could not be authenticated and ask them to retry.
 
-```json
-{
-  "pagination": { "limit": 1, "offset": 0 }
-}
-```
-
-7. If verification succeeds → continue to ICP check.
-
-8. If sign-up fails → tell the user the email could not be authenticated and ask them to retry.
-
-9. If verify fails → tell the user the code was invalid or expired, explain they get up to 10 attempts within 24 hours, and ask whether to retry the code or send a new one by calling sign-up again.
+8. If verify fails → tell the user the code was invalid or expired, explain they get up to 10 attempts within 24 hours, and ask whether to retry the code or send a new one by calling sign-up again.
 
 ### ICP Check
 
-After auth, fetch ICP profiles via `GET /api/v1/icp/list`.
+After auth, fetch ICP profiles via `bash "$API" GET /api/v1/icp/list`.
 
 **If ICPs exist:** note the available ICPs and continue to Step 1.
 
@@ -110,7 +108,7 @@ it filters by company size, location, and the roles you're targeting.
 2. **Skip** — auto-create a broad fallback ICP and continue
 ```
 
-If quick setup → collect ICP name, target roles, company size, and location. Create via `POST /api/v1/icp/create`.
+If quick setup → collect ICP name, target roles, company size, and location. Create via `bash "$API" POST /api/v1/icp/create '<json_body>'`.
 
 If skip → auto-create a broad fallback ICP:
 
@@ -123,7 +121,7 @@ If skip → auto-create a broad fallback ICP:
 }
 ```
 
-Call `POST /api/v1/icp/create`, then tell the user:
+Call `bash "$API" POST /api/v1/icp/create '<json_body>'`, then tell the user:
 
 ```
 I created a default ICP profile: **{name}** (ID: {id})
@@ -190,11 +188,11 @@ Use batch account enrichment first, even if the input contains only one domain.
 
 Call:
 
-`POST /api/v1/enrich/accounts { domains: [...] }`
+`bash "$API" POST /api/v1/enrich/accounts '{"domains": [...]}'`
 
 Then poll:
 
-`GET /api/v1/enrich/accounts/{job_id}`
+`bash "$API" GET /api/v1/enrich/accounts/{job_id}`
 
 Polling guidance:
 
@@ -217,7 +215,7 @@ If the batch completes with mixed results, continue with all successful accounts
 
 After batch enrichment completes, fetch current account details with:
 
-`POST /api/v2/account/batch { account_ids: [...], icp_people_page: 1, icp_people_page_size: 100 }`
+`bash "$API" POST /api/v2/account/batch '{"account_ids": [...], "icp_people_page": 1, "icp_people_page_size": 100}'`
 
 Present a coverage summary before enrichment:
 
@@ -261,7 +259,7 @@ This works for a single account too — it just runs as a one-domain batch.
 
 For each resolved account returned from the batch account enrichment job, start a fast people enrichment job:
 
-`POST /api/v1/enrich/fast-people-enrichment`
+`bash "$API" POST /api/v1/enrich/fast-people-enrichment '<json_body>'`
 
 Body:
 
@@ -278,7 +276,7 @@ Run these jobs in parallel across accounts where possible.
 
 Then poll each job:
 
-`GET /api/v1/enrich/fast-people-enrichment/{job_id}`
+`bash "$API" GET /api/v1/enrich/fast-people-enrichment/{job_id}`
 
 Polling guidance:
 
@@ -306,12 +304,12 @@ Rules:
 
 Build one deduplicated people ID list from:
 
-- Existing `icp_people` from `POST /api/v2/account/batch`
+- Existing `icp_people` from the V2 account batch call
 - New `people_ids` returned by fast people enrichment
 
 Then call:
 
-`POST /api/v1/people/batch { people_ids: [...] }`
+`bash "$API" POST /api/v1/people/batch '{"people_ids": [...]}'`
 
 This is the source of truth for person details:
 
@@ -339,7 +337,7 @@ Split people into three groups:
 
 For eligible people, call:
 
-`POST /api/v1/enrich/people`
+`bash "$API" POST /api/v1/enrich/people '<json_body>'`
 
 Body:
 
@@ -353,7 +351,7 @@ Body:
 
 Then poll:
 
-`GET /api/v1/enrich/people/{job_id}`
+`bash "$API" GET /api/v1/enrich/people/{job_id}`
 
 Polling guidance:
 
@@ -430,76 +428,10 @@ Skip email enrichment only if:
 
 ### When to mention deep enrichment
 
-Mention `POST /api/v1/enrich/deep-enrich` only as an optional fallback when:
+Mention deep enrichment (`bash "$API" POST /api/v1/enrich/deep-enrich '<json_body>'`) only as an optional fallback when:
 
 - Fast people enrichment returns zero usable people across key accounts
 - The user explicitly asks for broader research or deeper company coverage
 
 Do not auto-run it in this workflow.
 
----
-
-## API Reference
-
-**Base URL:** `https://api.openfunnel.dev`
-
-**Required headers (all requests):**
-
-| Header | Value |
-|--------|-------|
-| `X-API-Key` | Your OpenFunnel API key (`OPENFUNNEL_API_KEY`) |
-| `X-User-ID` | Your OpenFunnel user ID (`OPENFUNNEL_USER_ID`) |
-| `Content-Type` | `application/json` |
-
-### Resolve existing accounts
-
-- **Method:** `POST`
-- **Path:** `/api/v1/enrich/accounts`
-- **Body:** `{ "domains": ["acme.com", "beta.io"] }`
-- **Use for:** starting batch account enrichment for one or more domains
-
-### Poll batch account enrichment
-
-- **Method:** `GET`
-- **Path:** `/api/v1/enrich/accounts/{job_id}`
-- **Use for:** reading per-domain account enrichment results including `account_id`, `status`, and `fields_updated`
-
-### Get account details after enrichment
-
-- **Method:** `POST`
-- **Path:** `/api/v2/account/batch`
-- **Body:** `{ "account_ids": [123, 456], "icp_people_page": 1, "icp_people_page_size": 100 }`
-- **Use for:** fetching current account details and existing ICP people after the batch account enrichment job completes
-
-### Fast people enrichment
-
-- **Method:** `POST`
-- **Path:** `/api/v1/enrich/fast-people-enrichment`
-- **Body:** `{ "account_id": 123, "seniority_filters": ["VP"], "department_filters": ["ENGINEERING"], "max_credit_limit": 50 }`
-- **Use for:** fast person discovery by account, seniority, and department
-
-### Poll fast people enrichment
-
-- **Method:** `GET`
-- **Path:** `/api/v1/enrich/fast-people-enrichment/{job_id}`
-- **Use for:** reading status, `people_ids`, and credits used for people discovery
-
-### Get people details
-
-- **Method:** `POST`
-- **Path:** `/api/v1/people/batch`
-- **Body:** `{ "people_ids": [101, 102] }`
-- **Use for:** fetching full person records after people discovery
-
-### Enrich people with contact info
-
-- **Method:** `POST`
-- **Path:** `/api/v1/enrich/people`
-- **Body:** `{ "people_ids": [101, 102], "enrich_emails": true, "enrich_phones": false }`
-- **Use for:** filling missing work emails
-
-### Poll people contact enrichment
-
-- **Method:** `GET`
-- **Path:** `/api/v1/enrich/people/{job_id}`
-- **Use for:** reading email enrichment completion, per-person status, and credits used

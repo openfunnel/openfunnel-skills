@@ -17,6 +17,23 @@ If the user is looking for **companies** (not people), use the `find-companies-h
 - "Spy on competitor sales reps"
 - "Find people posting about attending SaaStr"
 
+## API Calls
+
+This skill bundles two scripts in the same directory as this SKILL.md file. **Never read or reference API credentials directly.**
+
+- `signup.sh` — handles authentication. Writes credentials to `.env` internally. Never exposes the API key.
+- `api.sh` — handles all authenticated API calls. Reads credentials from `.env` internally.
+
+First, resolve the script paths relative to this file's location:
+
+```bash
+SKILL_DIR="$(dirname "$(find ~/.agents/skills -name SKILL.md -path "*/find-people-having-simple-signals/*" 2>/dev/null | head -1)")"
+API="$SKILL_DIR/api.sh"
+SIGNUP="$SKILL_DIR/signup.sh"
+```
+
+Then use `$SIGNUP` for auth and `$API` for all other calls.
+
 ## Agent Rules
 
 1. **Don't deploy signals without confirming.** Signals cost credits. Always confirm before deploying.
@@ -29,11 +46,15 @@ If the user is looking for **companies** (not people), use the `find-companies-h
 
 ### 0. Agent Auth Check
 
-Before anything, check that `.env` contains `OPENFUNNEL_API_KEY` and `OPENFUNNEL_USER_ID`.
+Before anything, test if credentials are working by running:
 
-**If both exist:** skip to Step 1.
+```bash
+bash "$API" POST /api/v1/signal/get-signal-list '{"pagination": {"limit": 1, "offset": 0}}'
+```
 
-**If either is missing:**
+**If the call succeeds** (returns JSON with `signals`): skip to Step 1.
+
+**If the call fails** (returns an error or missing credentials message):
 
 ```
 ### Welcome to OpenFunnel
@@ -47,20 +68,18 @@ To get started, I'll authenticate you via the API.
 
 Wait for user input. Then:
 
-1. Call `POST /api/v1/agent/sign-up` with `{ "email": "<user_email>" }`
+1. Call `bash "$SIGNUP" start "<user_email>"`
 2. Tell the user a 6-digit code was sent:
    ```
    I sent a 6-digit verification code to **{email}**. Reply with the code.
    ```
-3. Wait for input. Call `POST /api/v1/agent/verify` with `{ "email": "<user_email>", "otp_code": "<code>" }`
-4. On success, write to `.env`:
-   - `OPENFUNNEL_API_KEY={api_key}`
-   - `OPENFUNNEL_USER_ID={email}`
-5. Add `.env` to `.gitignore` if not already there
-6. Verify with `POST /api/v1/signal/get-signal-list { "pagination": { "limit": 1, "offset": 0 } }`
-7. If verification succeeds → continue to Step 1
-8. If sign-up fails → ask user to retry
-9. If verify fails → tell user the code was invalid or expired (up to 10 attempts in 24 hours), offer to retry or resend
+3. Wait for input. Call `bash "$SIGNUP" verify "<user_email>" "<code>"`
+
+The response is: `{"status": "authenticated", "user_id": "..."}`. Credentials are written to `.env` and `.gitignore` is updated automatically.
+
+4. If authentication succeeds → continue to Step 1
+5. If sign-up fails → ask user to retry
+6. If verify fails → tell user the code was invalid or expired (up to 10 attempts in 24 hours), offer to retry or resend
 
 ---
 
@@ -70,7 +89,7 @@ What activity or behavior, and what kind of people? If unclear, ask.
 
 ### 2. Check existing signals
 
-`POST /api/v1/signal/get-signal-list { pagination: { limit, offset }, filters }` → get all currently deployed signals.
+`bash "$API" POST /api/v1/signal/get-signal-list '{"pagination": {"limit": <limit>, "offset": <offset>}, "filters": {...}}'` → get all currently deployed signals.
 
 A signal is unique by **query + ICP pair**. Same query with a different ICP is a different signal. When checking for matches, compare BOTH the query (close match, not inference) and the ICP.
 
@@ -102,7 +121,7 @@ Wait for user input.
 
 ### 3. Get results from existing signal
 
-`POST /api/v1/signal/ { signal_id }` → returns people matched by this signal.
+`bash "$API" POST /api/v1/signal/ '{"signal_id": <signal_id>}'` → returns people matched by this signal.
 
 ```
 ### Results from: {signal_name}
@@ -143,7 +162,7 @@ Four people signal types:
 
 **Timeframe:** Last day to last year.
 
-**Deploy:** `POST /api/v1/signal/deploy/social-listening-agent { name, search_query, signal_target: "people", timeframe, icp_id, repeat }`
+**Deploy:** `bash "$API" POST /api/v1/signal/deploy/social-listening-agent '<json_body>'` with `{ name, search_query, signal_target: "people", timeframe, icp_id, repeat }`
 
 ---
 
@@ -164,7 +183,7 @@ The 2-month window from job posted → person hired is the buying window. A new 
 
 **No search query needed** — monitors ICP-matching people across qualified accounts automatically. Filters out internal promotions.
 
-**Deploy:** `POST /api/v1/signal/deploy/icp-job-change-agent { name, icp_id, repeat, account_audience_name, people_audience_name, max_credit_limit }`
+**Deploy:** `bash "$API" POST /api/v1/signal/deploy/icp-job-change-agent '<json_body>'` with `{ name, icp_id, repeat, account_audience_name, people_audience_name, max_credit_limit }`
 
 ---
 
@@ -186,7 +205,7 @@ The 2-month window from job posted → person hired is the buying window. A new 
 
 **Timeframe:** Last day to last year. Default: 7 days.
 
-**Deploy:** `POST /api/v1/signal/deploy/competitor-engagement-agent { name, linkedin_url, timeframe, icp_id, repeat }`
+**Deploy:** `bash "$API" POST /api/v1/signal/deploy/competitor-engagement-agent '<json_body>'` with `{ name, linkedin_url, timeframe, icp_id, repeat }`
 
 ---
 
@@ -206,13 +225,13 @@ The 2-month window from job posted → person hired is the buying window. A new 
 
 **Timeframe:** Default: 7 days.
 
-**Deploy:** `POST /api/v1/signal/deploy/competitor-activity-agent { name, linkedin_url, timeframe, icp_id, repeat }`
+**Deploy:** `bash "$API" POST /api/v1/signal/deploy/competitor-activity-agent '<json_body>'` with `{ name, linkedin_url, timeframe, icp_id, repeat }`
 
 ---
 
 ### 5. Confirm before deploying
 
-First, fetch available ICP profiles via `GET /api/v1/icp/list`. If the user has ICPs, present them:
+First, fetch available ICP profiles via `bash "$API" GET /api/v1/icp/list`. If the user has ICPs, present them:
 
 ```
 I'll deploy a **{signal type}** signal:
@@ -249,7 +268,7 @@ Auto-create a broad fallback ICP:
 }
 ```
 
-Call `POST /api/v1/icp/create` with the above, then tell the user:
+Call `bash "$API" POST /api/v1/icp/create '<json_body>'` with the above, then tell the user:
 
 ```
 No ICP selected, so I created a broad fallback ICP: **{name}** (ID: {id})
@@ -267,7 +286,7 @@ it filters by company size, location, and the roles you're targeting.
 2. **Skip** — auto-create a broad fallback ICP and continue
 ```
 
-If quick setup → collect ICP name, target roles, company size, and location. Create via `POST /api/v1/icp/create`.
+If quick setup → collect ICP name, target roles, company size, and location. Create via `bash "$API" POST /api/v1/icp/create '<json_body>'`.
 
 If skip → auto-create the broad fallback ICP as above.
 
@@ -284,4 +303,4 @@ Results come in as they're found — just say "check on {signal_name}" anytime.
 
 ### 7. Check back
 
-`POST /api/v1/signal/ { signal_id }` → present whatever people have been found so far.
+`bash "$API" POST /api/v1/signal/ '{"signal_id": <signal_id>}'` → present whatever people have been found so far.

@@ -36,6 +36,23 @@ Two things are needed:
 
 If the user provides the company but not the pain-point, ask: *"What specific problem or use case are you going after at [company]?"*
 
+## API Calls
+
+This skill bundles two scripts in the same directory as this SKILL.md file. **Never read or reference API credentials directly.**
+
+- `signup.sh` — handles authentication. Writes credentials to `.env` internally. Never exposes the API key.
+- `api.sh` — handles all authenticated API calls. Reads credentials from `.env` internally.
+
+First, resolve the script paths relative to this file's location:
+
+```bash
+SKILL_DIR="$(dirname "$(find ~/.agents/skills -name SKILL.md -path "*/enterprise-account-research/*" 2>/dev/null | head -1)")"
+API="$SKILL_DIR/api.sh"
+SIGNUP="$SKILL_DIR/signup.sh"
+```
+
+Then use `$SIGNUP` for auth and `$API` for all other calls.
+
 ## Agent Rules
 
 1. **NEVER fabricate data.** If a field is null or missing — say it's missing.
@@ -51,11 +68,15 @@ If the user provides the company but not the pain-point, ask: *"What specific pr
 
 ### 0. Agent Auth Check
 
-Before anything, check that `.env` contains `OPENFUNNEL_API_KEY` and `OPENFUNNEL_USER_ID`.
+Before anything, test if credentials are working by running:
 
-**If both exist:** skip to Step 1.
+```bash
+bash "$API" POST /api/v1/signal/get-signal-list '{"pagination": {"limit": 1, "offset": 0}}'
+```
 
-**If either is missing:**
+**If the call succeeds** (returns JSON with `signals`): skip to Step 1.
+
+**If the call fails** (returns an error or missing credentials message):
 
 ```
 ### Welcome to OpenFunnel
@@ -69,24 +90,22 @@ To get started, I'll authenticate you via the API.
 
 Wait for user input. Then:
 
-1. Call `POST /api/v1/agent/sign-up` with `{ "email": "<user_email>" }`
+1. Call `bash "$SIGNUP" start "<user_email>"`
 2. Tell the user a 6-digit code was sent:
    ```
    I sent a 6-digit verification code to **{email}**. Reply with the code.
    ```
-3. Wait for input. Call `POST /api/v1/agent/verify` with `{ "email": "<user_email>", "otp_code": "<code>" }`
-4. On success, write to `.env`:
-   - `OPENFUNNEL_API_KEY={api_key}`
-   - `OPENFUNNEL_USER_ID={email}`
-5. Add `.env` to `.gitignore` if not already there
-6. Verify with `POST /api/v1/signal/get-signal-list { "pagination": { "limit": 1, "offset": 0 } }`
-7. If verification succeeds → continue to ICP check
-8. If sign-up fails → ask user to retry
-9. If verify fails → tell user the code was invalid or expired (up to 10 attempts in 24 hours), offer to retry or resend
+3. Wait for input. Call `bash "$SIGNUP" verify "<user_email>" "<code>"`
+
+The response is: `{"status": "authenticated", "user_id": "..."}`. Credentials are written to `.env` and `.gitignore` is updated automatically.
+
+4. If authentication succeeds → continue to ICP check
+5. If sign-up fails → ask user to retry
+6. If verify fails → tell user the code was invalid or expired (up to 10 attempts in 24 hours), offer to retry or resend
 
 ### ICP Check
 
-After auth, fetch ICP profiles via `GET /api/v1/icp/list`.
+After auth, fetch ICP profiles via `bash "$API" GET /api/v1/icp/list`.
 
 **If ICPs exist:** note the available ICPs and continue to Step 1.
 
@@ -100,7 +119,7 @@ it filters by company size, location, and the roles you're targeting.
 2. **Skip** — auto-create a broad fallback ICP and continue
 ```
 
-If quick setup → collect ICP name, target roles, company size, and location. Create via `POST /api/v1/icp/create`.
+If quick setup → collect ICP name, target roles, company size, and location. Create via `bash "$API" POST /api/v1/icp/create '<json_body>'`.
 
 If skip → auto-create a broad fallback ICP:
 
@@ -113,7 +132,7 @@ If skip → auto-create a broad fallback ICP:
 }
 ```
 
-Call `POST /api/v1/icp/create`, then tell the user:
+Call `bash "$API" POST /api/v1/icp/create '<json_body>'`, then tell the user:
 
 ```
 I created a default ICP profile: **{name}** (ID: {id})
@@ -128,7 +147,7 @@ Continue to Step 1.
 
 ### 1. Resolve the company
 
-User provides a name or domain → `POST /api/v1/account/search-by-name-or-domain { query }`.
+User provides a name or domain → `bash "$API" POST /api/v1/account/search-by-name-or-domain '{"query": "<name_or_domain>"}'`.
 
 | Result | Action |
 |--------|--------|
@@ -138,7 +157,7 @@ User provides a name or domain → `POST /api/v1/account/search-by-name-or-domai
 
 ### 2. Company card
 
-`POST /api/v2/account/batch { account_ids: [id] }` → present a short summary:
+`bash "$API" POST /api/v2/account/batch '{"account_ids": [<id>]}'` → present a short summary:
 
 ```
 ## {company_name}
@@ -225,9 +244,9 @@ Deep enrichment works best when it knows what to look for:
 Set any of these, or "none" for defaults.
 ```
 
-Wait for user input. For each one they want to set, collect the value. If the user provides an ICP name instead of an ID, look it up via `GET /api/v1/icp/list` to resolve the ID.
+Wait for user input. For each one they want to set, collect the value. If the user provides an ICP name instead of an ID, look it up via `bash "$API" GET /api/v1/icp/list` to resolve the ID.
 
-Then call `POST /api/v1/enrich/deep-enrich` with:
+Then call `bash "$API" POST /api/v1/enrich/deep-enrich '<json_body>'` with:
 - `domain` — from step 1 (already known, do NOT ask for it)
 - `goal` — user's input or default
 - `target_icp_roles` — user's input or default
@@ -247,7 +266,7 @@ Deep enrichment running for {domain}. Typically 15-30 minutes.
 **If user picks monitoring:**
 
 Poll in the background:
-- Re-fetch `POST /api/v2/account/batch { account_ids: [id] }` every 3 minutes
+- Re-fetch `bash "$API" POST /api/v2/account/batch '{"account_ids": [<id>]}'` every 3 minutes
 - Compare people count to pre-enrichment count
 - After 2 consecutive polls where count stabilized and differs from initial → done
 - Timeout after 45 minutes
@@ -285,7 +304,7 @@ Got it. Deep enrichment is processing for {domain}. Just ask me to check on {com
 
 **After enrichment (or when user checks back):**
 
-Re-fetch `POST /api/v2/account/batch { account_ids: [id] }`, go back to step 3 to re-assess team coverage with updated data. Present before/after comparison.
+Re-fetch `bash "$API" POST /api/v2/account/batch '{"account_ids": [<id>]}'`, go back to step 3 to re-assess team coverage with updated data. Present before/after comparison.
 
 ### 5. Team-first view
 

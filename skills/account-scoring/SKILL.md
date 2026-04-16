@@ -7,17 +7,38 @@ description: Score accounts 0-100 on pain-point relevance with evidence and reas
 
 Score accounts in an audience based on pain-point relevance and urgency.
 
+## API Calls
+
+This skill bundles two scripts in the same directory as this SKILL.md file. **Never read or reference API credentials directly.**
+
+- `signup.sh` — handles authentication. Writes credentials to `.env` internally. Never exposes the API key.
+- `api.sh` — handles all authenticated API calls. Reads credentials from `.env` internally.
+
+First, resolve the script paths relative to this file's location:
+
+```bash
+SKILL_DIR="$(dirname "$(find ~/.agents/skills -name SKILL.md -path "*/account-scoring/*" 2>/dev/null | head -1)")"
+API="$SKILL_DIR/api.sh"
+SIGNUP="$SKILL_DIR/signup.sh"
+```
+
+Then use `$SIGNUP` for auth and `$API` for all other calls.
+
 ## Conversation Flow
 
 The agent MUST follow this sequence — do NOT skip steps.
 
 ### Step 0: Agent Auth Check
 
-Before anything, check that `.env` contains `OPENFUNNEL_API_KEY` and `OPENFUNNEL_USER_ID`.
+Before anything, test if credentials are working by running:
 
-**If both exist:** skip to Step 1.
+```bash
+bash "$API" POST /api/v1/signal/get-signal-list '{"pagination": {"limit": 1, "offset": 0}}'
+```
 
-**If either is missing:**
+**If the call succeeds** (returns JSON with `signals`): skip to Step 1.
+
+**If the call fails** (returns an error or missing credentials message):
 
 ```
 ### Welcome to OpenFunnel
@@ -31,24 +52,21 @@ To get started, I'll authenticate you via the API.
 
 Wait for user input. Then:
 
-1. Call `POST /api/v1/agent/sign-up` with `{ "email": "<user_email>" }`
+1. Run `bash "$SIGNUP" start "<user_email>"`
 2. Tell the user a 6-digit code was sent:
    ```
    I sent a 6-digit verification code to **{email}**. Reply with the code.
    ```
-3. Wait for input. Call `POST /api/v1/agent/verify` with `{ "email": "<user_email>", "otp_code": "<code>" }`
-4. On success, write to `.env`:
-   - `OPENFUNNEL_API_KEY={api_key}`
-   - `OPENFUNNEL_USER_ID={email}`
-5. Add `.env` to `.gitignore` if not already there
-6. Verify with `POST /api/v1/signal/get-signal-list { "pagination": { "limit": 1, "offset": 0 } }`
-7. If verification succeeds → continue to ICP check
-8. If sign-up fails → ask user to retry
-9. If verify fails → tell user the code was invalid or expired (up to 10 attempts in 24 hours), offer to retry or resend
+3. Wait for input. Run `bash "$SIGNUP" verify "<user_email>" "<code>"`
+4. On success, the response is: `{"status": "authenticated", "user_id": "..."}`. Credentials are written to `.env` and `.gitignore` is updated automatically.
+5. Verify with `bash "$API" POST /api/v1/signal/get-signal-list '{"pagination": {"limit": 1, "offset": 0}}'`
+6. If verification succeeds → continue to ICP check
+7. If sign-up fails → ask user to retry
+8. If verify fails → tell user the code was invalid or expired (up to 10 attempts in 24 hours), offer to retry or resend
 
 ### ICP Check
 
-After auth, fetch ICP profiles via `GET /api/v1/icp/list`.
+After auth, fetch ICP profiles via `bash "$API" GET /api/v1/icp/list`.
 
 **If ICPs exist:** note the available ICPs and continue to Step 1.
 
@@ -62,7 +80,7 @@ it filters by company size, location, and the roles you're targeting.
 2. **Skip** — auto-create a broad fallback ICP and continue
 ```
 
-If quick setup → collect ICP name, target roles, company size, and location. Create via `POST /api/v1/icp/create`.
+If quick setup → collect ICP name, target roles, company size, and location. Create via `bash "$API" POST /api/v1/icp/create '<json_body>'`.
 
 If skip → auto-create a broad fallback ICP:
 
@@ -75,7 +93,7 @@ If skip → auto-create a broad fallback ICP:
 }
 ```
 
-Call `POST /api/v1/icp/create`, then tell the user:
+Call `bash "$API" POST /api/v1/icp/create '<json_body>'`, then tell the user:
 
 ```
 I created a default ICP profile: **{name}** (ID: {id})
@@ -186,14 +204,12 @@ Output per account: score (0-100) + reasoning (1-2 sentences).
 
 ## Runtime
 
-| Step | Endpoint |
-|------|----------|
-| Step 1 | `POST https://api.openfunnel.dev/api/v1/audience/get-audience-list { limit, offset }` |
-| Step 2 | `POST https://api.openfunnel.dev/api/v1/audience/ { audience_id }` |
-| Step 4 | `POST https://api.openfunnel.dev/api/v2/account/batch { account_ids: [id] }` → full details + inline signal content (preferred) |
+| Step | Call |
+|------|------|
+| Step 1 | `bash "$API" POST /api/v1/audience/get-audience-list '{"limit": N, "offset": 0}'` |
+| Step 2 | `bash "$API" POST /api/v1/audience/ '{"audience_id": ID}'` |
+| Step 4 | `bash "$API" POST /api/v2/account/batch '{"account_ids": [id]}'` → full details + inline signal content (preferred) |
 
 **Prefer V2 batch for scoring.** The V2 batch endpoint returns inline signal content — job posting text, social post content, context — so the LLM can read actual evidence without extra calls.
 
 > **NOTE:** Large audiences (100+) will be slow.
-
-All endpoints require headers: `X-API-Key`, `X-User-ID`, `Content-Type: application/json`.

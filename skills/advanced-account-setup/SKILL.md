@@ -18,6 +18,23 @@ Authentication is handled by Step 0 (Agent Auth Check) in every skill. This skil
 - "Set up integrations"
 - "Fine-tune my account settings"
 
+## API Calls
+
+This skill bundles two scripts in the same directory as this SKILL.md file. **Never read or reference API credentials directly.**
+
+- `signup.sh` — handles authentication. Writes credentials to `.env` internally. Never exposes the API key.
+- `api.sh` — handles all authenticated API calls. Reads credentials from `.env` internally.
+
+First, resolve the script paths relative to this file's location:
+
+```bash
+SKILL_DIR="$(dirname "$(find ~/.agents/skills -name SKILL.md -path "*/advanced-account-setup/*" 2>/dev/null | head -1)")"
+API="$SKILL_DIR/api.sh"
+SIGNUP="$SKILL_DIR/signup.sh"
+```
+
+Then use `$SIGNUP` for auth and `$API` for all other calls.
+
 ## Agent Rules
 
 1. **Walk through one section at a time.** Don't dump the entire setup flow. Present each section, complete it, then move to the next.
@@ -31,11 +48,15 @@ Authentication is handled by Step 0 (Agent Auth Check) in every skill. This skil
 
 ### 0. Agent Auth Check
 
-Before anything, check that `.env` contains `OPENFUNNEL_API_KEY` and `OPENFUNNEL_USER_ID`.
+Before anything, test if credentials are working by running:
 
-**If both exist:** skip to Step 1.
+```bash
+bash "$API" POST /api/v1/signal/get-signal-list '{"pagination": {"limit": 1, "offset": 0}}'
+```
 
-**If either is missing:**
+**If the call succeeds** (returns JSON with `signals`): skip to Step 1.
+
+**If the call fails** (returns an error or missing credentials message):
 
 ```
 ### Welcome to OpenFunnel
@@ -49,20 +70,17 @@ To get started, I'll authenticate you via the API.
 
 Wait for user input. Then:
 
-1. Call `POST /api/v1/agent/sign-up` with `{ "email": "<user_email>" }`
+1. Run `bash "$SIGNUP" start "<user_email>"`
 2. Tell the user a 6-digit code was sent:
    ```
    I sent a 6-digit verification code to **{email}**. Reply with the code.
    ```
-3. Wait for input. Call `POST /api/v1/agent/verify` with `{ "email": "<user_email>", "otp_code": "<code>" }`
-4. On success, write to `.env`:
-   - `OPENFUNNEL_API_KEY={api_key}`
-   - `OPENFUNNEL_USER_ID={email}`
-5. Add `.env` to `.gitignore` if not already there
-6. Verify with `POST /api/v1/signal/get-signal-list { "pagination": { "limit": 1, "offset": 0 } }`
-7. If verification succeeds → continue to Step 1
-8. If sign-up fails → ask user to retry
-9. If verify fails → tell user the code was invalid or expired (up to 10 attempts in 24 hours), offer to retry or resend
+3. Wait for input. Run `bash "$SIGNUP" verify "<user_email>" "<code>"`
+4. On success, the response is: `{"status": "authenticated", "user_id": "..."}`. Credentials are written to `.env` and `.gitignore` is updated automatically.
+5. Verify with `bash "$API" POST /api/v1/signal/get-signal-list '{"pagination": {"limit": 1, "offset": 0}}'`
+6. If verification succeeds → continue to Step 1
+7. If sign-up fails → ask user to retry
+8. If verify fails → tell user the code was invalid or expired (up to 10 attempts in 24 hours), offer to retry or resend
 
 ---
 
@@ -93,7 +111,7 @@ This is the foundation. OpenFunnel agents use the ICP to filter every signal, ev
 
 #### Step 1: Fetch valid options
 
-Call `GET /api/v1/icp/options` to get the valid values for each field.
+Call `bash "$API" GET /api/v1/icp/options` to get the valid values for each field.
 
 Present them cleanly:
 
@@ -174,7 +192,7 @@ Present the full configuration:
 Create this ICP? (yes / no / edit)
 ```
 
-If yes → call `POST /api/v1/icp/create` with:
+If yes → call `bash "$API" POST /api/v1/icp/create '<json_body>'` with:
 
 ```json
 {
@@ -239,7 +257,7 @@ Once the user provides their description, confirm:
 Save this? (yes / edit)
 ```
 
-If yes → call `POST /api/v1/icp/advanced-description` with:
+If yes → call `bash "$API" POST /api/v1/icp/advanced-description '<json_body>'` with:
 
 ```json
 {
@@ -293,7 +311,7 @@ Blocking these domains from all results:
 Confirm? (yes / edit)
 ```
 
-If yes → call `POST /api/v1/blocklist/domains` with:
+If yes → call `bash "$API" POST /api/v1/blocklist/domains '<json_body>'` with:
 
 ```json
 {
@@ -322,7 +340,7 @@ Blocking companies matching:
 Confirm? (yes / edit)
 ```
 
-If yes → call `POST /api/v1/blocklist/description` with:
+If yes → call `bash "$API" POST /api/v1/blocklist/description '<json_body>'` with:
 
 ```json
 {
@@ -353,7 +371,7 @@ Want to connect Salesforce? (yes / skip)
 
 If yes:
 
-1. Call `POST /api/v1/integrations/salesforce/auth-url` to get the OAuth authorization URL
+1. Call `bash "$API" POST /api/v1/integrations/salesforce/auth-url '{}'` to get the OAuth authorization URL
 2. Present the URL to the user:
    ```
    Open this URL to authorize OpenFunnel with your Salesforce org:
@@ -362,15 +380,15 @@ If yes:
    After authorizing, Salesforce will redirect you with a code. Paste the full redirect URL here.
    ```
 3. User pastes the redirect URL → extract the authorization code
-4. Call `POST /api/v1/integrations/salesforce/callback { code, redirect_uri }` to complete the connection
+4. Call `bash "$API" POST /api/v1/integrations/salesforce/callback '{"code": "...", "redirect_uri": "..."}'` to complete the connection
 5. On success:
    ```
    Salesforce connected.
 
    You can now:
-   - Sync accounts: `POST /api/v1/crm/sync-accounts-job { account_ids, assigned_user_email }`
-   - Sync people: `POST /api/v1/crm/sync-people-job { people_ids, assigned_user_email }`
-   - Check sync status: `POST /api/v1/crm/check-job-status { job_id }`
+   - Sync accounts: `bash "$API" POST /api/v1/crm/sync-accounts-job '{"account_ids": [...], "assigned_user_email": "..."}'`
+   - Sync people: `bash "$API" POST /api/v1/crm/sync-people-job '{"people_ids": [...], "assigned_user_email": "..."}'`
+   - Check sync status: `bash "$API" POST /api/v1/crm/check-job-status '{"job_id": "..."}'`
    ```
 
 Return to setup menu.
@@ -390,7 +408,7 @@ Want to connect HubSpot? (yes / skip)
 
 If yes:
 
-1. Call `POST /api/v1/integrations/hubspot/auth-url` to get the OAuth authorization URL
+1. Call `bash "$API" POST /api/v1/integrations/hubspot/auth-url '{}'` to get the OAuth authorization URL
 2. Present the URL to the user:
    ```
    Open this URL to authorize OpenFunnel with your HubSpot account:
@@ -399,15 +417,15 @@ If yes:
    After authorizing, HubSpot will redirect you with a code. Paste the full redirect URL here.
    ```
 3. User pastes the redirect URL → extract the authorization code
-4. Call `POST /api/v1/integrations/hubspot/callback { code, redirect_uri }` to complete the connection
+4. Call `bash "$API" POST /api/v1/integrations/hubspot/callback '{"code": "...", "redirect_uri": "..."}'` to complete the connection
 5. On success:
    ```
    HubSpot connected.
 
    You can now:
-   - Sync accounts: `POST /api/v1/crm/sync-accounts-job { account_ids, assigned_user_email }`
-   - Sync people: `POST /api/v1/crm/sync-people-job { people_ids, assigned_user_email }`
-   - Check sync status: `POST /api/v1/crm/check-job-status { job_id }`
+   - Sync accounts: `bash "$API" POST /api/v1/crm/sync-accounts-job '{"account_ids": [...], "assigned_user_email": "..."}'`
+   - Sync people: `bash "$API" POST /api/v1/crm/sync-people-job '{"people_ids": [...], "assigned_user_email": "..."}'`
+   - Check sync status: `bash "$API" POST /api/v1/crm/check-job-status '{"job_id": "..."}'`
    ```
 
 Return to setup menu.
@@ -427,7 +445,7 @@ Want to connect Slack? (yes / skip)
 
 If yes:
 
-1. Call `POST /api/v1/integrations/slack/auth-url` to get the OAuth authorization URL
+1. Call `bash "$API" POST /api/v1/integrations/slack/auth-url '{}'` to get the OAuth authorization URL
 2. Present the URL to the user:
    ```
    Open this URL to authorize OpenFunnel with your Slack workspace:
@@ -436,7 +454,7 @@ If yes:
    After authorizing, Slack will redirect you with a code. Paste the full redirect URL here.
    ```
 3. User pastes the redirect URL → extract the authorization code
-4. Call `POST /api/v1/integrations/slack/callback { code, redirect_uri }` to complete the connection
+4. Call `bash "$API" POST /api/v1/integrations/slack/callback '{"code": "...", "redirect_uri": "..."}'` to complete the connection
 5. On success, configure notifications:
    ```
    Slack connected.
@@ -455,7 +473,7 @@ If yes:
       - All signals (default)
       - Specific signal IDs
    ```
-6. Collect user preferences, then call `POST /api/v1/integrations/slack/configure { channel, frequency, signal_ids }` to save.
+6. Collect user preferences, then call `bash "$API" POST /api/v1/integrations/slack/configure '{"channel": "...", "frequency": "...", "signal_ids": [...]}'` to save.
 
 Return to setup menu.
 
@@ -485,131 +503,3 @@ You're ready to start finding accounts. Try:
 - "Find people posting about [topic]"
 ```
 
----
-
-## API Reference
-
-**Base URL:** `https://api.openfunnel.dev`
-
-**Required headers (all requests):**
-
-| Header | Value |
-|--------|-------|
-| `X-API-Key` | Your OpenFunnel API key |
-| `X-User-ID` | Your OpenFunnel user ID |
-| `Content-Type` | `application/json` |
-
-**Endpoints used by this skill:**
-
-### Agent Sign Up
-- **Method:** `POST`
-- **Path:** `/api/v1/agent/sign-up`
-- **Body:** `{ "email": "<user_email>" }`
-- **Response:** `{ email, message }`
-
-### Agent Verify
-- **Method:** `POST`
-- **Path:** `/api/v1/agent/verify`
-- **Body:** `{ "email": "<user_email>", "otp_code": "<6_digit_code>" }`
-- **Response:** `{ email, api_key, is_new_user }`
-
-### ICP Options (fetch valid filter values)
-- **Method:** `GET`
-- **Path:** `/api/v1/icp/options`
-- **Response:** `{ employee_ranges: [string], funding_stages: [string], locations: [{value, label}], sub_locations: [{value, label}], people_locations: [{value, label}], people_sub_locations: [{value, label}] }`
-
-### Create ICP
-- **Method:** `POST`
-- **Path:** `/api/v1/icp/create`
-- **Body:**
-  - `name` (string, required) — Descriptive ICP name
-  - `target_roles` (string[], required) — Job titles to target
-  - `employee_ranges` (string[], required) — Company size labels from `/icp/options`
-  - `location` (string[], required) — HQ location codes from `/icp/options`
-  - `min_funding` (string, optional) — Funding stage range start
-  - `max_funding` (string, optional) — Funding stage range end
-  - `employee_count_funding_config` (string, optional) — "AND" or "OR"
-  - `sub_locations` (string[], optional) — US state/city codes
-  - `people_locations` (string[], optional) — People location codes
-  - `people_sub_locations` (string[], optional) — People US state/city codes
-- **Response:** `{ icp: { id, name, target_roles, min_employee, max_employee, min_funding, max_funding, location, sub_locations, people_locations, people_sub_locations, employee_count_funding_config } }`
-
-### List ICPs
-- **Method:** `GET`
-- **Path:** `/api/v1/icp/list`
-- **Response:** `{ icps: [{id, name, target_roles, ...}], total_count }`
-
-### Advanced ICP Description (coming soon)
-- **Method:** `POST`
-- **Path:** `/api/v1/icp/advanced-description`
-- **Body:** `{ icp_id, description }`
-
-### Blocklist — Domains (coming soon)
-- **Method:** `POST`
-- **Path:** `/api/v1/blocklist/domains`
-- **Body:** `{ domains: [string] }`
-
-### Blocklist — Description (coming soon)
-- **Method:** `POST`
-- **Path:** `/api/v1/blocklist/description`
-- **Body:** `{ description: string }`
-
-### Salesforce — Get Auth URL (coming soon)
-- **Method:** `POST`
-- **Path:** `/api/v1/integrations/salesforce/auth-url`
-- **Body:** `{}`
-- **Response:** `{ auth_url: string }`
-
-### Salesforce — OAuth Callback (coming soon)
-- **Method:** `POST`
-- **Path:** `/api/v1/integrations/salesforce/callback`
-- **Body:** `{ code: string, redirect_uri: string }`
-- **Response:** `{ status, connected_crm: "salesforce" }`
-
-### HubSpot — Get Auth URL (coming soon)
-- **Method:** `POST`
-- **Path:** `/api/v1/integrations/hubspot/auth-url`
-- **Body:** `{}`
-- **Response:** `{ auth_url: string }`
-
-### HubSpot — OAuth Callback (coming soon)
-- **Method:** `POST`
-- **Path:** `/api/v1/integrations/hubspot/callback`
-- **Body:** `{ code: string, redirect_uri: string }`
-- **Response:** `{ status, connected_crm: "hubspot" }`
-
-### Slack — Get Auth URL (coming soon)
-- **Method:** `POST`
-- **Path:** `/api/v1/integrations/slack/auth-url`
-- **Body:** `{}`
-- **Response:** `{ auth_url: string }`
-
-### Slack — OAuth Callback (coming soon)
-- **Method:** `POST`
-- **Path:** `/api/v1/integrations/slack/callback`
-- **Body:** `{ code: string, redirect_uri: string }`
-- **Response:** `{ status, workspace_name: string }`
-
-### Slack — Configure Notifications (coming soon)
-- **Method:** `POST`
-- **Path:** `/api/v1/integrations/slack/configure`
-- **Body:** `{ channel: string, frequency: "real-time" | "daily" | "weekly", signal_ids: [number] | null }`
-- **Response:** `{ status, channel, frequency }`
-
-### CRM Sync — Accounts
-- **Method:** `POST`
-- **Path:** `/api/v1/crm/sync-accounts-job`
-- **Body:** `{ account_ids: [number], assigned_user_email: "<optional>" }`
-- **Response:** `{ job_id, status, message, connected_crm, total_records }`
-
-### CRM Sync — People
-- **Method:** `POST`
-- **Path:** `/api/v1/crm/sync-people-job`
-- **Body:** `{ people_ids: [number], assigned_user_email: "<optional>" }`
-- **Response:** `{ job_id, status, message, connected_crm, total_records }`
-
-### CRM Job Status
-- **Method:** `POST`
-- **Path:** `/api/v1/crm/check-job-status`
-- **Body:** `{ job_id: string }`
-- **Response:** `{ job_id, job_type, status, connected_crm, created_at, error_message, result }`

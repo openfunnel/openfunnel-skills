@@ -7,6 +7,23 @@ description: Look up a company, enrich it with people and signals, and get an at
 
 End-to-end workflow for researching a specific company: resolve it, check data coverage, enrich if needed, and produce an actionable attack strategy.
 
+## API Calls
+
+This skill bundles two scripts in the same directory as this SKILL.md file. **Never read or reference API credentials directly.**
+
+- `signup.sh` — handles authentication. Writes credentials to `.env` internally. Never exposes the API key.
+- `api.sh` — handles all authenticated API calls. Reads credentials from `.env` internally.
+
+First, resolve the script paths relative to this file's location:
+
+```bash
+SKILL_DIR="$(dirname "$(find ~/.agents/skills -name SKILL.md -path "*/enrich-and-research/*" 2>/dev/null | head -1)")"
+API="$SKILL_DIR/api.sh"
+SIGNUP="$SKILL_DIR/signup.sh"
+```
+
+Then use `$SIGNUP` for auth and `$API` for all other calls.
+
 ## CRITICAL: Agent Behavior Rules
 
 This skill handles mission-critical GTM data. Bad data = bad outreach = burned relationships. The agent executing this skill MUST follow these rules strictly:
@@ -26,11 +43,15 @@ This skill handles mission-critical GTM data. Bad data = bad outreach = burned r
 
 ### 0. Agent Auth Check
 
-Before anything, check that `.env` contains `OPENFUNNEL_API_KEY` and `OPENFUNNEL_USER_ID`.
+Before anything, test if credentials are working by running:
 
-**If both exist:** skip to Step 1.
+```bash
+bash "$API" POST /api/v1/signal/get-signal-list '{"pagination": {"limit": 1, "offset": 0}}'
+```
 
-**If either is missing:**
+**If the call succeeds** (returns JSON with `signals`): skip to Step 1.
+
+**If the call fails** (returns an error or missing credentials message):
 
 ```
 ### Welcome to OpenFunnel
@@ -44,24 +65,22 @@ To get started, I'll authenticate you via the API.
 
 Wait for user input. Then:
 
-1. Call `POST /api/v1/agent/sign-up` with `{ "email": "<user_email>" }`
+1. Call `bash "$SIGNUP" start "<user_email>"`
 2. Tell the user a 6-digit code was sent:
    ```
    I sent a 6-digit verification code to **{email}**. Reply with the code.
    ```
-3. Wait for input. Call `POST /api/v1/agent/verify` with `{ "email": "<user_email>", "otp_code": "<code>" }`
-4. On success, write to `.env`:
-   - `OPENFUNNEL_API_KEY={api_key}`
-   - `OPENFUNNEL_USER_ID={email}`
-5. Add `.env` to `.gitignore` if not already there
-6. Verify with `POST /api/v1/signal/get-signal-list { "pagination": { "limit": 1, "offset": 0 } }`
-7. If verification succeeds → continue to ICP check
-8. If sign-up fails → ask user to retry
-9. If verify fails → tell user the code was invalid or expired (up to 10 attempts in 24 hours), offer to retry or resend
+3. Wait for input. Call `bash "$SIGNUP" verify "<user_email>" "<code>"`
+
+The response is: `{"status": "authenticated", "user_id": "..."}`. Credentials are written to `.env` and `.gitignore` is updated automatically.
+
+4. If authentication succeeds → continue to ICP check
+5. If sign-up fails → ask user to retry
+6. If verify fails → tell user the code was invalid or expired (up to 10 attempts in 24 hours), offer to retry or resend
 
 ### ICP Check
 
-After auth, fetch ICP profiles via `GET /api/v1/icp/list`.
+After auth, fetch ICP profiles via `bash "$API" GET /api/v1/icp/list`.
 
 **If ICPs exist:** note the available ICPs and continue to Step 1.
 
@@ -75,7 +94,7 @@ it filters by company size, location, and the roles you're targeting.
 2. **Skip** — auto-create a broad fallback ICP and continue
 ```
 
-If quick setup → collect ICP name, target roles, company size, and location. Create via `POST /api/v1/icp/create`.
+If quick setup → collect ICP name, target roles, company size, and location. Create via `bash "$API" POST /api/v1/icp/create '<json_body>'`.
 
 If skip → auto-create a broad fallback ICP:
 
@@ -88,7 +107,7 @@ If skip → auto-create a broad fallback ICP:
 }
 ```
 
-Call `POST /api/v1/icp/create`, then tell the user:
+Call `bash "$API" POST /api/v1/icp/create '<json_body>'`, then tell the user:
 
 ```
 I created a default ICP profile: **{name}** (ID: {id})
@@ -103,7 +122,7 @@ Continue to Step 1.
 
 ### 1. Resolve the company
 
-User provides a name or domain → `POST /api/v1/account/search-by-name-or-domain { query }`.
+User provides a name or domain → `bash "$API" POST /api/v1/account/search-by-name-or-domain '{"query": "<name_or_domain>"}'`.
 
 | Result | Action |
 |--------|--------|
@@ -113,7 +132,7 @@ User provides a name or domain → `POST /api/v1/account/search-by-name-or-domai
 
 ### 2. Present the Company Card
 
-`POST /api/v2/account/batch { account_ids: [id] }` → full details with inline signal content + ICP people.
+`bash "$API" POST /api/v2/account/batch '{"account_ids": [<id>]}'` → full details with inline signal content + ICP people.
 
 Present a clean summary so the user can see what we know at a glance:
 
@@ -213,7 +232,7 @@ This is the enrichment decision tree. Present the recommendation based on curren
 
 **3a. Account not found in DB:**
 
-The company wasn't resolved in Step 1. Ask the user for the exact domain (e.g., "What's their domain?"), then call `POST /api/v1/enrich/deep-enrich { domain }` (clean the domain first — strip protocol and www prefix).
+The company wasn't resolved in Step 1. Ask the user for the exact domain (e.g., "What's their domain?"), then call `bash "$API" POST /api/v1/enrich/deep-enrich '{"domain": "<domain>"}'` (clean the domain first — strip protocol and www prefix).
 
 > This company isn't in OpenFunnel yet. Deep enrichment will add it — discovering the company profile, buying signals, and key contacts.
 >
@@ -268,7 +287,7 @@ If yes → before triggering, present the enrichment configuration. The domain i
 >
 > **Which of these would you like to set?** (or "none" to use defaults for all)
 
-Wait for user input. For each one they want to set, collect the value. If the user provides an ICP name instead of an ID, look it up via `GET /api/v1/icp/list` to resolve the ID. Then call `POST /api/v1/enrich/deep-enrich` with:
+Wait for user input. For each one they want to set, collect the value. If the user provides an ICP name instead of an ID, look it up via `bash "$API" GET /api/v1/icp/list` to resolve the ID. Then call `bash "$API" POST /api/v1/enrich/deep-enrich '<json_body>'` with:
 - `domain` — from Step 1 (already known, do NOT ask for it)
 - `goal` — user's input or omit
 - `icp_id` — user's input or omit
@@ -289,7 +308,7 @@ Then present the monitoring choice:
 
 **If user picks OpenFunnel Poller:**
 
-Poll `POST /api/v2/account/batch { account_ids: [id] }` every 3 minutes in the background:
+Poll `bash "$API" POST /api/v2/account/batch '{"account_ids": [<id>]}'` every 3 minutes in the background:
 - `id` — from the resolved account
 - Record the `peopleCount` before enrichment was triggered as `initialPeopleCount`
 - Each poll, check the current people count in the response
@@ -330,7 +349,7 @@ Proceed to step 5.
 ### 4. Post-enrichment refresh
 
 After enrichment completes (or user returns manually):
-- Re-fetch `POST /api/v2/account/batch { account_ids: [id] }` for updated data
+- Re-fetch `bash "$API" POST /api/v2/account/batch '{"account_ids": [<id>]}'` for updated data
 - Re-present the company card with updated numbers
 - Return to the option menu
 
@@ -384,56 +403,3 @@ Prioritize by: decision-making power × signal recency × role relevance
 Keep the strategy concise and actionable. Every recommendation must tie back to a specific signal or data point.
 ```
 
-## API Reference
-
-**Base URL:** `https://api.openfunnel.dev`
-
-**Required headers (all requests):**
-
-| Header | Value |
-|--------|-------|
-| `X-API-Key` | Your OpenFunnel API key (from `.env` → `OPENFUNNEL_API_KEY`) |
-| `X-User-ID` | Your OpenFunnel user ID (from `.env` → `OPENFUNNEL_USER_ID`) |
-| `Content-Type` | `application/json` |
-
-**Endpoints used by this skill:**
-
-### Agent Sign Up
-- **Method:** `POST`
-- **Path:** `/api/v1/agent/sign-up`
-- **Body:** `{ "email": "<user_email>" }`
-- **Response:** `{ email, message }`
-
-### Agent Verify
-- **Method:** `POST`
-- **Path:** `/api/v1/agent/verify`
-- **Body:** `{ "email": "<user_email>", "otp_code": "<6_digit_code>" }`
-- **Response:** `{ email, api_key, is_new_user }`
-
-### 1. Search by name or domain
-
-- **Method:** `POST`
-- **Path:** `/api/v1/account/search-by-name-or-domain`
-- **Body:** `{ "query": "<company name or domain>", "limit": <number> }`
-- **Response:** Array of account matches. If multiple results, the response includes `needs_clarification: true`.
-
-### 2. Get accounts (batch)
-
-- **Method:** `POST`
-- **Path:** `/api/v2/account/batch`
-- **Body:** `{ "account_ids": ["<id>"], "account_domains": [], "icp_people_page": 1, "icp_people_page_size": 25 }`
-- **Response:** Full account details including traits, signals (hiring, social, engagement, job changes), ICP people with roles and LinkedIn profiles, and enrichment state.
-
-### 3. List ICP profiles
-
-- **Method:** `GET`
-- **Path:** `/api/v1/icp/list`
-- **Body:** None
-- **Response:** Array of ICP profiles with `id` and `name`.
-
-### 4. Trigger deep enrichment
-
-- **Method:** `POST`
-- **Path:** `/api/v1/enrich/deep-enrich`
-- **Body:** `{ "domain": "<domain>", "goal": "<optional goal string>", "icp_id": "<optional ICP ID>", "target_icp_roles": ["<optional roles>"], "timeframe": "<optional>", "max_jobs_to_check": <optional number> }`
-- **Response:** Confirmation that enrichment has been queued. The domain should be cleaned before sending (strip protocol and www prefix).

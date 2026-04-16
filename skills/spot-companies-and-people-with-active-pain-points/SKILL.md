@@ -481,7 +481,7 @@ Always show after presenting results:
 Route based on selection:
 - 1 → use the `enrich-and-research` skill
 - 2 → use the `score-and-tier` skill
-- 3 → use the `spot-people-having-simple-signals` skill
+- 3 → use `spot-people-posting-about-specific-things`, `spot-people-changing-jobs`, `spot-people-engaging-with-competitors`, or `spot-competitor-sales-activity`
 - 4 → use the `enterprise-account-research` skill
 - 5 → loop back to Step 1
 - 6 → use CRM sync endpoints: `bash "$API" POST /api/v1/crm/sync-accounts-job '<json_body>'` and `bash "$API" POST /api/v1/crm/sync-people-job '<json_body>'`

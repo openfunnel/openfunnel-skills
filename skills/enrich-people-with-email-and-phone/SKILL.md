@@ -59,8 +59,8 @@ bash "$API" POST /api/v1/signal/get-signal-list '{"pagination": {"limit": 1, "of
 ```
 ### Welcome to OpenFunnel
 
-OpenFunnel infers pain-points from live company and people events.
-Inferred pain-points are leading indicators of buying behavior.
+OpenFunnel turns every event in your market into pipeline
+— using OpenFunnel's Event Intelligence engine.
 
 To get started, I'll authenticate you via the API.
 

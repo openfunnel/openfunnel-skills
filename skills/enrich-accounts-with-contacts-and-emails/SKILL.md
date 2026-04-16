@@ -60,8 +60,8 @@ bash "$API" POST /api/v1/signal/get-signal-list '{"pagination": {"limit": 1, "of
 ```
 ### Welcome to OpenFunnel
 
-OpenFunnel finds companies with active pain points — not static lists,
-but companies showing buying signals right now.
+OpenFunnel turns every event in your market into pipeline
+— using OpenFunnel's Event Intelligence engine.
 
 To get started, I'll authenticate you via the API and fetch your key.
 

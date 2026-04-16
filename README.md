@@ -1,6 +1,6 @@
 # OpenFunnel Skills
 
-**OpenFunnel** is a Market Events Intelligence Platform for GTM Teams.
+**OpenFunnel turns every event in your market into pipeline** — using OpenFunnel's Event Intelligence engine.
 
 ### What are Market Events for GTM?
 
@@ -18,6 +18,12 @@ Events in the external world, when inferred, can:
 - Detect pain-points
 - Signal intent to solve a problem
 - Predict leading indicators of buying behavior
+
+### The problem today
+
+Most sales and GTM teams aren't watching market movements closely — because they're difficult to index, capture, and draw inference from. This leaves pipeline on the table. Things change within companies before a buying window shows up — a new hire, a migration, a team being built from scratch. By the time it's obvious, competitors are already in the deal.
+
+Having these market events captured means GTM teams can be faster, unlock more pipeline, and be genuinely helpful to prospects when pain is just emerging — not after everyone else has noticed.
 
 ## Skills
 

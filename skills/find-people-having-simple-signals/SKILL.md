@@ -59,7 +59,8 @@ bash "$API" POST /api/v1/signal/get-signal-list '{"pagination": {"limit": 1, "of
 ```
 ### Welcome to OpenFunnel
 
-OpenFunnel finds people based on what they're doing — posting about topics, changing jobs, or engaging with competitors.
+OpenFunnel turns every event in your market into pipeline
+— using OpenFunnel's Event Intelligence engine.
 
 To get started, I'll authenticate you via the API.
 

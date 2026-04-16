@@ -1,9 +1,9 @@
 ---
-name: find-companies-and-people-facing-active-pain-points
-description: Find companies and people facing active pain-points (daily). Inferred from live company and people events using the TAQ model — Trait (who they are), Activity (what they're doing now), Qualifier (what they already have). Inferred pain-points are leading indicators of buying behavior.
+name: find-companies-and-people-with-active-pain-points
+description: Find companies and people with active pain-points (daily). Inferred from live company and people events using the TAQ model — Trait (who they are), Activity (what they're doing now), Qualifier (what they already have). Inferred pain-points are leading indicators of buying behavior.
 ---
 
-# Find Companies and People Facing Active Pain-Points (Daily)
+# Find Companies and People with Active Pain-Points (Daily)
 
 Find ICP companies with inferred pain-points from live company and people events — where a combination of who they are (trait), what they're doing right now or what pain-points they are facing (activity), and what they already have in place (qualifier). Uses the TAQ model to build a precise search through a guided walkthrough.
 
@@ -28,7 +28,7 @@ This skill bundles two scripts in the same directory as this SKILL.md file. **Ne
 First, resolve the script paths relative to this file's location:
 
 ```bash
-SKILL_DIR="$(dirname "$(find ~/.agents/skills -name SKILL.md -path "*/find-companies-and-people-facing-active-pain-points/*" 2>/dev/null | head -1)")"
+SKILL_DIR="$(dirname "$(find ~/.agents/skills -name SKILL.md -path "*/find-companies-and-people-with-active-pain-points/*" 2>/dev/null | head -1)")"
 API="$SKILL_DIR/api.sh"
 SIGNUP="$SKILL_DIR/signup.sh"
 ```

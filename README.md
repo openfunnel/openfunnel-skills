@@ -23,7 +23,7 @@ Events in the external world, when inferred, can:
 
 | Skill | Description |
 |-------|-------------|
-| `find-companies-and-people-facing-active-pain-points` | Find ICP companies with inferred pain-points from live company and people events, and the people involved |
+| `find-companies-and-people-with-active-pain-points` | Find ICP companies with inferred pain-points from live company and people events, and the people involved |
 | `find-companies-hiring-to-solve-specific-problems` | Find companies hiring to solve specific problems (daily) |
 | `find-companies-posting-about-specific-things` | Find companies posting about specific things on socials (daily) |
 | `find-companies-using-specific-tech-stack` | Find companies using specific tech stack (daily) |

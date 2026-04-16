@@ -56,7 +56,7 @@ User Request
   │   → Use the `enrich-and-research` skill and follow its workflow
   │
   ├─ PAIN-POINTS ("B2B SaaS companies migrating off Heroku that already have a DevOps team", "Mid-market healthcare companies hiring for their first CISO")
-  │   → Use the `find-companies-and-people-facing-active-pain-points` skill and follow its workflow
+  │   → Use the `find-companies-and-people-with-active-pain-points` skill and follow its workflow
   │
   ├─ HIRING SIGNALS ("Companies hiring to implement AI guardrails", "Find companies hiring to migrate from Heroku to AWS")
   │   → Use the `find-companies-hiring-to-solve-specific-problems` skill and follow its workflow
@@ -107,7 +107,7 @@ Existing data is instant and free. Only search or deploy agents when no signal c
 Read these files only when routed to them by the workflow above.
 
 ### Skills
-- `find-companies-and-people-facing-active-pain-points` — Find ICP companies with inferred pain-points from live company and people events, and the people involved
+- `find-companies-and-people-with-active-pain-points` — Find ICP companies with inferred pain-points from live company and people events, and the people involved
 - `find-companies-hiring-to-solve-specific-problems` — Find companies hiring to solve specific problems (daily)
 - `find-companies-posting-about-specific-things` — Find companies posting about specific things on socials (daily)
 - `find-companies-using-specific-tech-stack` — Find companies using specific tech stack (daily)

@@ -95,106 +95,105 @@ The response is: `{"status": "authenticated", "user_id": "..."}`. Credentials ar
 
 ---
 
-### 1. Trait (required)
-
-This is WHO the company is — industry, stage, description, or services they offer.
+### 1. What kind of company? (maps to Trait — required)
 
 ```
 ### Let's build your search.
 
-**Step 1: Trait** — Describe the type of company you're looking for.
+**What kind of company are you looking for?**
 
-This is the company descriptor — industry, stage, what they do, or what services they offer.
+Describe what they do, what space they're in, or what they build. (Firmographics like size, funding, and location are handled by your ICP profile.)
 
 **Examples:**
-- "B2B SaaS companies in the data infrastructure space"
-- "Mid-market healthcare companies"
-- "Companies building developer tools"
-- "E-commerce companies with 100+ employees"
-- "Fintech startups offering payments APIs"
+- "Companies building AI agents"
+- "Developer tools companies in the observability space"
+- "Companies that sell to healthcare providers"
+- "B2B SaaS companies in the payments space"
+- "Companies building voice AI products"
 ```
 
-Wait for user input.
+Wait for user input. Use their exact words — do not reframe.
 
 After the user responds, show:
 
 ```
 ### Building your search...
 
-| Step | Field | Value |
-|------|-------|-------|
-| ✅ | **Trait** | {user's trait} |
-| ⬜ | **Activity** | (next) |
-| ⬜ | **Qualifier** | (next) |
+| | Question | Your answer |
+|---|----------|-------------|
+| ✅ | **What kind of company?** | {user's answer} |
+| ⬜ | **What are they doing right now?** | (next) |
+| ⬜ | **Any must-haves?** | (next) |
 ```
 
 ---
 
-### 2. Activity (optional, strongly recommended)
+### 2. What are they doing right now that signals pain? (maps to Activity — optional, strongly recommended)
 
-This is what the company is CURRENTLY DOING that indicates they need what the user sells. This is the timing layer — the difference between a static list and an inferred pain-point.
+This is the timing layer — the difference between a static list and an inferred pain-point.
 
 ```
-**Step 2: Activity** — What current action would indicate this company needs what you sell — right now?
+**What are they doing right now that would signal they need what you sell?**
 
-A trait without activity is a static list. Activity is what makes your outreach timely instead of generic.
+This is what makes your search timely instead of generic. Without it, you get a static list of companies that match the description — with it, you get companies showing active pain.
 
 **Examples:**
-- "Hiring for AI safety and evaluation roles"
-- "Posting about migrating off legacy on-prem systems"
-- "Evaluating observability vendors"
-- "Scaling their engineering team for a new product line"
-- "Publicly discussing compliance challenges"
+- "VP of AI joined to implement agent evals"
+- "Building out their AI GTM function from scratch"
+- "Migrating off Netsuite"
+- "Hiring their first Head of Security"
+- "Posting about switching CRM platforms"
 
-Or type **"skip"** to search by trait only (no timing layer).
+Or type **"skip"** to search by company description only.
 ```
 
-Wait for user input.
+Wait for user input. Use their exact words — do not reframe.
 
 After the user responds, show:
 
 ```
 ### Building your search...
 
-| Step | Field | Value |
-|------|-------|-------|
-| ✅ | **Trait** | {trait} |
-| ✅ | **Activity** | {activity or "skipped — trait-only search"} |
-| ⬜ | **Qualifier** | (next) |
+| | Question | Your answer |
+|---|----------|-------------|
+| ✅ | **What kind of company?** | {answer 1} |
+| ✅ | **What are they doing right now?** | {answer 2 or "skipped"} |
+| ⬜ | **Any must-haves?** | (next) |
 ```
 
 ---
 
-### 3. Qualifier (optional)
+### 3. Any must-haves? (maps to Qualifier — optional)
 
-This is a deal-breaker condition — something the company MUST ALREADY HAVE in place. Companies without this don't qualify regardless of trait or activity match.
+A deal-breaker condition — something the company MUST ALREADY HAVE in place. Companies without this won't appear regardless of how well they match.
 
 ```
-**Step 3: Qualifier** — Any deal-breaker requirements the company must already have?
+**Any deal-breaker requirements the company must already have?**
 
-This is a hard filter. Companies that don't meet this condition won't appear in results.
+Companies that don't meet this condition won't show up in results.
 
 **Examples:**
-- "Must already be using Kubernetes in production"
-- "Must have an existing data engineering team"
-- "Must be SOC2 compliant"
-- "Must have a mobile app"
+- "Must have more than 5 SDRs"
+- "Must have SOC2 compliance"
+- "Must have majority of Engineering team in the US"
+- "Must already have a DevOps team"
+- "Must be using AWS"
 
 Or type **"skip"** — no hard filters.
 ```
 
-Wait for user input.
+Wait for user input. Use their exact words — do not reframe.
 
-After the user responds, show the completed TAQ:
+After the user responds, show the completed search:
 
 ```
 ### Your search
 
-| Field | Value |
-|-------|-------|
-| **Trait** | {trait} |
-| **Activity** | {activity or "none"} |
-| **Qualifier** | {qualifier or "none"} |
+| Question | Your answer |
+|----------|-------------|
+| **What kind of company?** | {answer 1} |
+| **What are they doing right now?** | {answer 2 or "none"} |
+| **Any must-haves?** | {answer 3 or "none"} |
 ```
 
 ---

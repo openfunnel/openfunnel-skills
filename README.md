@@ -33,8 +33,6 @@ By the time it's obvious, competitors are already in the deal.
 
 Having these market events captured means GTM teams can be faster, unlock more pipeline, and be genuinely helpful to prospects when pain is just emerging.
 
-**Inferred pain-points are leading indicators of buying windows.**
-
 ## Skills
 
 | Skill | Description |

@@ -1,6 +1,6 @@
 # OpenFunnel
 
-OpenFunnel turns every event in your market into pipeline — using OpenFunnel's Event Intelligence engine. Inferred pain-points from live company and people events are leading indicators of buying behavior.
+OpenFunnel turns daily events in your market into pipeline — using OpenFunnel's Event Intelligence engine. Inferred pain-points from live company and people events are leading indicators of buying behavior.
 
 ---
 

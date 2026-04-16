@@ -1,6 +1,6 @@
 # OpenFunnel Skills
 
-**OpenFunnel turns every event in your market into pipeline** using OpenFunnel's Event Intelligence engine.
+**OpenFunnel turns daily events in your market into pipeline** using OpenFunnel's Event Intelligence engine.
 
 ### What are Market Events for GTM?
 
@@ -27,7 +27,7 @@ Having these market events captured means GTM teams can be faster, unlock more p
 
 ### You don't need another list. You need an informer agent.
 
-OpenFunnel isn't a database you query. It's an informer agent that spots market trends, watches company movements, tracks people, runs inference, and alerts you when pain emerges. The skills below are how you tell it what to watch for.
+OpenFunnel isn't a list builder. It's an informer agent that spots market trends, watches every specific company movements, tracks 1B people, runs inference, and alerts you when pain emerges. The skills below are how you tell it what to watch for.
 
 ## Skills
 

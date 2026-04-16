@@ -5,7 +5,7 @@ description: Find companies and people facing active pain-points (daily). Inferr
 
 # Find Companies and People Facing Active Pain-Points (Daily)
 
-Find ICP companies with inferred pain-points from live company and people events — where a combination of who they are (trait), what they're doing right now (activity), and what they already have in place (qualifier) indicates active pain. Uses the TAQ model to build a precise search through a guided walkthrough.
+Find ICP companies with inferred pain-points from live company and people events — where a combination of who they are (trait), what they're doing right now or what pain-points they are facing (activity), and what they already have in place (qualifier). Uses the TAQ model to build a precise search through a guided walkthrough.
 
 Inferred pain-points are leading indicators of buying behavior. Instead of picking signal types (hiring vs social vs tech), describe the pain and the agent infers pain-points by decomposing it into searchable components.
 

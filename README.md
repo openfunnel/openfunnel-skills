@@ -30,6 +30,7 @@ Events in the external world, when inferred, can:
 | `find-people-having-simple-signals` | Find people tied to topics, job changes, and competitor engagement |
 | `enrich-and-research` | Enrich a company with people, signals, and a recommended attack strategy |
 | `enterprise-account-research` | Identify which team inside a large account has the pain, who leads it, and why now |
+| `enrich-people-with-email-and-phone` | Enrich OpenFunnel people with work email addresses and phone numbers |
 | `enrich-accounts-with-contacts-and-emails` | Turn a list of accounts or domains into relevant contacts with work email coverage |
 | `account-scoring` | Score accounts from 0-100 using evidence-backed pain-point relevance |
 | `score-and-tier` | Score accounts, group them into tiers, and re-score as new signals arrive |

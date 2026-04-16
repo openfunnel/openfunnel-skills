@@ -70,6 +70,9 @@ User Request
   ├─ FIND PEOPLE ("Find people posting about adding MCP in production", "Who's engaging with our competitor's LinkedIn content")
   │   → Use the `find-people-having-simple-signals` skill and follow its workflow
   │
+  ├─ ENRICH EMAILS/PHONES ("Get work emails for these people", "Enrich phone numbers for my signal results")
+  │   → Use the `enrich-people-with-email-and-phone` skill and follow its workflow
+  │
   ├─ BULK CONTACT ENRICHMENT ("Take this list of domains and get me the best contacts plus emails")
   │   → Use the `enrich-accounts-with-contacts-and-emails` skill and follow its workflow
   │
@@ -112,6 +115,7 @@ Read these files only when routed to them by the workflow above.
 - `find-companies-posting-about-specific-things` — Find companies posting about specific things on socials (daily)
 - `find-companies-using-specific-tech-stack` — Find companies using specific tech stack (daily)
 - `find-people-having-simple-signals` — Find people posting about topics, changing jobs, or engaging with competitor content
+- `enrich-people-with-email-and-phone` — Enrich OpenFunnel people with work email addresses and phone numbers
 - `enrich-accounts-with-contacts-and-emails` — Turn a list of domains or accounts into relevant contacts with work email coverage
 - `enrich-and-research` — Look up a company, enrich it with people and signals, and get an attack strategy
 - `enterprise-account-research` — Break into F500 accounts and find which team has the pain, who leads it, and the evidence

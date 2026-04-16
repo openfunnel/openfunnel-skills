@@ -50,7 +50,7 @@ Having these market events captured means GTM teams can be faster, unlock more p
 | `enrich-people-with-email-and-phone` | Enrich OpenFunnel people with work email addresses and phone numbers |
 | `enrich-accounts-with-contacts-and-emails` | Turn a list of accounts or domains into relevant contacts with work email coverage |
 | `account-scoring` | Score accounts from 0-100 using evidence-backed pain-point relevance |
-| `score-and-tier` | Score accounts, group them into tiers, and re-score as new signals arrive |
+| `score-and-tier` | Score accounts, group them into tiers, and daily auto-rescore as new signals arrive |
 | `advanced-account-setup` | Configure ICPs, integrations, and account-level controls |
 
 ## Install

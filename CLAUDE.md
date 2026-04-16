@@ -132,6 +132,6 @@ Read these files only when routed to them by the workflow above.
 - `enrich-and-research` — Look up a company, enrich it with people and signals, and get an attack strategy
 - `enterprise-account-research` — Break into F500 accounts and find which team has the pain, who leads it, and the evidence
 - `account-scoring` — Score accounts 0-100 on pain-point relevance with evidence and reasoning
-- `score-and-tier` — Score accounts, bucket into tiers, and re-score as new signals come in
+- `score-and-tier` — Score accounts, bucket into tiers, and daily auto-rescore as new signals come in
 - `advanced-account-setup` — Advanced account setup for ICPs, blocklists, and integrations
 

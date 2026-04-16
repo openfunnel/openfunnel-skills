@@ -28,12 +28,12 @@ Then use `$SIGNUP` for auth and `$API` for all other calls.
 
 ## When to Use This Skill
 
-- "Find companies posting about their Series A round"
-- "Companies posting about growing their GTM team"
+- "Find companies posting about raising their Series A"
+- "Find companies posting about growing their GTM team"
 - "Find companies posting about attending RSAC conference"
-- "Companies posting about adding AI to their existing stack"
-- "Find companies posting about migrating off legacy systems"
-- "Companies publicly evaluating observability vendors"
+- "Find companies posting about adding AI to their existing stack"
+- "Find companies posting about migrating off legacy monitoring"
+- "Find companies posting about evaluating new CRM platforms"
 
 ## What It Captures
 
@@ -101,12 +101,12 @@ What topic, milestone, or announcement is the user looking for in social posts? 
 **Prompt format:** `"Find companies posting about [topic or milestone or announcement]"`
 
 **Examples of good inputs:**
-- "Their Series A round"
-- "Growing their GTM team"
-- "Attending RSAC conference"
-- "Adding AI to their existing stack"
-- "Migrating off legacy monitoring"
-- "Evaluating new CRM platforms"
+- "Find companies posting about raising their Series A"
+- "Find companies posting about growing their GTM team"
+- "Find companies posting about attending RSAC conference"
+- "Find companies posting about adding AI to their existing stack"
+- "Find companies posting about migrating off legacy monitoring"
+- "Find companies posting about evaluating new CRM platforms"
 
 **Timeframe:** Last day to last year. Default: last 3 months.
 

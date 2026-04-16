@@ -29,11 +29,11 @@ Then use `$SIGNUP` for auth and `$API` for all other calls.
 ## When to Use This Skill
 
 - "Find companies using Snowflake"
-- "Companies running Kubernetes in production"
-- "Find companies that use Terraform"
-- "Companies using dbt for data transformation"
+- "Find companies running Kubernetes in production"
+- "Find companies using Terraform for infrastructure"
+- "Find companies using dbt for data transformation"
 - "Find companies with Kafka in their stack"
-- "Companies that adopted React recently"
+- "Find companies that recently adopted Datadog"
 
 ## Important: Input Must Be Specific
 

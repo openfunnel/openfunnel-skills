@@ -28,12 +28,12 @@ Then use `$SIGNUP` for auth and `$API` for all other calls.
 
 ## When to Use This Skill
 
-- "Find companies hiring to implement guardrails for AI agents"
-- "Companies looking to build out their first data engineering team"
+- "Find companies hiring to set up guardrails for AI agents"
+- "Find companies hiring to build their first data engineering team"
 - "Find companies hiring to migrate from Heroku to AWS"
-- "Companies scaling their PLG motion"
-- "Find companies setting up agent evals and testing"
-- "Companies hiring to adopt Kubernetes"
+- "Find companies hiring to scale their PLG motion"
+- "Find companies hiring to set up agent evals and testing"
+- "Find companies hiring to adopt Kubernetes in production"
 
 ## Agent Rules
 
@@ -91,15 +91,15 @@ Wait for user input. Then:
 
 What specific problem or activity is the user looking for in hiring posts? If unclear, ask.
 
-**Prompt format:** `"Find companies that are looking to [activity] or facing [pain point]"`
+**Prompt format:** `"Find companies hiring to [solve specific problem]"`
 
 **Examples of good inputs:**
-- "Implementing guardrails for AI agents"
-- "Setting up agent evals and testing"
-- "Migrating from Heroku to AWS"
-- "Scaling their PLG motion"
-- "Building out their first data engineering team"
-- "Adopting Kubernetes"
+- "Find companies hiring to set up guardrails for AI agents"
+- "Find companies hiring to set up agent evals and testing"
+- "Find companies hiring to migrate from Heroku to AWS"
+- "Find companies hiring to scale their PLG motion"
+- "Find companies hiring to build their first data engineering team"
+- "Find companies hiring to adopt Kubernetes in production"
 
 **Timeframe:** Last day to last year. Default: last 3 months.
 

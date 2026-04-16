@@ -1,6 +1,6 @@
 {
   "name": "openfunnel",
-  "version": "0.2.19",
+  "version": "0.2.20",
   "description": "Market Events Intelligence Platform for GTM Teams. A time-aware context graph across 1B people and 50M companies that continuously streams custom defined events that indicate pain-points.",
   "type": "module",
   "author": "OpenFunnel <hello@openfunnel.ai> (https://openfunnel.ai)",

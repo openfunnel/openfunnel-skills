@@ -20,11 +20,12 @@ Inferred pain-points are leading indicators of buying behavior. Instead of picki
 
 ## Agent Rules
 
-1. **Walk through TAQ one step at a time.** Don't dump all three fields at once. Each step is a conversation turn.
-2. **Show the progressive build.** After each TAQ step, show the running summary so the user sees their search taking shape.
-3. **Don't deploy without confirming.** Signals cost credits. Always show the full config and wait for explicit "deploy."
-4. **Present what the API returns.** No fabrication, no inference.
-5. **Activity is the timing layer.** Always explain why it matters. A trait without activity is a static list. Activity is what makes it an inferred pain-point.
+1. **NEVER rewrite or reframe the user's query.** Use the user's exact words for trait, activity, and qualifier. Do not add your own interpretation, expand abbreviations, add synonyms, or "improve" the input. If you think it could be more specific, ask the user — do not modify it yourself.
+2. **Walk through TAQ one step at a time.** Don't dump all three fields at once. Each step is a conversation turn.
+3. **Show the progressive build.** After each TAQ step, show the running summary so the user sees their search taking shape.
+4. **Don't deploy without confirming.** Signals cost credits. Always show the full config and wait for explicit "deploy."
+5. **Present what the API returns.** No fabrication, no inference.
+6. **Activity is the timing layer.** Always explain why it matters. A trait without activity is a static list. Activity is what makes it an inferred pain-point.
 
 ---
 

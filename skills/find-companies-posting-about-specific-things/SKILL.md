@@ -44,10 +44,11 @@ Then use `$SIGNUP` for auth and `$API` for all other calls.
 
 ## Agent Rules
 
-1. **Don't deploy signals without confirming.** Signals cost credits. Always confirm before deploying.
-2. **Present what the API returns.** No fabrication, no inference.
-3. **Close match ≠ loose match.** "Companies posting about SOC2" ≈ "Companies discussing compliance" → match. "Companies posting about SOC2" ≠ "Companies in regulated industries" → not a match, too much inference.
-4. **Never output or log API credentials.** All authenticated calls go through `api.sh`.
+1. **NEVER rewrite or reframe the user's query.** Use the user's exact words as the search query. Do not add your own interpretation, expand abbreviations, add synonyms, or "improve" the query. If you think the query could be more specific, ask the user — do not modify it yourself.
+2. **Don't deploy signals without confirming.** Signals cost credits. Always confirm before deploying.
+3. **Present what the API returns.** No fabrication, no inference.
+4. **Close match ≠ loose match.** "Companies posting about SOC2" ≈ "Companies discussing compliance" → match. "Companies posting about SOC2" ≠ "Companies in regulated industries" → not a match, too much inference.
+5. **Never output or log API credentials.** All authenticated calls go through `api.sh`.
 
 ---
 

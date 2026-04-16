@@ -1,13 +1,13 @@
 ---
-name: find-companies-posting-about-specific-things
-description: Find companies posting about specific things on socials (daily). Decision-maker posts, announcements, and public positioning reveal active pain. Inferred pain-points from social events are leading indicators of buying behavior.
+name: spot-companies-hiring-to-solve-specific-problems
+description: Spot companies hiring to solve specific problems (daily). Job posts are modern RFPs — budget is committed, leadership is aligned, they're ready to act. Inferred pain-points from hiring events are leading indicators of buying behavior.
 ---
 
-# Find Companies Posting About Specific Things (Daily)
+# Spot Companies Hiring to Solve Specific Problems (Daily)
 
-Find companies whose decision-makers are posting about specific topics, milestones, or announcements on social media. VP/C-level posts about challenges are stronger signals than press releases — they reveal pain in real time.
+Spot companies whose job posts reveal they are actively building, scaling, or fixing something specific. What a company hires for tells you what problems they're facing right now — budget is already committed, leadership is already aligned.
 
-Inferred pain-points from social events are leading indicators of buying behavior.
+Inferred pain-points from hiring events are leading indicators of buying behavior.
 
 ## API Calls
 
@@ -19,7 +19,7 @@ This skill bundles two scripts in the same directory as this SKILL.md file. **Ne
 First, resolve the script paths relative to this file's location:
 
 ```bash
-SKILL_DIR="$(dirname "$(find ~/.agents/skills -name SKILL.md -path "*/find-companies-posting-about-specific-things/*" 2>/dev/null | head -1)")"
+SKILL_DIR="$(dirname "$(find ~/.agents/skills -name SKILL.md -path "*/spot-companies-hiring-to-solve-specific-problems/*" 2>/dev/null | head -1)")"
 API="$SKILL_DIR/api.sh"
 SIGNUP="$SKILL_DIR/signup.sh"
 ```
@@ -28,26 +28,19 @@ Then use `$SIGNUP` for auth and `$API` for all other calls.
 
 ## When to Use This Skill
 
-- "Find companies posting about raising their Series A"
-- "Find companies posting about growing their GTM team"
-- "Find companies posting about attending RSAC conference"
-- "Find companies posting about adding AI to their existing stack"
-- "Find companies posting about migrating off legacy monitoring"
-- "Find companies posting about evaluating new CRM platforms"
-
-## What It Captures
-
-- **Decision-maker pain posts** — VP/C-level posting about challenges (stronger than press releases)
-- **Budget signals** — headcount growth, new initiatives, strategic pivots
-- **Vendor evaluation** — comparing tools, asking for recommendations, discussing migrations
-- **Conference/event attendance** — signals active evaluation and network building
+- "Find companies hiring to set up guardrails for AI agents"
+- "Find companies hiring to build their first data engineering team"
+- "Find companies hiring to migrate from Heroku to AWS"
+- "Find companies hiring to scale their PLG motion"
+- "Find companies hiring to set up agent evals and testing"
+- "Find companies hiring to adopt Kubernetes in production"
 
 ## Agent Rules
 
 1. **NEVER rewrite or reframe the user's query.** Use the user's exact words as the search query. Do not add your own interpretation, expand abbreviations, add synonyms, or "improve" the query. If you think the query could be more specific, ask the user — do not modify it yourself.
 2. **Don't deploy signals without confirming.** Signals cost credits. Always confirm before deploying.
 3. **Present what the API returns.** No fabrication, no inference.
-4. **Close match ≠ loose match.** "Companies posting about SOC2" ≈ "Companies discussing compliance" → match. "Companies posting about SOC2" ≠ "Companies in regulated industries" → not a match, too much inference.
+4. **Close match ≠ loose match.** "Companies hiring for Kubernetes" ≈ "Companies looking to adopt Kubernetes" → match. "Companies hiring for Kubernetes" ≠ "Companies migrating to container orchestration" → not a match, too much inference.
 5. **Never output or log API credentials.** All authenticated calls go through `api.sh`.
 
 ---
@@ -97,17 +90,17 @@ Wait for user input. Then:
 
 ### 1. Understand the request
 
-What topic, milestone, or announcement is the user looking for in social posts? If unclear, ask.
+What specific problem or activity is the user looking for in hiring posts? If unclear, ask.
 
-**Prompt format:** `"Find companies posting about [topic or milestone or announcement]"`
+**Prompt format:** `"Find companies hiring to [solve specific problem]"`
 
 **Examples of good inputs:**
-- "Find companies posting about raising their Series A"
-- "Find companies posting about growing their GTM team"
-- "Find companies posting about attending RSAC conference"
-- "Find companies posting about adding AI to their existing stack"
-- "Find companies posting about migrating off legacy monitoring"
-- "Find companies posting about evaluating new CRM platforms"
+- "Find companies hiring to set up guardrails for AI agents"
+- "Find companies hiring to set up agent evals and testing"
+- "Find companies hiring to migrate from Heroku to AWS"
+- "Find companies hiring to scale their PLG motion"
+- "Find companies hiring to build their first data engineering team"
+- "Find companies hiring to adopt Kubernetes in production"
 
 **Timeframe:** Last day to last year. Default: last 3 months.
 
@@ -117,7 +110,10 @@ Run `bash "$API" POST /api/v1/signal/get-signal-list '{"pagination": {"limit": 1
 
 A signal is unique by **query + ICP pair**. When checking for matches, compare BOTH:
 
-1. **Query match** — close match on signal name. Same meaning, different wording is fine.
+1. **Query match** — close match on signal name. Same meaning, different wording is fine:
+   - "Companies hiring for Kubernetes" ≈ "Companies looking to adopt Kubernetes" → **match**
+   - "Companies hiring for Kubernetes" ≠ "Companies migrating to container orchestration" → **not a match, too much inference**
+
 2. **ICP match** — the signal's `icp.id` must match the user's intended ICP.
 
 **If potential match found (query + ICP both match):**
@@ -204,7 +200,7 @@ If skip → auto-create the broad fallback ICP as above.
 ### 5. Confirm & Deploy
 
 ```
-I'll deploy a **social listening** signal:
+I'll deploy a **hiring** signal:
 
 **Name:** {auto-generated descriptive name}
 **Query:** "{formatted prompt}"
@@ -225,7 +221,7 @@ Set any of these, or "deploy" to go with defaults.
 Wait for user input. Then deploy:
 
 ```bash
-bash "$API" POST /api/v1/signal/deploy/social-listening-agent '{"name": "<name>", "search_query": "<query>", "signal_target": "account", "timeframe": <days>, "icp_id": <id>, "repeat": <true|false>}'
+bash "$API" POST /api/v1/signal/deploy/deep-hiring-agent '{"name": "<name>", "search_query": "<query>", "timeframe": <days>, "icp_id": <id>, "repeat": <true|false>}'
 ```
 
 ### 6. Post-deploy
@@ -233,7 +229,7 @@ bash "$API" POST /api/v1/signal/deploy/social-listening-agent '{"name": "<name>"
 ```
 Signal deployed: **{name}** (ID: {signal_id})
 
-This is now scanning social posts for companies discussing this topic.
+This is now scanning job posts for companies hiring to solve this problem.
 Results come in as they're found — just say "check on {signal_name}" anytime.
 ```
 

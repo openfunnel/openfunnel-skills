@@ -29,11 +29,11 @@ Having these market events captured means GTM teams can be faster, unlock more p
 
 | Skill | Description |
 |-------|-------------|
-| `find-companies-and-people-with-active-pain-points` | Find ICP companies with inferred pain-points from live company and people events, and the people involved |
-| `find-companies-hiring-to-solve-specific-problems` | Find companies hiring to solve specific problems (daily) |
-| `find-companies-posting-about-specific-things` | Find companies posting about specific things on socials (daily) |
-| `find-companies-using-specific-tech-stack` | Find companies using specific tech stack (daily) |
-| `find-people-having-simple-signals` | Find people tied to topics, job changes, and competitor engagement |
+| `spot-companies-and-people-with-active-pain-points` | Find companies and people with active pain-points (daily) |
+| `spot-companies-hiring-to-solve-specific-problems` | Find companies hiring to solve specific problems (daily) |
+| `spot-companies-posting-about-specific-things` | Find companies posting about specific things on socials (daily) |
+| `spot-companies-using-specific-tech-stack` | Find companies using specific tech stack (daily) |
+| `spot-people-having-simple-signals` | Find people tied to topics, job changes, and competitor engagement (daily) |
 | `enrich-and-research` | Enrich a company with people, signals, and a recommended attack strategy |
 | `enterprise-account-research` | Identify which team inside a large account has the pain, who leads it, and why now |
 | `enrich-people-with-email-and-phone` | Enrich OpenFunnel people with work email addresses and phone numbers |
@@ -53,7 +53,7 @@ npx skills add openfunnel/openfunnel --all
 npx skills add openfunnel/openfunnel --list
 
 # Install specific skills only
-npx skills add openfunnel/openfunnel --skill find-companies-hiring-to-solve-specific-problems --skill enrich-and-research
+npx skills add openfunnel/openfunnel --skill spot-companies-hiring-to-solve-specific-problems --skill enrich-and-research
 ```
 
 OpenFunnel follows the open `SKILL.md` standard used by `skills`, so it can be installed into Cursor, Claude Code, Codex, and other compatible agents.

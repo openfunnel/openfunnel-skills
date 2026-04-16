@@ -1,11 +1,11 @@
 ---
-name: find-companies-using-specific-tech-stack
-description: Find companies using specific tech stack (daily). Technographic data inferred from job postings reveals what tools companies rely on. Combined with timing, inferred pain-points from tech adoption events are leading indicators of buying behavior.
+name: spot-companies-using-specific-tech-stack
+description: Spot companies using specific tech stack (daily). Technographic data inferred from job postings reveals what tools companies rely on. Combined with timing, inferred pain-points from tech adoption events are leading indicators of buying behavior.
 ---
 
-# Find Companies Using Specific Tech Stack (Daily)
+# Spot Companies Using Specific Tech Stack (Daily)
 
-Find companies using a specific tool, platform, or technology — inferred from their job postings. What a company requires in job posts tells you what they're running in production.
+Spot companies using a specific tool, platform, or technology — inferred from their job postings. What a company requires in job posts tells you what they're running in production.
 
 Technographic data alone is a trait (static). Combined with timing — "just adopted Snowflake" vs "has used Snowflake for 5 years" — it becomes an inferred pain-point and a leading indicator of buying behavior.
 
@@ -19,7 +19,7 @@ This skill bundles two scripts in the same directory as this SKILL.md file. **Ne
 First, resolve the script paths relative to this file's location:
 
 ```bash
-SKILL_DIR="$(dirname "$(find ~/.agents/skills -name SKILL.md -path "*/find-companies-using-specific-tech-stack/*" 2>/dev/null | head -1)")"
+SKILL_DIR="$(dirname "$(find ~/.agents/skills -name SKILL.md -path "*/spot-companies-using-specific-tech-stack/*" 2>/dev/null | head -1)")"
 API="$SKILL_DIR/api.sh"
 SIGNUP="$SKILL_DIR/signup.sh"
 ```

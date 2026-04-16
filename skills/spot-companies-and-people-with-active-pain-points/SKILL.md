@@ -1,11 +1,11 @@
 ---
-name: find-companies-and-people-with-active-pain-points
-description: Find companies and people with active pain-points (daily). Inferred from live company and people events using the TAQ model — Trait (who they are), Activity (what they're doing now), Qualifier (what they already have). Inferred pain-points are leading indicators of buying behavior.
+name: spot-companies-and-people-with-active-pain-points
+description: Spot companies and people with active pain-points (daily). Inferred from live company and people events using the TAQ model — Trait (who they are), Activity (what they're doing now), Qualifier (what they already have). Inferred pain-points are leading indicators of buying behavior.
 ---
 
-# Find Companies and People with Active Pain-Points (Daily)
+# Spot Companies and People with Active Pain-Points (Daily)
 
-Find ICP companies with inferred pain-points from live company and people events — where a combination of who they are (trait), what they're doing right now or what pain-points they are facing (activity), and what they already have in place (qualifier). Uses the TAQ model to build a precise search through a guided walkthrough.
+Spot ICP companies with inferred pain-points from live company and people events — where a combination of who they are (trait), what they're doing right now or what pain-points they are facing (activity), and what they already have in place (qualifier). Uses the TAQ model to build a precise search through a guided walkthrough.
 
 Inferred pain-points are leading indicators of buying behavior. Instead of picking signal types (hiring vs social vs tech), describe the pain and the agent infers pain-points by decomposing it into searchable components.
 
@@ -28,7 +28,7 @@ This skill bundles two scripts in the same directory as this SKILL.md file. **Ne
 First, resolve the script paths relative to this file's location:
 
 ```bash
-SKILL_DIR="$(dirname "$(find ~/.agents/skills -name SKILL.md -path "*/find-companies-and-people-with-active-pain-points/*" 2>/dev/null | head -1)")"
+SKILL_DIR="$(dirname "$(find ~/.agents/skills -name SKILL.md -path "*/spot-companies-and-people-with-active-pain-points/*" 2>/dev/null | head -1)")"
 API="$SKILL_DIR/api.sh"
 SIGNUP="$SKILL_DIR/signup.sh"
 ```
@@ -481,7 +481,7 @@ Always show after presenting results:
 Route based on selection:
 - 1 → use the `enrich-and-research` skill
 - 2 → use the `score-and-tier` skill
-- 3 → use the `find-people-having-simple-signals` skill
+- 3 → use the `spot-people-having-simple-signals` skill
 - 4 → use the `enterprise-account-research` skill
 - 5 → loop back to Step 1
 - 6 → use CRM sync endpoints: `bash "$API" POST /api/v1/crm/sync-accounts-job '<json_body>'` and `bash "$API" POST /api/v1/crm/sync-people-job '<json_body>'`

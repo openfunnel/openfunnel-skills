@@ -1,13 +1,13 @@
 ---
-name: find-people-having-simple-signals
-description: Find people posting about topics, changing jobs, or engaging with competitor content (daily)
+name: spot-people-having-simple-signals
+description: Spot people posting about topics, changing jobs, or engaging with competitor content (daily)
 ---
 
-# Find People Having Simple Signals (Daily)
+# Spot People Having Simple Signals (Daily)
 
-Find specific people based on what they're doing — posting about topics, changing jobs, or engaging with competitors. This skill checks if a signal is already tracking what the user wants, returns results if so, or deploys a new signal if not.
+Spot specific people based on what they're doing — posting about topics, changing jobs, or engaging with competitors. This skill checks if a signal is already tracking what the user wants, returns results if so, or deploys a new signal if not.
 
-If the user is looking for **companies** (not people), use the `find-companies-hiring-to-solve-specific-problems`, `find-companies-posting-about-specific-things`, or `find-companies-using-specific-tech-stack` skill instead.
+If the user is looking for **companies** (not people), use the `spot-companies-hiring-to-solve-specific-problems`, `spot-companies-posting-about-specific-things`, or `spot-companies-using-specific-tech-stack` skill instead.
 
 ## When to Use This Skill
 
@@ -27,7 +27,7 @@ This skill bundles two scripts in the same directory as this SKILL.md file. **Ne
 First, resolve the script paths relative to this file's location:
 
 ```bash
-SKILL_DIR="$(dirname "$(find ~/.agents/skills -name SKILL.md -path "*/find-people-having-simple-signals/*" 2>/dev/null | head -1)")"
+SKILL_DIR="$(dirname "$(find ~/.agents/skills -name SKILL.md -path "*/spot-people-having-simple-signals/*" 2>/dev/null | head -1)")"
 API="$SKILL_DIR/api.sh"
 SIGNUP="$SKILL_DIR/signup.sh"
 ```

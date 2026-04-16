@@ -33,9 +33,7 @@ By the time it's obvious, competitors are already in the deal.
 
 Having these market events captured means GTM teams can be faster, unlock more pipeline, and be genuinely helpful to prospects when pain is just emerging.
 
-### You don't need another list. You need an informer agent.
-
-OpenFunnel isn't a list builder. It's an informer agent that spots market trends, watches every specific company movements, tracks 1B people, runs inference, and alerts you when pain emerges. The skills below are how you tell it what to watch for.
+**Inferred pain-points are leading indicators of buying windows.**
 
 ## Skills
 

@@ -1,6 +1,6 @@
 # OpenFunnel Skills
 
-**OpenFunnel turns every event in your market into pipeline** — using OpenFunnel's Event Intelligence engine.
+**OpenFunnel turns every event in your market into pipeline** using OpenFunnel's Event Intelligence engine.
 
 ### What are Market Events for GTM?
 

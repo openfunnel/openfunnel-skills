@@ -13,8 +13,8 @@ Inferred pain-points from hiring events are leading indicators of buying behavio
 
 This skill bundles two scripts in the same directory as this SKILL.md file. **Never read or reference API credentials directly.**
 
-- `signup.sh` — handles authentication. Writes credentials to `.env` internally. Never exposes the API key.
-- `api.sh` — handles all authenticated API calls. Reads credentials from `.env` internally.
+- `signup.sh` — handles authentication. Writes credentials to `.env` internally. Never exposes the API key. The verification code is collected via stdin directly from the user — the agent never sees, handles, or logs the code. No secrets or credentials pass through the LLM at any point.
+- `api.sh` — handles all authenticated API calls. Reads credentials from `.env` internally. The agent only sees the JSON response, never the authentication headers or credential values.
 
 First, resolve the script paths relative to this file's location:
 

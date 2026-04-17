@@ -22,7 +22,7 @@ These are opinions and perspectives learned from working with hundreds of GTM te
 
 OpenFunnel is distributed as both a skills package and an npm package.
 
-- Prefer `npx skills add openfunnel/openfunnel` for cross-agent skill installs
+- Prefer `npx skills add openfunnel/openfunnel-skills` for cross-agent skill installs
 - `npm install openfunnel` is also supported for npm-based distribution
 - Treat `skills/` as the source of truth
 - Do not rely on `node_modules/openfunnel` being present

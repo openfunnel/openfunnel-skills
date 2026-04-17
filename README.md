@@ -56,15 +56,15 @@ Having these market events captured means GTM teams can be faster, unlock more p
 ## Install
 
 ```bash
-npx skills add openfunnel/openfunnel --all
+npx skills add openfunnel/openfunnel-skills --all
 ```
 
 ```bash
 # Preview discoverable skills
-npx skills add openfunnel/openfunnel --list
+npx skills add openfunnel/openfunnel-skills --list
 
 # Install specific skills only
-npx skills add openfunnel/openfunnel --skill spot-companies-hiring-to-solve-specific-problems --skill enrich-and-research
+npx skills add openfunnel/openfunnel-skills --skill spot-companies-hiring-to-solve-specific-problems --skill enrich-and-research
 ```
 
 OpenFunnel follows the open `SKILL.md` standard used by `skills`, so it can be installed into Cursor, Claude Code, Codex, and other compatible agents.

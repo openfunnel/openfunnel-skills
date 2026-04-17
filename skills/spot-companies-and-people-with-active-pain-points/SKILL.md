@@ -422,9 +422,9 @@ If "yes" → deploy:
   "activity": "<activity or null>",
   "qualifier": "<qualifier or null>",
   "icp_id": "<selected_or_fallback_icp_id>",
-  "repeat": false,
-  "account_audience_name": "<name or null>",
-  "people_audience_name": "<name or null>",
+  "run_daily": false,
+  "account_audience_name": "<signal_name> - Accounts",
+  "people_audience_name": "<signal_name> - People",
   "max_credit_limit": null,
   "enable_safe_crm_addition": false,
   "auto_enrich_people_emails": false
@@ -438,51 +438,63 @@ Signal deployed: **{name}** (ID: {signal_id})
 
 This agent is now searching for companies matching your pain point.
 Results come in as they're found — say "check on {signal_name}" anytime.
+
+Account audience: **{signal_name} - Accounts**
+People audience: **{signal_name} - People**
 ```
 
 ---
 
-### 6. Check Results
+### 6. Check Signal Status
 
-When the user checks back:
+The user can check anytime — during or after the signal run.
 
-`bash "$API" POST /api/v1/signal/ '{"signal_id": <signal_id>}'` → present accounts and people.
+`bash "$API" POST /api/v1/signal/ '{"signal_id": <signal_id>}'`
 
 ```
-### Results from: {signal_name}
+### Signal: {signal_name}
 
+**Status:** {status}
 **{total_accounts} accounts found | {total_people} people found**
-
-| # | Company | Domain | Signals |
-|---|---------|--------|---------|
-| 1 | {name} | {domain} | {signal count} |
-| 2 | ... | ... | ... |
 ```
-
-If the user wants full details on specific accounts, pull with `bash "$API" POST /api/v2/account/batch '{"account_ids": [...]}'`.
 
 ---
 
-### 7. What's Next
+### 7. View Account Audience
 
-Always show after presenting results:
+Pull the account audience to get IDs, then fetch full account details with signal reasoning.
+
+1. Get audience: `bash "$API" GET '/api/v1/audience/<audience_id>'` → returns `account_ids`
+2. Get account details: `bash "$API" POST /api/v2/account/batch '{"account_ids": [<ids>], "icp_people_page": 1, "icp_people_page_size": 100}'`
+
+Present as a sheet. **Activity is the headline — it's the "why reach out now."** Trait and Qualifier are the qualifying context.
 
 ```
-### What would you like to do next?
+### Accounts — {signal_name}
 
-1. **Drill into a specific account** — full enrichment, signals, contacts, and attack strategy
-2. **Score & tier these accounts** — prioritize by pain urgency and evidence strength
-3. **Find people at these companies** — decision-makers posting about this pain
-4. **Enterprise deep-dive** — for F500 accounts, find which team has the pain
-5. **Deploy another signal** — search for a different pain point or refine this one
-6. **Export to CRM** — push accounts and contacts to Salesforce or HubSpot
+| Account | Activity (why now) | Trait | Qualifier |
+|---------|-------------------|-------|-----------|
+| {company_name} | {signal reasoning from activity match} | {trait match} | {qualifier match} |
+| ... | ... | ... | ... |
 ```
 
-Route based on selection:
-- 1 → use the `enrich-and-research` skill
-- 2 → use the `score-and-tier` skill
-- 3 → use `spot-people-posting-about-specific-things`, `spot-people-changing-jobs`, `spot-people-engaging-with-competitors`, or `spot-competitor-sales-activity`
-- 4 → use the `enterprise-account-research` skill
-- 5 → loop back to Step 1
-- 6 → use CRM sync endpoints: `bash "$API" POST /api/v1/crm/sync-accounts-job '<json_body>'` and `bash "$API" POST /api/v1/crm/sync-people-job '<json_body>'`
+---
+
+### 8. View People Audience
+
+Pull the people audience to get IDs, then fetch full people details. People get account-level TAQ reasoning — the pain is at the company level, people are the contacts involved.
+
+1. Get audience: `bash "$API" GET '/api/v1/audience/<audience_id>'` → returns `people_ids`
+2. Get people details: `bash "$API" POST /api/v1/people/batch '{"people_ids": [<ids>]}'`
+
+Present as a sheet. Activity is still the lead — it's the account-level "why now" for each person.
+
+```
+### People — {signal_name}
+
+| Person | Role | Account | Activity (why now) | Trait | Qualifier |
+|--------|------|---------|-------------------|-------|-----------|
+| {name} | {role} | {company} | {account-level signal reasoning} | {trait match} | {qualifier match} |
+| ... | ... | ... | ... | ... | ... |
+```
 

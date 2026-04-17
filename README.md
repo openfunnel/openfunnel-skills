@@ -69,19 +69,6 @@ npx skills add openfunnel/openfunnel-skills --skill spot-companies-hiring-to-sol
 
 OpenFunnel follows the open `SKILL.md` standard used by `skills`, so it can be installed into Cursor, Claude Code, Codex, and other compatible agents.
 
-## Setup
-
-On first use, OpenFunnel will ask for:
-
-```dotenv
-OPENFUNNEL_API_KEY=your-api-key
-OPENFUNNEL_USER_ID=your-user-id
-```
-
-These values are stored in the target repo's `.env`. If needed, OpenFunnel will also add `.env` to `.gitignore`.
-
-Get your credentials at [openfunnel.ai](https://openfunnel.ai).
-
 ## Docs
 
 - [Documentation](https://docs.openfunnel.dev)

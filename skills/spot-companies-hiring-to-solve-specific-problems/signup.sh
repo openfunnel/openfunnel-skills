@@ -2,11 +2,10 @@
 # OpenFunnel sign-up wrapper — keeps API key out of the agent's context
 # Usage:
 #   bash signup.sh start <email>
-#   bash signup.sh verify <email> <otp_code>
+#   bash signup.sh verify <email>
 
 ACTION="$1"
 EMAIL="$2"
-OTP_CODE="$3"
 
 BASE_URL="https://api.openfunnel.dev"
 
@@ -47,8 +46,17 @@ case "$ACTION" in
     ;;
 
   verify)
-    if [ -z "$EMAIL" ] || [ -z "$OTP_CODE" ]; then
-      echo '{"error": "Email and OTP code are required. Usage: bash signup.sh verify <email> <otp_code>"}' >&2
+    if [ -z "$EMAIL" ]; then
+      echo '{"error": "Email is required. Usage: bash signup.sh verify <email>"}' >&2
+      exit 1
+    fi
+
+    # Prompt user directly — OTP never enters the agent's context
+    echo -n "Enter your 6-digit verification code: "
+    read -r OTP_CODE
+
+    if [ -z "$OTP_CODE" ]; then
+      echo '{"status": "failed", "message": "No code entered."}'
       exit 1
     fi
 
@@ -96,7 +104,7 @@ case "$ACTION" in
     ;;
 
   *)
-    echo '{"error": "Unknown action. Usage: bash signup.sh start <email> OR bash signup.sh verify <email> <otp_code>"}' >&2
+    echo '{"error": "Unknown action. Usage: bash signup.sh start <email> OR bash signup.sh verify <email>"}' >&2
     exit 1
     ;;
 esac

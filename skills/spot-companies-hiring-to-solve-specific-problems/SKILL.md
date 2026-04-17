@@ -74,11 +74,13 @@ Wait for user input. Then:
 
 1. Run `bash "$SIGNUP" start "<user_email>"`
    - Returns `{"status": "verification_code_sent", "email": "..."}` on success
-2. Tell the user a 6-digit code was sent:
+2. Tell the user a 6-digit code was sent, then run verify. The script will prompt the user directly for the code — the agent never handles it.
    ```
-   I sent a 6-digit verification code to **{email}**. Reply with the code.
+   I sent a 6-digit verification code to **{email}**. The next command will ask you to enter it directly.
    ```
-3. Wait for input. Run `bash "$SIGNUP" verify "<user_email>" "<code>"`
+3. Run `bash "$SIGNUP" verify "<user_email>"`
+   - The script prompts the user: "Enter your 6-digit verification code:"
+   - The user types the code directly into the terminal
    - On success: returns `{"status": "authenticated", "user_id": "..."}`. Credentials are written to `.env` and `.gitignore` is updated automatically.
    - On failure: returns `{"status": "failed", ...}`
 4. Verify with `bash "$API" POST /api/v1/signal/get-signal-list '{"pagination": {"limit": 1, "offset": 0}}'`

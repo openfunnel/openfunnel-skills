@@ -61,23 +61,11 @@ User Request
   ├─ HIRING SIGNALS ("Companies hiring to implement AI guardrails", "Find companies hiring to migrate from Heroku to AWS")
   │   → Use the `spot-companies-hiring-to-solve-specific-problems` skill and follow its workflow
   │
-  ├─ SOCIAL SIGNALS ("Companies posting about their Series A", "Find companies posting about attending RSAC")
-  │   → Use the `spot-companies-posting-about-specific-things` skill and follow its workflow
-  │
   ├─ TECH STACK ("Companies using Snowflake", "Find companies running Kubernetes")
   │   → Use the `spot-companies-using-specific-tech-stack` skill and follow its workflow
   │
-  ├─ PEOPLE POSTING ("Find people posting about adding MCP in production", "Find people announcing their Series A")
-  │   → Use the `spot-people-posting-about-specific-things` skill and follow its workflow
-  │
   ├─ JOB CHANGES ("Track ICP people changing jobs", "Alert me when decision-makers join new companies")
   │   → Use the `spot-people-changing-jobs` skill and follow its workflow
-  │
-  ├─ COMPETITOR ENGAGEMENT ("Who's engaging with our competitor's LinkedIn content", "Track people engaging with our CEO's posts")
-  │   → Use the `spot-people-engaging-with-competitors` skill and follow its workflow
-  │
-  ├─ COMPETITOR SPYING ("Spy on competitor sales reps", "Track what accounts Gong's AEs are working")
-  │   → Use the `spot-competitor-sales-activity` skill and follow its workflow
   │
   ├─ ENRICH EMAILS/PHONES ("Get work emails for these people", "Enrich phone numbers for my signal results")
   │   → Use the `enrich-people-with-email-and-phone` skill and follow its workflow
@@ -121,12 +109,8 @@ Read these files only when routed to them by the workflow above.
 ### Skills
 - `spot-companies-and-people-with-active-pain-points` — Find ICP companies with inferred pain-points from live company and people events, and the people involved
 - `spot-companies-hiring-to-solve-specific-problems` — Find companies hiring to solve specific problems (daily)
-- `spot-companies-posting-about-specific-things` — Find companies posting about specific things on socials (daily)
 - `spot-companies-using-specific-tech-stack` — Find companies using specific tech stack (daily)
-- `spot-people-posting-about-specific-things` — Spot people posting about specific things on socials (daily)
 - `spot-people-changing-jobs` — Spot ICP people changing jobs (daily)
-- `spot-people-engaging-with-competitors` — Spot people engaging with competitor or thought leader content (daily)
-- `spot-competitor-sales-activity` — Spy on competitor sales reps' LinkedIn activity (daily)
 - `enrich-people-with-email-and-phone` — Enrich OpenFunnel people with work email addresses and phone numbers
 - `enrich-accounts-with-contacts-and-emails` — Turn a list of domains or accounts into relevant contacts with work email coverage
 - `enrich-and-research` — Look up a company, enrich it with people and signals, and get an attack strategy

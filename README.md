@@ -39,12 +39,8 @@ Having these market events captured means GTM teams can be faster, unlock more p
 |-------|-------------|
 | `spot-companies-and-people-with-active-pain-points` | Find companies and people with active pain-points (daily) |
 | `spot-companies-hiring-to-solve-specific-problems` | Find companies hiring to solve specific problems (daily) |
-| `spot-companies-posting-about-specific-things` | Find companies posting about specific things on socials (daily) |
 | `spot-companies-using-specific-tech-stack` | Find companies using specific tech stack (daily) |
-| `spot-people-posting-about-specific-things` | Spot people posting about specific things on socials (daily) |
 | `spot-people-changing-jobs` | Spot ICP people changing jobs (daily) |
-| `spot-people-engaging-with-competitors` | Spot people engaging with competitor or thought leader content (daily) |
-| `spot-competitor-sales-activity` | Spy on competitor sales reps' LinkedIn activity (daily) |
 | `enrich-and-research` | Enrich a company with people, signals, and a recommended attack strategy |
 | `enterprise-account-research` | Identify which team inside a large account has the pain, who leads it, and why now |
 | `enrich-people-with-email-and-phone` | Enrich OpenFunnel people with work email addresses and phone numbers |

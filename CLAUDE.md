@@ -73,6 +73,9 @@ User Request
   ├─ BULK CONTACT ENRICHMENT ("Take this list of domains and get me the best contacts plus emails")
   │   → Use the `enrich-accounts-with-contacts-and-emails` skill and follow its workflow
   │
+  ├─ LOOKALIKE / TRAIT SEARCH ("Find me B2B SaaS doing voice AI in healthcare", "Series-B dev tools in the US", "Companies like Ramp")
+  │   → Use the `find-lookalike-companies` skill. Natural-language description → up to 100 matching companies with domain + HQ + size.
+  │
   ├─ SCORING ("Score these accounts", "Tier my pipeline")
   │   → Use the `account-scoring` or `score-and-tier` skill
   │
@@ -113,6 +116,7 @@ Read these files only when routed to them by the workflow above.
 - `spot-people-changing-jobs` — Spot ICP people changing jobs (daily)
 - `enrich-people-with-email-and-phone` — Enrich OpenFunnel people with work email addresses and phone numbers
 - `enrich-accounts-with-contacts-and-emails` — Turn a list of domains or accounts into relevant contacts with work email coverage
+- `find-lookalike-companies` — Natural-language trait → up to 100 matching companies with domain + HQ + size. Optional firmographic filters (employees, funding, country).
 - `enrich-and-research` — Look up a company, enrich it with people and signals, and get an attack strategy
 - `enterprise-account-research` — Break into F500 accounts and find which team has the pain, who leads it, and the evidence
 - `account-scoring` — Score accounts 0-100 on pain-point relevance with evidence and reasoning
